@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  # The Cookie Factory backend in SpringBoot
+  tcf-server:
+    image: pcollet/tcf-spring-backend
+    container_name: server
+    environment:
+      - BANK_WITH_PORT=bank-system:9090
+    entrypoint: "bash -c '/opt/app/wait-for-it.sh $${BANK_WITH_PORT} -- java -jar /opt/app/app.jar --bank.host.baseurl=http://$${BANK_WITH_PORT}'"
+    depends_on:
+      - bank-system
+
+  # A simple java CLI
+  tcf-cli:
+    image: pcollet/tcf-spring-cli
+    container_name: cli
+    environment:
+      - SERVER_WITH_PORT=tcf-server:8080
+    entrypoint: "bash -c '/opt/app/wait-for-it.sh $${SERVER_WITH_PORT} -- java -jar /opt/app/app.jar'"
+    depends_on:
+      - tcf-server
+    volumes:
+      - ./cli/demo.txt:/opt/app/demo.txt
+    stdin_open: true
+    tty: true
+
+  # An external bank service in NestJs
+  bank-system:
+    image: pcollet/tcf-bank-service
+    container_name: bank
