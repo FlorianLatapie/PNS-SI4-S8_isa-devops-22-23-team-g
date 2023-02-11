@@ -48,3 +48,7 @@ build/
 
 ### Mono build ###
 **/*.exe
+
+workflows/jenkins_configuration
+.secrets.env
+jenkins.yaml

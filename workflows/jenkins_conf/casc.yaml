@@ -1,0 +1,55 @@
+jenkins:
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+       - id: ${JENKINS_ADMIN_ID}
+         password: ${JENKINS_ADMIN_PASSWORD}
+
+  sonarGlobalConfiguration:
+    buildWrapperEnabled: false
+    installations:
+    - credentialsId: "sonarqube-project-token"
+      name: "SonarQube"
+      serverUrl: "http://sonarqube:9000"
+      triggers:
+        skipScmCause: false
+        skipUpstreamCause: false
+
+  nodes:
+  - permanent:
+      launcher:
+        ssh:
+          credentialsId: "jenkins_agent_key"
+          host: "agent"
+          port: 22
+          sshHostKeyVerificationStrategy: "nonVerifyingKeyVerificationStrategy"
+      name: "jenkins_agent"
+      remoteFS: "/home/jenkins/agent"
+      retentionStrategy: "always"
+  numExecutors: 0
+
+unclassified:
+  location:
+    url: http://vmpx07.polytech.unice.fr:8000/
+credentials:
+  system:
+    domainCredentials:
+    - credentials:
+      - basicSSHUserPrivateKey:
+          id: "jenkins_agent_key"
+          privateKeySource:
+            directEntry:
+              privateKey: ${AGENT_KEY}
+          scope: SYSTEM
+          username: "jenkins"
+      - usernamePassword:
+          id: "FlorianGitHub"
+          password: ${GITHUB_TOKEN}
+          scope: GLOBAL
+          username: "FlorianLatapie"
+      - string:
+          description: "sonarqube-project-token"
+          id: "sonarqube-project-token"
+          scope: GLOBAL
+          secret: ${SONARQUBE_TOKEN}

@@ -1,0 +1,12 @@
+pipeline {
+    agent any
+    stages {
+        stage('Hello') {
+            steps {
+                echo 'Hello World'
+                def output = sh(script: "whoami", returnStdout: true).trim()
+                echo "Current user: ${output}"
+            }
+        }
+    }
+}
