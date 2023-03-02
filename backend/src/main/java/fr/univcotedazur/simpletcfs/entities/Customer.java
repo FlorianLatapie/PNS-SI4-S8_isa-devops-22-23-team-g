@@ -8,13 +8,10 @@ import java.util.List;
 
 public class Customer extends Account {
 
-
     private String licensePlate;
     private CustomerBalance customerBalance;
     private List<Shop> favoriteShops;
-
-    private Date lastEuroTransaction = new Date(Long.MIN_VALUE);
-
+    private Date lastEuroTransactionDate = new Date(Long.MIN_VALUE);
 
     public Customer(String username) {
         super(username);
@@ -35,9 +32,9 @@ public class Customer extends Account {
     }
 
     public void removePoint(Point point) {
-        try{
+        try {
             customerBalance.removePoint(point);
-        }catch (NegativePointBalanceException e){
+        } catch (NegativePointBalanceException e) {
             e.printStackTrace();
         }
     }
@@ -58,12 +55,12 @@ public class Customer extends Account {
         this.favoriteShops = favoriteShops;
     }
 
-    public Date getLastEuroTransaction() {
-        return lastEuroTransaction;
+    public Date getLastEuroTransactionDate() {
+        return lastEuroTransactionDate;
     }
 
-    public void setLastEuroTransaction(Date lastEuroTransaction) {
-        this.lastEuroTransaction = lastEuroTransaction;
+    public void setLastEuroTransactionDate(Date lastEuroTransactionDate) {
+        this.lastEuroTransactionDate = lastEuroTransactionDate;
     }
 
     public List<AdvantageItem> getAdvantageItems() {
@@ -72,10 +69,6 @@ public class Customer extends Account {
 
     @Override
     public String toString() {
-        return "Customer{" +
-                "customerBalance=" + customerBalance +
-                ", id=" + id +
-                ", username='" + username + '\'' +
-                '}';
+        return "Customer{" + "customerBalance=" + customerBalance + ", id=" + id + ", username='" + username + "'}";
     }
 }

@@ -6,7 +6,6 @@ public record Euro(int centsAmount) {
         this((int) amount * 100);
     }
 
-
     public Euro subtract(Euro amount) {
         return new Euro(centsAmount - amount.centsAmount);
     }

@@ -5,15 +5,10 @@ import java.util.UUID;
 
 public class PointTransaction {
     private Point pointAmount;
-
     private UUID id;
-
     private Date date;
-
     private String description;
-
     private Customer customer;
-
     private AdvantageItem advantageItem;
 
     PointTransaction(Point pointAmount, Date date, String description, Customer customer, AdvantageItem advantageItem) {
@@ -32,7 +27,6 @@ public class PointTransaction {
     public void setPointAmount(Point pointAmount) {
         this.pointAmount = pointAmount;
     }
-
 
     public UUID getId() {
         return id;

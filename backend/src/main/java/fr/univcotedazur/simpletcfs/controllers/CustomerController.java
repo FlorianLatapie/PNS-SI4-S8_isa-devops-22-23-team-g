@@ -24,10 +24,10 @@ public class CustomerController {
     public static final String BASE_URI = "/customers";
 
     @Autowired
-    private CustomerFinder finder;
+    private CustomerFinder customerFinder;
 
     @Autowired
-    private CustomerModifier modifier;
+    private CustomerModifier customerModifier;
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     // The 422 (Unprocessable Entity) status code means the server understands the content type of the request entity
@@ -43,12 +43,12 @@ public class CustomerController {
     }
 
     @PostMapping(path = "register", consumes = APPLICATION_JSON_VALUE) // path is a REST CONTROLLER NAME
-    public ResponseEntity<CustomerDTO> register(@RequestBody @Valid CustomerDTO cusDto) {
+    public ResponseEntity<CustomerDTO> register(@RequestBody @Valid CustomerDTO customerDTO) {
         // Note that there is no validation at all on the CustomerDto mapped
         try {
-            System.out.println("Registering customer " + cusDto.getName());
+            System.out.println("Registering customer " + customerDTO.getName());
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(convertCustomerToDto(modifier.signup(cusDto.getName(), null)));
+                    .body(convertCustomerToDto(customerModifier.signup(customerDTO.getName(), null)));
         } catch (CustomerAlreadyExistsException e) {
             // Note: Returning 409 (Conflict) can also be seen a security/privacy vulnerability, exposing a service for account enumeration
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -56,12 +56,12 @@ public class CustomerController {
     }
 
     @PostMapping(path = "login", consumes = APPLICATION_JSON_VALUE) // path is a REST CONTROLLER NAME
-    public ResponseEntity<CustomerDTO> login(@RequestBody @Valid CustomerDTO cusDto) {
+    public ResponseEntity<CustomerDTO> login(@RequestBody @Valid CustomerDTO customerDTO) {
         // Note that there is no validation at all on the CustomerDto mapped
         try {
-            System.out.println("Logging in customer " + cusDto.getName());
+            System.out.println("Logging in customer " + customerDTO.getName());
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(convertCustomerToDto(finder.login(cusDto.getName())));
+                    .body(convertCustomerToDto(customerFinder.login(customerDTO.getName())));
         } catch (CustomerNotFoundException e) {
             // Note: Returning 409 (Conflict) can also be seen a security/privacy vulnerability, exposing a service for account enumeration
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -72,6 +72,4 @@ public class CustomerController {
         System.out.println("Converting customer " + customer.getUsername() + " to DTO");
         return new CustomerDTO(customer);
     }
-
-
 }

@@ -61,10 +61,12 @@ public class AdvantageItem {
     public void setPrice(Point price) {
         this.price = price;
     }
-    public Shop getShop(){
+
+    public Shop getShop() {
         return this.shop;
     }
-    public void setShop(Shop shop){
+
+    public void setShop(Shop shop) {
         this.shop = shop;
     }
 }

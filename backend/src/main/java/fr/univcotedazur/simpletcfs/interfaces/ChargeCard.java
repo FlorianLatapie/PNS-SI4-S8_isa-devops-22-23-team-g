@@ -7,6 +7,5 @@ import fr.univcotedazur.simpletcfs.exceptions.NegativePaymentException;
 import fr.univcotedazur.simpletcfs.exceptions.PaymentException;
 
 public interface ChargeCard {
-
     EuroTransaction chargeCard(Euro amount, Customer customer, String creditCard) throws NegativePaymentException, PaymentException;
 }

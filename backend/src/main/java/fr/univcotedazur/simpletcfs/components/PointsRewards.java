@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class PointsRewards implements PointAdder {
 
-
     @Override
     public Point gain(Customer customer, Point point) {
         customer.addPoint(point);

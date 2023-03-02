@@ -19,6 +19,7 @@ public class AdvantageController {
     public static final String BASE_URI = "/payment/advantage";
     @Autowired
     private PointTransactionRegistry pointRegistry;
+
     //TODO: implement the controller
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     // The 422 (Unprocessable Entity) status code means the server understands the content type of the request entity

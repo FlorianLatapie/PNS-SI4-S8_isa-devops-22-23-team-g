@@ -7,6 +7,6 @@ public class PaymentException extends Exception{
     }
 
     public PaymentException() {
-        super("An error occured during the payment");
+        super("An error occurred during the payment");
     }
 }

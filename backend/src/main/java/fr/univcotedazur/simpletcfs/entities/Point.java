@@ -2,7 +2,6 @@ package fr.univcotedazur.simpletcfs.entities;
 
 public record Point(int pointAmount) {
 
-
     public Point subtract(Point amount) {
         return new Point(pointAmount - amount.pointAmount());
     }

@@ -12,9 +12,7 @@ public class CustomerBalance {
     private Euro euroBalance;
 
     public CustomerBalance() {
-        this.pointBalance = new Point(0);
-        this.euroBalance = new Euro(0);
-        this.advantageItem = new ArrayList<>();
+        this(new Point(0), new ArrayList<>(), new Euro(0));
     }
 
     public CustomerBalance(Point pointBalance, List<AdvantageItem> advantageItem, Euro euroBalance) {
@@ -38,6 +36,7 @@ public class CustomerBalance {
     public void setAdvantageItem(List<AdvantageItem> advantageItem) {
         this.advantageItem = advantageItem;
     }
+
     public void addAdvantageItem(AdvantageItem advantageItem) {
         this.advantageItem.add(advantageItem);
     }
@@ -56,31 +55,30 @@ public class CustomerBalance {
 
     public void removePoint(Point point) throws NegativePointBalanceException {
         Point newPointBalance = pointBalance.subtract(point);
-        if(newPointBalance.getPointAmount() >= 0) {
+        if (newPointBalance.getPointAmount() >= 0) {
             pointBalance = newPointBalance;
-        }else{
+        } else {
             throw new NegativePointBalanceException();
         }
     }
 
     public void removeEuro(Euro amount) throws NegativeEuroBalanceException {
         Euro newEuroBalance = euroBalance.subtract(amount);
-        if(newEuroBalance.centsAmount() >= 0) {
+        if (newEuroBalance.centsAmount() >= 0) {
             euroBalance = newEuroBalance;
-        }else{
+        } else {
             throw new NegativeEuroBalanceException();
         }
     }
 
     public void addEuro(Euro amount) throws NegativeEuroBalanceException {
         Euro newEuroBalance = euroBalance.add(amount);
-        if(newEuroBalance.centsAmount() >= 0) {
+        if (newEuroBalance.centsAmount() >= 0) {
             euroBalance = newEuroBalance;
-        }else{
+        } else {
             throw new NegativeEuroBalanceException();
         }
     }
-
 
 
     public boolean hasPoints(Point price) {

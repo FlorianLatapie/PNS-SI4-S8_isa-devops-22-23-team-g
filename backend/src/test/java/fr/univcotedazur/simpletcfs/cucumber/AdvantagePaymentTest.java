@@ -4,19 +4,15 @@ import fr.univcotedazur.simpletcfs.components.AdvantageCashier;
 import fr.univcotedazur.simpletcfs.components.AdvantageManager;
 import fr.univcotedazur.simpletcfs.components.ExchangePoint;
 import fr.univcotedazur.simpletcfs.entities.*;
-import fr.univcotedazur.simpletcfs.exceptions.AdvantageNotInBalanceException;
+import fr.univcotedazur.simpletcfs.exceptions.CustomerDoesntHaveAdvantageException;
 import fr.univcotedazur.simpletcfs.exceptions.NegativePointBalanceException;
 import fr.univcotedazur.simpletcfs.interfaces.AdvantageAdder;
-import fr.univcotedazur.simpletcfs.interfaces.Bank;
-import fr.univcotedazur.simpletcfs.interfaces.PointPayement;
 import fr.univcotedazur.simpletcfs.repositories.CustomerRepository;
-import io.cucumber.java.Before;
 import io.cucumber.java.fr.Alors;
 import io.cucumber.java.fr.Et;
 import io.cucumber.java.fr.Etantdonné;
 import io.cucumber.java.fr.Quand;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +20,6 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class AdvantagePaymentTest {
 
@@ -102,7 +97,7 @@ public class AdvantagePaymentTest {
     }
 
     @Quand("le client dépense son avantage")
-    public void le_client_dépense_son_avantage() throws AdvantageNotInBalanceException {
+    public void le_client_dépense_son_avantage() throws CustomerDoesntHaveAdvantageException {
         advantageCashier.debitAdvantage(customer, advantage);
     }
     @Alors("le client n'a plus cet avantage")
@@ -120,7 +115,7 @@ public class AdvantagePaymentTest {
     }
 
     @Quand("le client dépense tout ses avantages")
-    public void leClientDépenseToutSesAvantages() throws AdvantageNotInBalanceException {
+    public void leClientDépenseToutSesAvantages() throws CustomerDoesntHaveAdvantageException {
         advantageCashier.debitAdvantage(customer, advantage);
         advantageCashier.debitAdvantage(customer, advantage2);
     }
@@ -151,6 +146,6 @@ public class AdvantagePaymentTest {
 
     @Alors("le systeme revoie une AdvantageNotInBalanceException")
     public void leSystemeRevoieUneAdvantageNotInBalanceException() {
-        assertEquals(AdvantageNotInBalanceException.class, exception.getClass());
+        assertEquals(CustomerDoesntHaveAdvantageException.class, exception.getClass());
     }
 }

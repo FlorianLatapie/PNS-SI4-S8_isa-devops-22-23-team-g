@@ -15,6 +15,7 @@ import java.util.UUID;
 @Component
 public class EuroTransactionRegistry implements EuroTransactionFinder, EuroTransactionModifier {
     EuroTransactionRepository euroTransactionRepository;
+
     @Override
     public EuroTransaction find(UUID id) {
         return euroTransactionRepository.findById(id).orElse(null);
@@ -48,7 +49,7 @@ public class EuroTransactionRegistry implements EuroTransactionFinder, EuroTrans
 
     @Override
     public EuroTransaction add(EuroTransaction transaction) {
-        euroTransactionRepository.save(transaction,transaction.getId());
+        euroTransactionRepository.save(transaction, transaction.getId());
         return transaction;
     }
 }

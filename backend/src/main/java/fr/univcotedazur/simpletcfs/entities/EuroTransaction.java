@@ -1,7 +1,6 @@
 package fr.univcotedazur.simpletcfs.entities;
 
 
-
 import java.util.UUID;
 
 public class EuroTransaction {
@@ -9,29 +8,26 @@ public class EuroTransaction {
     private Euro price;
     private Shop shop;
     private UUID id;
-    private Point pointEarned;
+    private final Point pointEarned;
 
     public EuroTransaction(Customer customer, Euro price) {
+        this.id = UUID.randomUUID();
         this.customer = customer;
         this.price = price;
-        id = UUID.randomUUID();
         this.pointEarned = new Point(0);
     }
 
-    public EuroTransaction(Customer customer,Shop shop, Euro price) {
-        this.customer = customer;
+    public EuroTransaction(Customer customer, Shop shop, Euro price) {
+        this(customer, price);
         this.shop = shop;
-        this.price = price;
-        this.pointEarned = new Point(0);
-        id = UUID.randomUUID();
     }
 
-    public EuroTransaction(Customer customer,Shop shop, Euro price, Point pointEarned) {
+    public EuroTransaction(Customer customer, Shop shop, Euro price, Point pointEarned) {
         this.customer = customer;
         this.shop = shop;
         this.price = price;
         this.pointEarned = pointEarned;
-        id = UUID.randomUUID();
+        this.id = UUID.randomUUID();
     }
 
     public Customer getCustomer() {

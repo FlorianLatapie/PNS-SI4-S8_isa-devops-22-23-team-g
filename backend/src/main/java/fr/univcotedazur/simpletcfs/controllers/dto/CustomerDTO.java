@@ -9,14 +9,14 @@ public class CustomerDTO {
 
     private final UUID id; // expected to be empty when POSTing the creation of Customer, and containing the UUID when returned
 
-    @NotBlank(message = "name should not be blank")
+    @NotBlank(message = "Name should not be blank")
     private final String name;
 
     private final int points;
     private final double euros;
 
     /*
-    @Pattern(regexp = "\\d{10}+", message = "credit card should be exactly 10 digits")
+    @Pattern(regexp = "\\d{10}+", message = "Credit card should be exactly 10 digits")
     private String creditCard;
      */
 

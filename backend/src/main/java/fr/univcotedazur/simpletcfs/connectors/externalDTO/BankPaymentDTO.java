@@ -1,9 +1,8 @@
-package fr.univcotedazur.simpletcfs.connectors.eternaldto;
+package fr.univcotedazur.simpletcfs.connectors.externalDTO;
 
 
 public class BankPaymentDTO {
     private String creditCard;
-
     private double amount;
 
     public BankPaymentDTO() {
