@@ -13,8 +13,8 @@ services:
     networks:
       - cicd
     ports:
-      - 8000:8080
-      - 50000:50000
+      - "8000:8080"
+      - "50000:50000"
     container_name: jenkins
     volumes:
       - 'jenkins_data:/var/jenkins_home'
@@ -37,7 +37,7 @@ services:
   sonarqube:
     image: sonarqube:latest
     ports:
-      - 8001:9000
+      - "8001:9000"
     env_file:
         - ./env/.secrets.env
     networks:

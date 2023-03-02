@@ -1,46 +1,63 @@
 package fr.univcotedazur.simpletcfs.components;
 
+import fr.univcotedazur.simpletcfs.entities.ContactDetails;
 import fr.univcotedazur.simpletcfs.entities.Customer;
-import fr.univcotedazur.simpletcfs.exceptions.AlreadyExistingCustomerException;
+import fr.univcotedazur.simpletcfs.exceptions.CustomerAlreadyExistsException;
+import fr.univcotedazur.simpletcfs.exceptions.CustomerNotFoundException;
 import fr.univcotedazur.simpletcfs.interfaces.CustomerFinder;
-import fr.univcotedazur.simpletcfs.interfaces.CustomerRegistration;
+import fr.univcotedazur.simpletcfs.interfaces.CustomerModifier;
 import fr.univcotedazur.simpletcfs.repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.util.Optional;
+
 import java.util.UUID;
-import java.util.stream.StreamSupport;
 
 @Component
-public class CustomerRegistry implements CustomerRegistration, CustomerFinder {
+public class CustomerRegistry implements CustomerFinder, CustomerModifier {
 
-    private CustomerRepository customerRepository;
-
-    @Autowired // annotation is optional since Spring 4.3 if component has only one constructor
+    private final CustomerRepository customerRepository;
+    @Autowired
     public CustomerRegistry(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
 
     @Override
-    public Customer register(String name, String creditCard)
-            throws AlreadyExistingCustomerException {
-        if (findByName(name).isPresent())
-            throw new AlreadyExistingCustomerException(name);
-        Customer newcustomer = new Customer(name, creditCard);
-        customerRepository.save(newcustomer, newcustomer.getId());
-        return newcustomer;
+    public Customer login(String username) throws CustomerNotFoundException {
+        return findCustomerByUsername(username).orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
     }
 
     @Override
-    public Optional<Customer> findByName(String name) {
-        return StreamSupport.stream(customerRepository.findAll().spliterator(), false)
-                .filter(cust -> name.equals(cust.getName())).findAny();
+    public Customer findCustomer(UUID id) throws CustomerNotFoundException {
+        return customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("Customer with id : " + id + "not found"));
     }
 
     @Override
-    public Optional<Customer> findById(UUID id) {
-        return customerRepository.findById(id);
+    public Customer signup(String username, ContactDetails contactDetails) throws CustomerAlreadyExistsException {
+        System.out.println("Customer trying to signup: " + username);
+        Optional<Customer> customerOpt = findCustomerByUsername(username);
+        if (customerOpt.isPresent()) {
+            throw new CustomerAlreadyExistsException("Customer already exists");
+        }
+
+        System.out.println("Customer not found, creating new customer: " + username);
+        Customer customer = new Customer(username);
+        customerRepository.save(customer, customer.getId());
+        return customer;
+
     }
 
+    @Override
+    public Customer update(Customer customer) throws CustomerNotFoundException {
+        return null;
+    }
+
+    private Optional<Customer> findCustomerByUsername(String username) {
+        for (Customer customer : customerRepository.findAll()) {
+            if (customer.getUsername().equals(username)) {
+                return Optional.of(customer);
+            }
+        }
+        return Optional.empty();
+    }
 }

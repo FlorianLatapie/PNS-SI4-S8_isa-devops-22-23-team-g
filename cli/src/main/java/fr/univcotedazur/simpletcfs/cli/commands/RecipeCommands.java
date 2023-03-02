@@ -18,7 +18,7 @@ public class RecipeCommands {
 
     @ShellMethod("List all available recipes")
     public Set<CookieEnum> recipes() {
-        return new HashSet<CookieEnum>(Arrays.asList(restTemplate.getForObject("/recipes", CookieEnum[].class)));
+        return new HashSet<>(Arrays.asList(restTemplate.getForObject("/recipes", CookieEnum[].class)));
     }
 
 }

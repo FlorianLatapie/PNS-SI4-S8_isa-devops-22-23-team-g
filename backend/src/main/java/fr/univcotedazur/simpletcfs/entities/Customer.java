@@ -1,64 +1,81 @@
 package fr.univcotedazur.simpletcfs.entities;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import fr.univcotedazur.simpletcfs.exceptions.NegativePointBalanceException;
 
-public class Customer {
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-    private UUID id;
-    private String name;
-    private String creditCard;
-    private Set<Item> cart = new HashSet<>();
+public class Customer extends Account {
 
-    public Customer(String n, String c) {
-        this.name = n;
-        this.creditCard = c;
-        this.id = UUID.randomUUID();
+
+    private String licensePlate;
+    private CustomerBalance customerBalance;
+    private List<Shop> favoriteShops;
+
+    private Date lastEuroTransaction = new Date(Long.MIN_VALUE);
+
+
+    public Customer(String username) {
+        super(username);
+        this.customerBalance = new CustomerBalance();
+        this.favoriteShops = new ArrayList<>();
     }
 
-    public UUID getId() {
-        return id;
+    public String getLicensePlate() {
+        return licensePlate;
     }
 
-    public String getName() {
-        return name;
+    public void setLicensePlate(String licensePlate) {
+        this.licensePlate = licensePlate;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void addPoint(Point point) {
+        customerBalance.addPoint(point);
     }
 
-    public String getCreditCard() {
-        return creditCard;
+    public void removePoint(Point point) {
+        try{
+            customerBalance.removePoint(point);
+        }catch (NegativePointBalanceException e){
+            e.printStackTrace();
+        }
     }
 
-    public void setCreditCard(String creditCard) {
-        this.creditCard = creditCard;
+    public CustomerBalance getCustomerBalance() {
+        return customerBalance;
     }
 
-    public Set<Item> getCart() {
-        return cart;
+    public void setCustomerBalance(CustomerBalance customerBalance) {
+        this.customerBalance = customerBalance;
     }
 
-    public void setCart(Set<Item> cart) {
-        this.cart = cart;
+    public List<Shop> getFavoriteShops() {
+        return favoriteShops;
+    }
+
+    public void setFavoriteShops(List<Shop> favoriteShops) {
+        this.favoriteShops = favoriteShops;
+    }
+
+    public Date getLastEuroTransaction() {
+        return lastEuroTransaction;
+    }
+
+    public void setLastEuroTransaction(Date lastEuroTransaction) {
+        this.lastEuroTransaction = lastEuroTransaction;
+    }
+
+    public List<AdvantageItem> getAdvantageItems() {
+        return customerBalance.getAdvantageItem();
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Customer)) return false;
-        Customer customer = (Customer) o;
-        if (!getId().equals(customer.getId())) return false;
-        if (!getName().equals(customer.getName())) return false;
-        return getCreditCard().equals(customer.getCreditCard());
+    public String toString() {
+        return "Customer{" +
+                "customerBalance=" + customerBalance +
+                ", id=" + id +
+                ", username='" + username + '\'' +
+                '}';
     }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, creditCard);
-    }
-
 }

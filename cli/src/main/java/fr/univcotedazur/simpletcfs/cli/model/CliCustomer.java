@@ -8,43 +8,41 @@ public class CliCustomer {
 
     private UUID id;
     private String name;
-    private String creditCard;
 
-    public CliCustomer(String name, String creditCard) {
+    private int points;
+
+    private double euros;
+
+    public CliCustomer() {
+    }
+
+    public CliCustomer(String name) {
         this.name = name;
-        this.creditCard = creditCard;
     }
 
     public UUID getId() {
         return id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public int getPoints() {
+    	return points;
     }
 
-    public String getCreditCard() {
-        return creditCard;
-    }
-
-    public void setCreditCard(String creditCard) {
-        this.creditCard = creditCard;
+    public double getEuros() {
+    	return euros;
     }
 
     @Override
     public String toString() {
-        return "Customer{" +
-                "id='" + id + '\'' +
+        return "CliCustomer{" +
+                "id=" + id +
                 ", name='" + name + '\'' +
-                ", creditCard='" + creditCard + '\'' +
+                ", points=" + points +
+                ", euros=" + euros +
                 '}';
     }
 }

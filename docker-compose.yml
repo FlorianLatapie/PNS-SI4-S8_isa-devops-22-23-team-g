@@ -4,6 +4,11 @@ services:
   # The Cookie Factory backend in SpringBoot
   tcf-server:
     image: pcollet/tcf-spring-backend
+    build:
+        context: ./backend
+        dockerfile: Dockerfile
+        args:
+            JAR_FILE: simpleTCFS-0.0.1-SNAPSHOT.jar
     container_name: server
     environment:
       - BANK_WITH_PORT=bank-system:9090
@@ -14,6 +19,11 @@ services:
   # A simple java CLI
   tcf-cli:
     image: pcollet/tcf-spring-cli
+    build:
+        context: cli
+        dockerfile: Dockerfile
+        args:
+            JAR_FILE: cli-0.0.1-SNAPSHOT.jar
     container_name: cli
     environment:
       - SERVER_WITH_PORT=tcf-server:8080
@@ -21,11 +31,14 @@ services:
     depends_on:
       - tcf-server
     volumes:
-      - ./cli/demo.txt:/opt/app/demo.txt
+      - ./cli/demo:/opt/app/demo
     stdin_open: true
     tty: true
 
   # An external bank service in NestJs
   bank-system:
     image: pcollet/tcf-bank-service
+    build:
+        context: bank
+        dockerfile: Dockerfile
     container_name: bank

@@ -13,7 +13,7 @@ import java.time.Duration;
 public class CliApplication {
 
     @Value("${tcf.host.baseurl}")
-    private String serverHostandPort;
+    private String serverHostAndPort;
 
     public static void main(String[] args) {
         SpringApplication.exit(SpringApplication.run(CliApplication.class, args), () -> 0);
@@ -26,7 +26,7 @@ public class CliApplication {
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder
-                .rootUri(serverHostandPort)
+                .rootUri(serverHostAndPort)
                 .setConnectTimeout(Duration.ofMillis(3000))
                 .setReadTimeout(Duration.ofMillis(3000))
                 .build();
