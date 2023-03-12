@@ -9,7 +9,6 @@ import org.springframework.web.client.RestTemplate;
 
 @ShellComponent
 public class CustomerCommands {
-
     public static final String BASE_URI = "/customers";
 
     @Autowired
@@ -39,5 +38,4 @@ public class CustomerCommands {
     public String customers() {
         return cliContext.getCustomers().toString();
     }
-
 }
