@@ -1,0 +1,7 @@
+register newClient
+login newClient
+pay-with-credit-card 100 896983 newClient
+
+// recover stats from all shops (amount 100 euros)
+get-stats-from-all-shops
+

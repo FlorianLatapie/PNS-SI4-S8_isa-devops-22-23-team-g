@@ -11,5 +11,7 @@ public interface EuroTransactionFinder {
     EuroTransaction find(UUID id);
     List<EuroTransaction> find(Shop shop);
     List<EuroTransaction> find(Customer customer);
+
+    List<EuroTransaction> findAll();
 }
 

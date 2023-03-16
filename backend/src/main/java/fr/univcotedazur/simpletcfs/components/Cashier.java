@@ -23,12 +23,15 @@ public class Cashier implements Payment, ChargeCard {
 
     private CustomerRepository customerRepository;
 
+    private EuroTransactionRegistry euroTransactionRegistry;
+
     @Autowired
-    public Cashier(AdvantageCashier advantageCashier, BankProxy bankProxy, PointsRewards pointsRewards, CustomerRepository customerRepository) {
+    public Cashier(AdvantageCashier advantageCashier, BankProxy bankProxy, PointsRewards pointsRewards, CustomerRepository customerRepository, EuroTransactionRegistry euroTransactionRegistry) {
         this.advantageCashier = advantageCashier;
         this.bankProxy = bankProxy;
         this.pointsRewards = pointsRewards;
         this.customerRepository = customerRepository;
+        this.euroTransactionRegistry = euroTransactionRegistry;
     }
 
     // TODO: merge the two methods below if possible
@@ -47,7 +50,10 @@ public class Cashier implements Payment, ChargeCard {
         }
 
         // need to register the transaction in DB
-        return new EuroTransaction(customer, shop, amount, pointEarned);
+
+        EuroTransaction euroTransaction = new EuroTransaction(customer, shop, amount, pointEarned);
+        euroTransactionRegistry.add(euroTransaction);
+        return euroTransaction;
     }
 
     @Override
@@ -57,14 +63,17 @@ public class Cashier implements Payment, ChargeCard {
         }
         // points earned are 2 times the amount of euro, euros are in cents
         customer.getCustomerBalance().removeEuro(amount);
-        pointsRewards.gain(customer, new Point((amount.centsAmount() / 100) * 2));
+        Point pointEarned = pointsRewards.gain(customer, new Point((amount.centsAmount() / 100) * 2));
 
         // need to register the transaction in BD
-        return new EuroTransaction(customer, shop, amount);
+        EuroTransaction euroTransaction = new EuroTransaction(customer, shop, amount, pointEarned);
+        euroTransactionRegistry.add(euroTransaction);
+        return euroTransaction;
     }
 
     @Override
     public EuroTransaction payWithCreditCard(Euro amount, List<AdvantageItem> advantages, Shop shop, Customer customer, String creditCard) throws PaymentException, NegativePaymentException {
+        // TODO : add the EuroTransaction to the registry
         EuroTransaction euroTransaction = payWithCreditCard(amount, customer, shop, creditCard);
         // TODO : need to use the advantages cashier to debit the advantages of the consumer
         return euroTransaction;
@@ -73,12 +82,14 @@ public class Cashier implements Payment, ChargeCard {
     //TODO Write the function
     @Override
     public EuroTransaction payWithAccountMoney(Euro amount, Customer customer, Shop shop) throws EuroBalanceException {
+        // TODO : add the EuroTransaction to the registry
         return new EuroTransaction(customer, shop, amount);
     }
 
     //TODO Write the function
     @Override
     public EuroTransaction payWithAccountMoney(Euro amount, List<AdvantageItem> advantages, Customer customer, Shop shop) throws EuroBalanceException {
+        // TODO : add the EuroTransaction to the registry
         return new EuroTransaction(customer, shop, amount);
     }
 
