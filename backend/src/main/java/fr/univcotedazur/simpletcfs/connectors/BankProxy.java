@@ -22,7 +22,7 @@ public class BankProxy implements Bank {
         try {
             ResponseEntity<BankPaymentDTO> result = restTemplate.postForEntity(
                     bankHostAndPort + "/cctransactions",
-                    new BankPaymentDTO(creditCard, (double) price.centsAmount() / 100),
+                    new BankPaymentDTO(creditCard,(double)price.getCentsAmount()/100),
                     BankPaymentDTO.class
             );
             return (result.getStatusCode().equals(HttpStatus.CREATED));

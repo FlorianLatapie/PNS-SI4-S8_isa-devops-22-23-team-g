@@ -3,13 +3,25 @@ package fr.univcotedazur.simpletcfs.entities;
 import fr.univcotedazur.simpletcfs.exceptions.NegativeEuroBalanceException;
 import fr.univcotedazur.simpletcfs.exceptions.NegativePointBalanceException;
 
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+@Embeddable
 public class CustomerBalance {
+    @Embedded
+
     private Point pointBalance;
+
+    @Transient
     private List<AdvantageItem> advantageItem;
+    @Embedded
+
     private Euro euroBalance;
+
 
     public CustomerBalance() {
         this(new Point(0), new ArrayList<>(), new Euro(0));
@@ -64,7 +76,7 @@ public class CustomerBalance {
 
     public void removeEuro(Euro amount) throws NegativeEuroBalanceException {
         Euro newEuroBalance = euroBalance.subtract(amount);
-        if (newEuroBalance.centsAmount() >= 0) {
+        if(newEuroBalance.getCentsAmount() >= 0) {
             euroBalance = newEuroBalance;
         } else {
             throw new NegativeEuroBalanceException();
@@ -73,13 +85,12 @@ public class CustomerBalance {
 
     public void addEuro(Euro amount) throws NegativeEuroBalanceException {
         Euro newEuroBalance = euroBalance.add(amount);
-        if (newEuroBalance.centsAmount() >= 0) {
+        if(newEuroBalance.getCentsAmount() >= 0) {
             euroBalance = newEuroBalance;
         } else {
             throw new NegativeEuroBalanceException();
         }
     }
-
 
     public boolean hasPoints(Point price) {
         return pointBalance.getPointAmount() >= price.getPointAmount();
@@ -92,5 +103,18 @@ public class CustomerBalance {
                 ", advantageItem=" + advantageItem +
                 ", euroBalance=" + euroBalance +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CustomerBalance that = (CustomerBalance) o;
+        return Objects.equals(pointBalance, that.pointBalance) && Objects.equals(advantageItem, that.advantageItem) && Objects.equals(euroBalance, that.euroBalance);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pointBalance, advantageItem, euroBalance);
     }
 }

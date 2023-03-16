@@ -40,25 +40,6 @@ public class PaymentController {
     @Autowired
     private CustomerFinder customerFinder;
 
-    static EuroTransactionDTO convertEuroTransactionToDto(EuroTransaction euroTransaction) {
-        System.out.println("Converting transaction of Customer :" + euroTransaction.getCustomer() + " to DTO");
-
-        CustomerDTO customerDTO = convertCustomerToDto(euroTransaction.getCustomer());
-        double price = euroTransaction.getPrice().getEuro();
-
-        String shopName;
-
-        if (euroTransaction.getShop() == null) {
-            shopName = "Unknown";
-        } else {
-            shopName = euroTransaction.getShop().getName();
-        }
-
-        UUID id = euroTransaction.getId();
-        int pointEarned = euroTransaction.getPointEarned().getPointAmount();
-
-        return new EuroTransactionDTO(customerDTO, price, shopName, id, pointEarned);
-    }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler({MethodArgumentNotValidException.class})
@@ -69,9 +50,8 @@ public class PaymentController {
         return errorDTO;
     }
 
-    @PostMapping(path = "/{customerId}/payWithCreditCard", consumes = APPLICATION_JSON_VALUE)
-    // path is a REST CONTROLLER NAME
-    public ResponseEntity<EuroTransactionDTO> payWithCreditCard(@PathVariable("customerId") UUID customerId, @RequestBody @Valid PaymentDTO paymentDTO) throws CustomerNotFoundException {
+    @PostMapping(path = "/{customerId}/payWithCreditCard", consumes = APPLICATION_JSON_VALUE) // path is a REST CONTROLLER NAME
+    public ResponseEntity<EuroTransactionDTO> payWithCreditCard(@PathVariable("customerId") Long customerId, @RequestBody @Valid PaymentDTO paymentDTO) throws CustomerNotFoundException {
         // Note that there is no validation at all on the CustomerDto mapped
         try {
             System.out.println("Customer id " + customerId);
@@ -91,7 +71,7 @@ public class PaymentController {
     }
 
     @PostMapping(path = "/{customerId}/loadCard", consumes = APPLICATION_JSON_VALUE) // path is a REST CONTROLLER NAME
-    public ResponseEntity<EuroTransactionDTO> loadCard(@PathVariable("customerId") UUID customerId, @RequestBody @Valid PaymentDTO paymentDTO) throws CustomerNotFoundException {
+    public ResponseEntity<EuroTransactionDTO> loadCard(@PathVariable("customerId") Long customerId, @RequestBody @Valid PaymentDTO paymentDTO) throws CustomerNotFoundException {
         // Note that there is no validation at all on the CustomerDto mapped
         try {
             System.out.println("Customer id " + customerId);
@@ -109,9 +89,8 @@ public class PaymentController {
         }
     }
 
-    @PostMapping(path = "/{customerId}/payWithLoyaltyCard", consumes = APPLICATION_JSON_VALUE)
-    // path is a REST CONTROLLER NAME
-    public ResponseEntity<EuroTransactionDTO> payWithLoyaltyCard(@PathVariable("customerId") UUID customerId, @RequestBody @Valid PaymentDTO paymentDTO) throws CustomerNotFoundException {
+    @PostMapping(path = "/{customerId}/payWithLoyaltyCard", consumes = APPLICATION_JSON_VALUE) // path is a REST CONTROLLER NAME
+    public ResponseEntity<EuroTransactionDTO> payWithLoyaltyCard(@PathVariable("customerId") Long customerId, @RequestBody @Valid PaymentDTO paymentDTO) throws CustomerNotFoundException {
         // Note that there is no validation at all on the CustomerDto mapped
         try {
             System.out.println("Customer id " + customerId);
@@ -130,7 +109,23 @@ public class PaymentController {
         }
     }
 
-    private Customer retrieveCustomer(UUID customerId) throws CustomerNotFoundException {
+
+    static EuroTransactionDTO convertEuroTransactionToDto(EuroTransaction euroTransaction) {
+        System.out.println("Converting transaction of Customer :" + euroTransaction.getCustomer() + " to DTO");
+        CustomerDTO customerDTO = convertCustomerToDto(euroTransaction.getCustomer());
+        double price = euroTransaction.getPrice().euroAmount();
+        String shopName;
+        if (euroTransaction.getShop() == null) {
+            shopName = "Unknown";
+        } else {
+            shopName = euroTransaction.getShop().getName();
+        }
+        UUID id = euroTransaction.getId();
+        int pointEarned = euroTransaction.getPointEarned().getPointAmount();
+        return new EuroTransactionDTO(customerDTO, price, shopName, id, pointEarned);
+    }
+
+    private Customer retrieveCustomer(Long customerId) throws CustomerNotFoundException {
         System.out.println("Customer Id in retrieve Customer " + customerId);
         // TODO : need to debug
         Customer customer = customerFinder.findCustomer(customerId);

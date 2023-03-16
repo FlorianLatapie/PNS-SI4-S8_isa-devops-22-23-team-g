@@ -1,5 +1,6 @@
 package fr.univcotedazur.simpletcfs.entities;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class AdvantageItem {
@@ -68,5 +69,18 @@ public class AdvantageItem {
 
     public void setShop(Shop shop) {
         this.shop = shop;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AdvantageItem that = (AdvantageItem) o;
+        return type == that.type && Objects.equals(title, that.title) && Objects.equals(description, that.description) && Objects.equals(price, that.price) && Objects.equals(shop, that.shop);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, title, description, price, shop);
     }
 }

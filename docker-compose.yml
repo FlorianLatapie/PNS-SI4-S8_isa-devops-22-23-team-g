@@ -12,9 +12,11 @@ services:
     container_name: server
     environment:
       - BANK_WITH_PORT=bank-system:9090
-    entrypoint: "bash -c '/opt/app/wait-for-it.sh $${BANK_WITH_PORT} -- java -jar /opt/app/app.jar --bank.host.baseurl=http://$${BANK_WITH_PORT}'"
+      - POSTGRES_HOST=postgres:5432
+    entrypoint: "bash -c '/opt/app/wait-for-it.sh $${POSTGRES_HOST} -- java -jar /opt/app/app.jar --bank.host.baseurl=http://$${BANK_WITH_PORT}'"
     depends_on:
       - bank-system
+      - postgres
 
   # A simple java CLI
   tcf-cli:
@@ -42,3 +44,11 @@ services:
         context: bank
         dockerfile: Dockerfile
     container_name: bank
+  
+  postgres:
+    image: postgres:15.2
+    container_name: db
+    environment:
+      - POSTGRES_PASSWORD=postgrespass
+      - POSTGRES_USER=postgresuser
+      - POSTGRES_DB=tcf-db

@@ -20,7 +20,7 @@ public class TransactionStatistics implements StatsFinder {
         List<EuroTransaction> euroTransactionList = euroTransactionFinder.findAll();
         double moneyEarned = 0;
         for (EuroTransaction euroTransaction : euroTransactionList) {
-            moneyEarned += euroTransaction.getPrice().getEuro();
+            moneyEarned += euroTransaction.getPrice().euroAmount();
         }
         return new Statistic(moneyEarned);
     }

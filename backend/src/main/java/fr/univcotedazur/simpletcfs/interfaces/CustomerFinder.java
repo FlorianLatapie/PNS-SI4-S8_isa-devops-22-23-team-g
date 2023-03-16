@@ -7,6 +7,6 @@ import java.util.UUID;
 
 public interface CustomerFinder {
     Customer login(String username) throws CustomerNotFoundException;
-    Customer findCustomer(UUID id) throws CustomerNotFoundException;
+    Customer findCustomer(Long id) throws CustomerNotFoundException;
 }
 

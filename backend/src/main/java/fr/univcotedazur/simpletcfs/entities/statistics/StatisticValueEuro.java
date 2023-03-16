@@ -16,6 +16,6 @@ public class StatisticValueEuro extends StatisticValue {
     }
 
     public double getValue() {
-        return value.getEuro();
+        return value.euroAmount();
     }
 }

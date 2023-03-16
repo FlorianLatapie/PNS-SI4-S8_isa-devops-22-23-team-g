@@ -1,6 +1,7 @@
 package fr.univcotedazur.simpletcfs.entities;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class Shop {
     private String name;
@@ -8,6 +9,8 @@ public class Shop {
     private Date openingTime;
     private Date closingTime;
     private IBAN iban;
+    
+    Long id;
 
     public Shop(String name, String address, Date openingTime, Date closingTime, IBAN iban) {
         this.name = name;
@@ -15,6 +18,10 @@ public class Shop {
         this.openingTime = openingTime;
         this.closingTime = closingTime;
         this.iban = iban;
+    }
+
+    public Shop() {
+
     }
 
     public String getName() {
@@ -55,5 +62,22 @@ public class Shop {
 
     public void setIban(IBAN iban) {
         this.iban = iban;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Shop)) return false;
+        Shop shop = (Shop) o;
+        return name == shop.name &&
+                address == shop.address &&
+                openingTime == shop.openingTime &&
+                closingTime == shop.closingTime &&
+                iban == shop.iban;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, address, openingTime, closingTime, iban);
     }
 }

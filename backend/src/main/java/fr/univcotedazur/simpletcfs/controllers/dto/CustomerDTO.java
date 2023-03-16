@@ -3,11 +3,10 @@ package fr.univcotedazur.simpletcfs.controllers.dto;
 import fr.univcotedazur.simpletcfs.entities.Customer;
 
 import javax.validation.constraints.NotBlank;
-import java.util.UUID;
 
 public class CustomerDTO {
 
-    private final UUID id; // expected to be empty when POSTing the creation of Customer, and containing the UUID when returned
+    private final Long id; // expected to be empty when POSTing the creation of Customer, and containing the UUID when returned
 
     @NotBlank(message = "Name should not be blank")
     private final String name;
@@ -20,7 +19,7 @@ public class CustomerDTO {
     private String creditCard;
      */
 
-    public CustomerDTO(UUID id, String name, int points, double euros) {
+    public CustomerDTO(Long id, String name, int points, double euros) {
         this.id = id;
         this.name = name;
         this.points = points;
@@ -30,11 +29,11 @@ public class CustomerDTO {
     public CustomerDTO(Customer customer) {
         this.id = customer.getId();
         this.name = customer.getUsername();
-        this.points = customer.getCustomerBalance().getPointBalance().pointAmount();
-        this.euros = customer.getCustomerBalance().getEuroBalance().getEuro();
+        this.points = customer.getCustomerBalance().getPointBalance().getPointAmount();
+        this.euros = customer.getCustomerBalance().getEuroBalance().euroAmount();
     }
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 

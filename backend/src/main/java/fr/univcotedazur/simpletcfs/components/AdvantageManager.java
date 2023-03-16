@@ -20,7 +20,7 @@ public class AdvantageManager implements AdvantageAdder, AdvantageRemover   {
     @Override
     public void addAdvantage(Customer customer, AdvantageItem item) {
         customer.getAdvantageItems().add(item);
-        customerRepository.save(customer, customer.getId());
+        customerRepository.save(customer);
     }
 
     @Override
@@ -29,6 +29,6 @@ public class AdvantageManager implements AdvantageAdder, AdvantageRemover   {
             throw new CustomerDoesntHaveAdvantageException();
         }
         customer.getAdvantageItems().remove(item);
-        customerRepository.save(customer, customer.getId());
+        customerRepository.save(customer);
     }
 }

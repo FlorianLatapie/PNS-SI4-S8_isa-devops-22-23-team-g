@@ -4,7 +4,6 @@ import fr.univcotedazur.simpletcfs.connectors.BankProxy;
 import fr.univcotedazur.simpletcfs.entities.*;
 import fr.univcotedazur.simpletcfs.exceptions.NegativePaymentException;
 import fr.univcotedazur.simpletcfs.exceptions.PaymentException;
-import fr.univcotedazur.simpletcfs.interfaces.Bank;
 import fr.univcotedazur.simpletcfs.interfaces.Payment;
 import fr.univcotedazur.simpletcfs.interfaces.PointAdder;
 import io.cucumber.java.Before;
@@ -13,17 +12,16 @@ import io.cucumber.java.fr.Etantdonné;
 import io.cucumber.java.fr.Quand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
+@SpringBootTest
 public class EuroPaymentTest {
-
-
 
     @Autowired
     PointAdder pointAdder;
@@ -64,7 +62,10 @@ public class EuroPaymentTest {
     }
     @Alors("il recois {int} en point")
     public void il_recois_en_point(Integer int1) {
-        assertEquals(new Point(int1).pointAmount(), customer.getCustomerBalance().getPointBalance().pointAmount());
+        System.out.println("TEST Point CARTE BLA BLABLA");
+        System.out.println((new Point(int1)).getPointAmount());
+        System.out.println(customer.getCustomerBalance().getPointBalance().getPointAmount());
+        assertEquals(new Point(int1).getPointAmount(), customer.getCustomerBalance().getPointBalance().getPointAmount());
     }
 
 
@@ -107,7 +108,7 @@ public class EuroPaymentTest {
 
     @Alors("la carte reste {int}")
     public void la_carte_reste(Integer int1) {
-        assertEquals(new Euro(int1 * 100).centsAmount(), customer.getCustomerBalance().getEuroBalance().centsAmount());
+        assertEquals(new Euro(int1 * 100).getCentsAmount(), customer.getCustomerBalance().getEuroBalance().getCentsAmount());
     }
 
 

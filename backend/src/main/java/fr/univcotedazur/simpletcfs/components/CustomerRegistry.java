@@ -31,7 +31,7 @@ public class CustomerRegistry implements CustomerFinder, CustomerModifier {
     }
 
     @Override
-    public Customer findCustomer(UUID id) throws CustomerNotFoundException {
+    public Customer findCustomer(Long id) throws CustomerNotFoundException {
         return customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("Customer with id : " + id + "not found"));
     }
 
@@ -45,7 +45,7 @@ public class CustomerRegistry implements CustomerFinder, CustomerModifier {
 
         System.out.println("Customer not found, creating new customer: " + username);
         Customer customer = new Customer(username);
-        customerRepository.save(customer, customer.getId());
+        customerRepository.save(customer);
         return customer;
 
     }

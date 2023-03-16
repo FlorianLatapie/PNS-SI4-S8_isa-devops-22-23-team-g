@@ -7,7 +7,7 @@ import java.util.UUID;
 // so that the automatic JSON (de-)/serialization will make the two compatible on each side
 public class CliCustomer {
 
-    private long id;
+    private Long id;
     private String name;
 
     private int points;
@@ -25,7 +25,7 @@ public class CliCustomer {
         this.name = name;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

@@ -13,16 +13,16 @@ import io.cucumber.java.fr.Et;
 import io.cucumber.java.fr.Etantdonné;
 import io.cucumber.java.fr.Quand;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 
+@SpringBootTest
 public class AdvantagePaymentTest {
-
 
     @Autowired
     AdvantageAdder advantageAdder;
@@ -34,9 +34,9 @@ public class AdvantagePaymentTest {
 
     private CustomerBalance customerBalance;
     @Autowired
-    AdvantageManager advantageManager = new AdvantageManager(new CustomerRepository());
+    AdvantageManager advantageManager;
     @Autowired
-    ExchangePoint pointPayement = new ExchangePoint(advantageManager);
+    ExchangePoint pointPayement;
 
     AdvantageItem advantage;
     AdvantageItem advantage2;

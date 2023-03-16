@@ -11,41 +11,42 @@ import fr.univcotedazur.simpletcfs.interfaces.Payment;
 import fr.univcotedazur.simpletcfs.repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
+
+
+@Transactional
 @Component
 public class Cashier implements Payment, ChargeCard {
-
     private AdvantageCashier advantageCashier;
     private BankProxy bankProxy;
     private PointsRewards pointsRewards;
 
-    private CustomerRepository customerRepository;
-
     private EuroTransactionRegistry euroTransactionRegistry;
 
     @Autowired
-    public Cashier(AdvantageCashier advantageCashier, BankProxy bankProxy, PointsRewards pointsRewards, CustomerRepository customerRepository, EuroTransactionRegistry euroTransactionRegistry) {
+    public Cashier(AdvantageCashier advantageCashier, BankProxy bankProxy, PointsRewards pointsRewards, EuroTransactionRegistry euroTransactionRegistry) {
         this.advantageCashier = advantageCashier;
         this.bankProxy = bankProxy;
         this.pointsRewards = pointsRewards;
-        this.customerRepository = customerRepository;
         this.euroTransactionRegistry = euroTransactionRegistry;
     }
 
     // TODO: merge the two methods below if possible
     @Override
     public EuroTransaction payWithCreditCard(Euro amount, Customer customer, Shop shop, String creditCard) throws PaymentException, NegativePaymentException {
-        if (amount.centsAmount() < 0) {
+        if(amount.getCentsAmount() < 0){
             throw new NegativePaymentException();
         }
 
         Point pointEarned;
-        if (bankProxy.pay(creditCard, amount)) {
-            // points earned are 2 times the amount of euro, euros are in cents
-            pointEarned = pointsRewards.gain(customer, new Point((amount.centsAmount() / 100) * 2));
-        } else {
+        if (bankProxy.pay(creditCard,amount)){
+            // on ajoute 2 fois le montant d'euro en point, (les euros sont en centimes)
+            pointEarned = pointsRewards.gain(customer, new Point((amount.getCentsAmount() / 100 ) * 2));
+        }else{
             throw new PaymentException();
         }
 
@@ -58,12 +59,12 @@ public class Cashier implements Payment, ChargeCard {
 
     @Override
     public EuroTransaction payWithLoyaltyCard(Euro amount, Customer customer, Shop shop) throws NegativePaymentException, NegativeEuroBalanceException {
-        if (amount.centsAmount() < 0) {
+        if (amount.getCentsAmount() < 0) {
             throw new NegativePaymentException();
         }
         // points earned are 2 times the amount of euro, euros are in cents
         customer.getCustomerBalance().removeEuro(amount);
-        Point pointEarned = pointsRewards.gain(customer, new Point((amount.centsAmount() / 100) * 2));
+        Point pointEarned = pointsRewards.gain(customer, new Point((amount.getCentsAmount() / 100) * 2));
 
         // need to register the transaction in BD
         EuroTransaction euroTransaction = new EuroTransaction(customer, shop, amount, pointEarned);
@@ -93,10 +94,9 @@ public class Cashier implements Payment, ChargeCard {
         return new EuroTransaction(customer, shop, amount);
     }
 
-    // TODO: rename chargeCard to reloadCard
     @Override
     public EuroTransaction chargeCard(Euro amount, Customer customer, String creditCard) throws NegativePaymentException, PaymentException {
-        if (amount.centsAmount() < 0) {
+        if(amount.getCentsAmount() < 0){
             throw new NegativePaymentException();
         }
         if (!bankProxy.pay(creditCard, amount)) {
@@ -105,13 +105,12 @@ public class Cashier implements Payment, ChargeCard {
 
         // amount is already checked to be positive above, can't throw exception but need to catch it
         try {
-            customer.getCustomerBalance().addEuro(amount);
+            customer.getCustomerBalance().setEuroBalance(customer.getCustomerBalance().getEuroBalance().add(amount));
+            //customer.setCustomerBalance(new CustomerBalance(new Point(-1), new ArrayList<>(), new Euro(-1)));
         } catch (Exception e) {
             System.err.println("Error while adding (" + amount + ") euro to customer balance, this should not happen");
             e.printStackTrace();
         }
-
-        customerRepository.save(customer, customer.getId());
 
         return new EuroTransaction(customer, amount);
     }
