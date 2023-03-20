@@ -1,0 +1,18 @@
+[
+  {
+    "name": "It should create account for Jeanne",
+    "comment": "TODO: Fix this test",
+    "command": "register Jeanne",
+    "expected": "200 : \\[no body\\]"
+  },
+  {
+    "name": "It should not create an account for Jeanne if one already exists",
+    "command": "register Jeanne",
+    "expected": "409 : \\[no body\\]"
+  },
+  {
+    "name": "It should login as Jeanne",
+    "command": "login Jeanne",
+    "expected": "Logged in customer result CliCustomer{id=1, name='Jeanne', points=20, euros=0.0}"
+  }
+]

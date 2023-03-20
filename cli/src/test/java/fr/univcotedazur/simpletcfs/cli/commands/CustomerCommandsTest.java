@@ -75,6 +75,6 @@ class CustomerCommandsTest {
         client.login("test");
         client.login("test2");
 
-        assertEquals("{test2=CliCustomer{id=0, name='test2', points=0, euros=0.0}, test=CliCustomer{id=0, name='test', points=0, euros=0.0}}", client.customers());
+        assertEquals("{test2=CliCustomer{id=null, name='test2', points=0, euros=0.0}, test=CliCustomer{id=null, name='test', points=0, euros=0.0}}", client.customers());
     }
 }
