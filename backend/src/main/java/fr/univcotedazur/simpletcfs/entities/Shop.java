@@ -1,22 +1,29 @@
 package fr.univcotedazur.simpletcfs.entities;
 
+import javax.persistence.*;
 import java.util.Date;
 import java.util.Objects;
 
+@Entity
+@Table(name = "shops")
 public class Shop {
     private String name;
     private String address;
-    private Date openingTime;
-    private Date closingTime;
+    // private Date openingTime;
+    // private Date closingTime;
+
+    @Enumerated(EnumType.STRING)
     private IBAN iban;
-    
+
+    @Id
+    @GeneratedValue()
     Long id;
 
-    public Shop(String name, String address, Date openingTime, Date closingTime, IBAN iban) {
+    public Shop(String name, String address, IBAN iban) {
         this.name = name;
         this.address = address;
-        this.openingTime = openingTime;
-        this.closingTime = closingTime;
+        //this.openingTime = openingTime;
+        //this.closingTime = closingTime;
         this.iban = iban;
     }
 
@@ -40,22 +47,6 @@ public class Shop {
         this.address = address;
     }
 
-    public Date getOpeningTime() {
-        return openingTime;
-    }
-
-    public void setOpeningTime(Date openingTime) {
-        this.openingTime = openingTime;
-    }
-
-    public Date getClosingTime() {
-        return closingTime;
-    }
-
-    public void setClosingTime(Date closingTime) {
-        this.closingTime = closingTime;
-    }
-
     public IBAN getIban() {
         return iban;
     }
@@ -64,20 +55,4 @@ public class Shop {
         this.iban = iban;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Shop)) return false;
-        Shop shop = (Shop) o;
-        return name == shop.name &&
-                address == shop.address &&
-                openingTime == shop.openingTime &&
-                closingTime == shop.closingTime &&
-                iban == shop.iban;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, address, openingTime, closingTime, iban);
-    }
 }

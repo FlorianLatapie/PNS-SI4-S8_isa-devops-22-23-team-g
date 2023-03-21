@@ -1,13 +1,12 @@
 package fr.univcotedazur.simpletcfs.cucumber;
 
-import fr.univcotedazur.simpletcfs.components.AdvantageCashier;
-import fr.univcotedazur.simpletcfs.components.AdvantageManager;
-import fr.univcotedazur.simpletcfs.components.ExchangePoint;
+import fr.univcotedazur.simpletcfs.components.advantages.AdvantageCashier;
+import fr.univcotedazur.simpletcfs.components.advantages.AdvantageManager;
+import fr.univcotedazur.simpletcfs.components.advantages.ExchangePoint;
 import fr.univcotedazur.simpletcfs.entities.*;
 import fr.univcotedazur.simpletcfs.exceptions.CustomerDoesntHaveAdvantageException;
 import fr.univcotedazur.simpletcfs.exceptions.NegativePointBalanceException;
 import fr.univcotedazur.simpletcfs.interfaces.AdvantageAdder;
-import fr.univcotedazur.simpletcfs.repositories.CustomerRepository;
 import io.cucumber.java.fr.Alors;
 import io.cucumber.java.fr.Et;
 import io.cucumber.java.fr.Etantdonné;

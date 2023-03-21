@@ -1,5 +1,7 @@
-package fr.univcotedazur.simpletcfs.components;
+package fr.univcotedazur.simpletcfs.components.payment;
 
+import fr.univcotedazur.simpletcfs.components.advantages.AdvantageCashier;
+import fr.univcotedazur.simpletcfs.components.registry.EuroTransactionRegistry;
 import fr.univcotedazur.simpletcfs.connectors.BankProxy;
 import fr.univcotedazur.simpletcfs.entities.*;
 import fr.univcotedazur.simpletcfs.exceptions.EuroBalanceException;
@@ -8,7 +10,6 @@ import fr.univcotedazur.simpletcfs.exceptions.NegativePaymentException;
 import fr.univcotedazur.simpletcfs.exceptions.PaymentException;
 import fr.univcotedazur.simpletcfs.interfaces.ChargeCard;
 import fr.univcotedazur.simpletcfs.interfaces.Payment;
-import fr.univcotedazur.simpletcfs.repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

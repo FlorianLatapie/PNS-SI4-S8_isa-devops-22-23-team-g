@@ -1,0 +1,24 @@
+[
+  {
+    "name": "It should create an account for newClient",
+    "comment": "check if the account id is correct",
+    "command": "register newClient",
+    "expected": "Registered customer result CliCustomer{id=5, name='newClient', points=0, euros=0.0}"
+  },
+  {
+    "name": "It should login as newClient",
+    "command": "login newClient",
+    "expected": "Logged in customer result CliCustomer{id=5, name='newClient', points=0, euros=0.0}"
+  },
+  {
+    "name": "It should accept newClient's payment if the card is valid",
+    "command": "pay-with-credit-card 100 896983 newClient",
+    "expected": "EuroTransactionDTO\\[customerDTO=CliCustomer{id=5, name='newClient', points=200, euros=0.0}, price=100.0, shopName=Unknown, idTransaction=6, pointsEarned=0\\]"
+  },
+  {
+    "name": "It should return the stats from all shops",
+    "comment":"check if the amount is correct (old test says 100, but its 120)",
+    "command": "get-stats-from-all-shops",
+    "expected": "StatisticDTO{shopName='All shops', values=\\[StatisticValueDTO{value=120.0, description='Money Earned', indicator='Average'}\\]}"
+  }
+]

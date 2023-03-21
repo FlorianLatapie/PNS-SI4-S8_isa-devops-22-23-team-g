@@ -1,10 +1,18 @@
 package fr.univcotedazur.simpletcfs.entities;
 
-import java.util.Objects;
-import java.util.UUID;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
+import javax.persistence.*;
+import java.util.Objects;
+
+@Entity
+@Table(name = "advantageItems")
 public class AdvantageItem {
-    private UUID id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     private Status type;
 
@@ -12,10 +20,16 @@ public class AdvantageItem {
 
     private String description;
     private Point price;
+
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Shop shop;
 
+    public AdvantageItem() {
+
+    }
+
     public AdvantageItem(Status type, String title, String description, Point price, Shop shop) {
-        this.id = UUID.randomUUID();
         this.type = type;
         this.title = title;
         this.description = description;
@@ -23,11 +37,11 @@ public class AdvantageItem {
         this.shop = shop;
     }
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -1,14 +1,28 @@
 package fr.univcotedazur.simpletcfs.entities;
 
-import java.util.UUID;
+import javax.persistence.*;
+import java.util.Objects;
 
+@Entity
+@Table(name = "answers")
 public class Answer {
-    String answer;
-    UUID questionRef;
 
-    public Answer(String answer, UUID questionRef) {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    Long id;
+
+    String answer;
+
+    @ManyToOne
+    Question question;
+
+    public Answer() {
+    }
+
+
+    public Answer(String answer, Question question) {
         this.answer = answer;
-        this.questionRef = questionRef;
+        this.question = question;
     }
 
     public String getAnswer() {
@@ -19,7 +33,32 @@ public class Answer {
         this.answer = answer;
     }
 
-    public UUID getQuestion() {
-        return questionRef;
+    public Question getQuestion() {
+        return question;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Answer answer1 = (Answer) o;
+        return Objects.equals(answer, answer1.answer) && Objects.equals(question, answer1.question);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(answer, question);
     }
 }

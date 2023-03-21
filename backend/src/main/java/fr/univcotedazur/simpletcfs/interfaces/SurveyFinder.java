@@ -2,11 +2,11 @@ package fr.univcotedazur.simpletcfs.interfaces;
 
 import fr.univcotedazur.simpletcfs.entities.Survey;
 
-import java.util.UUID;
+import java.util.Optional;
 
 public interface SurveyFinder {
 
-    Survey findById(UUID id);
+    Optional<Survey> findById(Long id);
 
     Iterable<Survey> findAll();
 }

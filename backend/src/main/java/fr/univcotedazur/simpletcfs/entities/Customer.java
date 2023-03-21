@@ -1,7 +1,9 @@
 package fr.univcotedazur.simpletcfs.entities;
 
+import fr.univcotedazur.simpletcfs.exceptions.NegativeEuroBalanceException;
 import fr.univcotedazur.simpletcfs.exceptions.NegativePointBalanceException;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 import java.util.*;
 
@@ -19,17 +21,13 @@ public class Customer {
     @Embedded
     private CustomerBalance customerBalance;
     @Transient
-    private List<Shop> favoriteShops;
-    @Transient
     private Date lastEuroTransactionDate = new Date(Long.MIN_VALUE);
     public Customer() {
     }
 
-
     public Customer(String username) {
         this.username = username;
         this.customerBalance = new CustomerBalance();
-        this.favoriteShops = new ArrayList<>();
     }
 
     public String getLicensePlate() {
@@ -42,6 +40,10 @@ public class Customer {
 
     public void addPoint(Point point) {
         customerBalance.addPoint(point);
+    }
+
+    public void addEuro(Euro euro) throws NegativeEuroBalanceException {
+        customerBalance.addEuro(euro);
     }
 
     public void removePoint(Point point) {
@@ -58,14 +60,6 @@ public class Customer {
 
     public void setCustomerBalance(CustomerBalance customerBalance) {
         this.customerBalance = customerBalance;
-    }
-
-    public List<Shop> getFavoriteShops() {
-        return favoriteShops;
-    }
-
-    public void setFavoriteShops(List<Shop> favoriteShops) {
-        this.favoriteShops = favoriteShops;
     }
 
     public Date getLastEuroTransactionDate() {

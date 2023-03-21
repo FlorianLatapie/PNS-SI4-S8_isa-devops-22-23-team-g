@@ -1,26 +1,39 @@
 package fr.univcotedazur.simpletcfs.entities;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Objects;
 
+@Entity
+@Table(name = "surveys")
 public class Survey {
-    UUID id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    Long id;
+
+
+    @OneToMany()
+    @JoinColumn(name = "survey_id")// cascade = CascadeType.REMOVE fetch = FetchType.EAGER : caused some problems
+    // @OnDelete(action = OnDeleteAction.CASCADE)
     List<Customer> participants;
+
+    @OneToMany(cascade = CascadeType.REMOVE) // cascade = CascadeType.REMOVE fetch = FetchType.EAGER : caused some problems
+    // @OnDelete(action = OnDeleteAction.CASCADE)
     List<Question> questions;
 
 
     public Survey() {
-        this.id = UUID.randomUUID();
-        this.participants = new ArrayList<>();
+        participants = new ArrayList<>();
         questions = new ArrayList<>();
     }
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -38,5 +51,18 @@ public class Survey {
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Survey survey = (Survey) o;
+        return Objects.equals(questions, survey.questions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(questions);
     }
 }

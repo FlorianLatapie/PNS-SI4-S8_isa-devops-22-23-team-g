@@ -1,17 +1,26 @@
 package fr.univcotedazur.simpletcfs.entities;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Objects;
 
+@Entity
+@Table(name = "questions")
 public class Question {
-    UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    Long id;
     String questionContent;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     List<Answer> answers;
+
+    public Question() {
+    }
 
     public Question(String questionContent){
         this.questionContent = questionContent;
-        this.id = UUID.randomUUID();
         answers = new ArrayList<>();
     }
 
@@ -34,11 +43,24 @@ public class Question {
         this.answers.add(answer);
     }
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Question question = (Question) o;
+        return Objects.equals(questionContent, question.questionContent) && Objects.equals(answers, question.answers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(questionContent, answers);
     }
 }

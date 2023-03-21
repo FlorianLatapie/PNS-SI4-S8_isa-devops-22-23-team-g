@@ -1,7 +1,6 @@
 package fr.univcotedazur.simpletcfs.cli.model;
 
 import java.util.Objects;
-import java.util.UUID;
 
 // A cli side class being equivalent to the backend CustomerDTO, in terms of attributes
 // so that the automatic JSON (de-)/serialization will make the two compatible on each side

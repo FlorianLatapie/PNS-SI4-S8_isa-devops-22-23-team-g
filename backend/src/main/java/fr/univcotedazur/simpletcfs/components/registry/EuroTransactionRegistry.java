@@ -1,4 +1,4 @@
-package fr.univcotedazur.simpletcfs.components;
+package fr.univcotedazur.simpletcfs.components.registry;
 
 import fr.univcotedazur.simpletcfs.entities.Customer;
 import fr.univcotedazur.simpletcfs.entities.EuroTransaction;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.StreamSupport;
 
 @Component
@@ -26,7 +25,7 @@ public class EuroTransactionRegistry implements EuroTransactionFinder, EuroTrans
     }
 
     @Override
-    public EuroTransaction find(UUID id) {
+    public EuroTransaction find(Long id) {
         return euroTransactionRepository.findById(id).orElse(null);
     }
 
@@ -58,8 +57,7 @@ public class EuroTransactionRegistry implements EuroTransactionFinder, EuroTrans
 
     @Override
     public EuroTransaction add(EuroTransaction transaction) {
-        euroTransactionRepository.save(transaction, transaction.getId());
-        return transaction;
+        return euroTransactionRepository.save(transaction);
     }
 
     @Override

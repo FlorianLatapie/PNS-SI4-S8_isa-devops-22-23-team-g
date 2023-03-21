@@ -1,17 +1,39 @@
 package fr.univcotedazur.simpletcfs.entities;
 
 
-import java.util.UUID;
+import javax.persistence.*;
+import java.util.Objects;
+import java.util.Date;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
+@Entity
+@Table(name ="euroTransactions")
 public class EuroTransaction {
+
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Customer customer;
+
+    @Embedded
     private Euro price;
+    @Transient
     private Shop shop;
-    private UUID id;
-    private final Point pointEarned;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @Embedded
+    private Point pointEarned;
+
+    private Date date;
+
+    public EuroTransaction() {
+
+    }
 
     public EuroTransaction(Customer customer, Euro price) {
-        this.id = UUID.randomUUID();
         this.customer = customer;
         this.price = price;
         this.pointEarned = new Point(0);
@@ -27,7 +49,6 @@ public class EuroTransaction {
         this.shop = shop;
         this.price = price;
         this.pointEarned = pointEarned;
-        this.id = UUID.randomUUID();
     }
 
     public Customer getCustomer() {
@@ -54,15 +75,40 @@ public class EuroTransaction {
         this.price = price;
     }
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
     public Point getPointEarned() {
         return pointEarned;
+    }
+
+    public void setPointEarned(Point pointEarned) {
+        this.pointEarned = pointEarned;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EuroTransaction that = (EuroTransaction) o;
+        return Objects.equals(customer, that.customer) && Objects.equals(price, that.price) && Objects.equals(shop, that.shop) && Objects.equals(pointEarned, that.pointEarned) && Objects.equals(date, that.date);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(customer, price, shop, pointEarned, date);
     }
 }

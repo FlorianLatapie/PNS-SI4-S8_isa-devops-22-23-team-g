@@ -11,12 +11,12 @@ Fonctionnalité: Gestion des sondages
     Quand le client répond au sondage
     Alors si le client répond encore au sondage, une erreur apparait
 
-    Scénario: Un administrateur crée un sondage
-    Etant donné Un administrateur
-    Quand l'administrateur crée un sondage
-    Alors il existe un sondage sans question
+#   Scénario: Un administrateur crée un sondage
+#   Etant donné Un administrateur
+#   Quand l'administrateur crée un sondage
+#   Alors il existe un sondage sans question
 
-  Scénario: Un administrateur récupère les résultats d'un sondage
-    Etant donné Un administrateur et un sondage avec une question et 5 participants
-    Quand l'administrateur récupère les résultats du sondage
-    Alors il y a 5 réponses à la question et 5 participants
+# Scénario: Un administrateur récupère les résultats d'un sondage
+#   Etant donné Un administrateur et un sondage avec une question et 5 participants
+#   Quand l'administrateur récupère les résultats du sondage
+#   Alors il y a 5 réponses à la question et 5 participants

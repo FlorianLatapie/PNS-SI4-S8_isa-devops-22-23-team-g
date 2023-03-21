@@ -1,4 +1,4 @@
-package fr.univcotedazur.simpletcfs.components;
+package fr.univcotedazur.simpletcfs.components.registry;
 
 import fr.univcotedazur.simpletcfs.entities.Customer;
 import fr.univcotedazur.simpletcfs.entities.PointTransaction;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Component
 public class PointTransactionRegistry implements PointTransactionFinder, PointTransactionModifier {
@@ -19,7 +18,7 @@ public class PointTransactionRegistry implements PointTransactionFinder, PointTr
     PointTransactionRepository pointTransactionRepository;
 
     @Override
-    public PointTransaction findPoint(UUID id) {
+    public PointTransaction findPoint(Long id) {
         Optional<PointTransaction> pointTransaction = pointTransactionRepository.findById(id);
         return pointTransaction.orElse(null);
     }
@@ -44,6 +43,6 @@ public class PointTransactionRegistry implements PointTransactionFinder, PointTr
 
     @Override
     public void add(PointTransaction transaction) {
-        pointTransactionRepository.save(transaction, transaction.getId());
+        pointTransactionRepository.save(transaction);
     }
 }

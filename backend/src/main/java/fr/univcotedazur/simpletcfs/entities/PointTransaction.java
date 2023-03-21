@@ -1,18 +1,31 @@
 package fr.univcotedazur.simpletcfs.entities;
 
+import javax.persistence.*;
 import java.util.Date;
-import java.util.UUID;
+import java.util.Objects;
 
+@Table
+@Entity(name = "pointTransactions")
 public class PointTransaction {
     private Point pointAmount;
-    private UUID id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private Date date;
     private String description;
+
+    @ManyToOne
     private Customer customer;
+
+    @ManyToOne
     private AdvantageItem advantageItem;
 
+    public PointTransaction() {
+
+    }
+
     PointTransaction(Point pointAmount, Date date, String description, Customer customer, AdvantageItem advantageItem) {
-        this.id = UUID.randomUUID();
         this.pointAmount = pointAmount;
         this.date = date;
         this.description = description;
@@ -28,11 +41,11 @@ public class PointTransaction {
         this.pointAmount = pointAmount;
     }
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -66,5 +79,18 @@ public class PointTransaction {
 
     public void setAdvantageItem(AdvantageItem advantageItem) {
         this.advantageItem = advantageItem;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PointTransaction that = (PointTransaction) o;
+        return Objects.equals(pointAmount, that.pointAmount) && Objects.equals(date, that.date) && Objects.equals(description, that.description) && Objects.equals(customer, that.customer) && Objects.equals(advantageItem, that.advantageItem);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pointAmount, date, description, customer, advantageItem);
     }
 }

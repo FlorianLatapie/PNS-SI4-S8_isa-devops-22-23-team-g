@@ -1,6 +1,6 @@
 package fr.univcotedazur.simpletcfs.controllers;
 
-import fr.univcotedazur.simpletcfs.components.PointTransactionRegistry;
+import fr.univcotedazur.simpletcfs.components.registry.PointTransactionRegistry;
 import fr.univcotedazur.simpletcfs.controllers.dto.ErrorDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

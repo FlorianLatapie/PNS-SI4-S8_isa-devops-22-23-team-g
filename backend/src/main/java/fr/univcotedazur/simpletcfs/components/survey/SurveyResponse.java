@@ -1,32 +1,37 @@
-package fr.univcotedazur.simpletcfs.components;
+package fr.univcotedazur.simpletcfs.components.survey;
 
+import fr.univcotedazur.simpletcfs.components.registry.SurveyRegistry;
 import fr.univcotedazur.simpletcfs.entities.Customer;
 import fr.univcotedazur.simpletcfs.entities.Survey;
 import fr.univcotedazur.simpletcfs.exceptions.AlreadyAnsweredException;
 import fr.univcotedazur.simpletcfs.interfaces.addAnswer;
-import fr.univcotedazur.simpletcfs.repositories.SurveyRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
+import java.util.Optional;
 
+@Component
+@Transactional
 public class SurveyResponse implements addAnswer {
     SurveyRegistry surveyRegistry;
-    public SurveyResponse(SurveyRepository surveyRepository){
-        this.surveyRegistry = new SurveyRegistry(surveyRepository);
-    }
 
+    @Autowired
     public SurveyResponse(SurveyRegistry surveyRegistry){
         this.surveyRegistry = surveyRegistry;
     }
 
     @Override
-    public Survey addAnswer(String answer, UUID question, UUID surveyID, Customer customer) throws AlreadyAnsweredException {
-        Survey survey = surveyRegistry.findById(surveyID);
-        if (survey == null) {
+    public Survey addAnswer(String answer, Long question, Long surveyID, Customer customer) throws AlreadyAnsweredException {
+        Optional<Survey> surveyOpt = surveyRegistry.findById(surveyID);
+        if (surveyOpt.isEmpty()) {
             throw new NullPointerException("The survey doesn't exist");
         }
+
+        Survey survey = surveyOpt.get();
         if(!survey.getParticipants().contains(customer)){
             surveyRegistry.addAnswer(answer,question,surveyID);
-            surveyRegistry.findById(surveyID).getParticipants().add(customer);
+            surveyRegistry.findById(surveyID).get().getParticipants().add(customer);
         }
         else {
             throw new AlreadyAnsweredException("The client already contribute to this survey");

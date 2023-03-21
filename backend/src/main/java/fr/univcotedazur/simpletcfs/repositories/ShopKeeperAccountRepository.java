@@ -1,10 +1,8 @@
 package fr.univcotedazur.simpletcfs.repositories;
 
-import fr.univcotedazur.repositories.BasicRepositoryImpl;
-import fr.univcotedazur.simpletcfs.entities.Account;
+import fr.univcotedazur.simpletcfs.entities.ShopKeeperAccount;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.UUID;
-
 @Repository
-public class ShopKeeperAccountRepository extends BasicRepositoryImpl<Account, UUID> {}
+public interface ShopKeeperAccountRepository extends JpaRepository<ShopKeeperAccount, Long> {}

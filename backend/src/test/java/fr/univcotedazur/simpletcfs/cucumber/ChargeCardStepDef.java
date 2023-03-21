@@ -2,12 +2,10 @@ package fr.univcotedazur.simpletcfs.cucumber;
 
 import fr.univcotedazur.simpletcfs.entities.Customer;
 import fr.univcotedazur.simpletcfs.entities.Euro;
-import fr.univcotedazur.simpletcfs.exceptions.CustomerAlreadyExistsException;
-import fr.univcotedazur.simpletcfs.exceptions.NegativeEuroBalanceException;
-import fr.univcotedazur.simpletcfs.exceptions.NegativePaymentException;
-import fr.univcotedazur.simpletcfs.exceptions.PaymentException;
+import fr.univcotedazur.simpletcfs.exceptions.*;
 import fr.univcotedazur.simpletcfs.interfaces.Bank;
 import fr.univcotedazur.simpletcfs.interfaces.ChargeCard;
+import fr.univcotedazur.simpletcfs.interfaces.CustomerFinder;
 import fr.univcotedazur.simpletcfs.interfaces.CustomerModifier;
 import fr.univcotedazur.simpletcfs.repositories.CustomerRepository;
 import io.cucumber.java.Before;
@@ -17,7 +15,10 @@ import io.cucumber.java.fr.Quand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import javax.transaction.Transactional;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -29,6 +30,8 @@ import java.util.Optional;
 @Transactional
 public class ChargeCardStepDef {
 
+    public static String MAGIC_CARD_NUMBER = "896983";
+
     @Autowired
     ChargeCard chargeCard;
 
@@ -37,6 +40,9 @@ public class ChargeCardStepDef {
 
     @Autowired
     CustomerModifier customerModifier;
+
+    @Autowired
+    CustomerFinder customerFinder;
 
     private String customerUsername;
 
@@ -48,41 +54,31 @@ public class ChargeCardStepDef {
     @Before
     public void setUp() {
         customerRepository.deleteAll();
-        // when(bankMock.pay(anyString(), any(Euro.class)))
-        //         .thenAnswer(invocation -> ((String) invocation.getArgument(0)).contains("896983"));
-
-        try {
-            Customer res = customerModifier.signup("customer", null);
-            System.out.println("le client créé " + res);
-        } catch (CustomerAlreadyExistsException e) {
-            throw new RuntimeException(e);
-        }
+        when(bankMock.pay(anyString(), any(Euro.class))).thenAnswer(invocation -> {
+            String cardNumber = invocation.getArgument(0);
+            Euro amount = invocation.getArgument(1);
+            return cardNumber.contains(MAGIC_CARD_NUMBER) && amount.getCentsAmount() > 0;
+        });
     }
 
 
     @Etantdonné("la balance du client {int} euros \\(card)")
-    public void laBalanceDuClientNbEurosCardEurosCard(int amount) throws NegativeEuroBalanceException {
-        Optional<Customer> resOptional = customerRepository.findCustomerByUsername("customer");
-        if (resOptional.isPresent()) {
-            Customer customer = resOptional.get();
-            customer.getCustomerBalance().addEuro(new Euro(amount));
-            customerUsername = customer.getUsername();
-        } else {
-            System.out.println("Le client récupéré de la DB est vide");
-            throw new RuntimeException("Customer not found");
-        }
+    public void laBalanceDuClientNbEurosCardEurosCard(int amount) throws NegativeEuroBalanceException, CustomerAlreadyExistsException {
+        customerUsername = "customer";
+        Customer customer = customerModifier.signup(customerUsername, null);
+        customer.getCustomerBalance().addEuro(new Euro(amount));
+        System.out.println("le client a été trouvé " + customer);
     }
 
     @Quand("le client paye un montant {int} en euro \\(card)")
     public void leClientPayeUnMontantNbEurosEnEuroCard(int amount) {
         try {
-            Optional<Customer> resOptional = customerRepository.findCustomerByUsername(customerUsername);
-            if(resOptional.isPresent()){
-                Customer customer = resOptional.get();
-                chargeCard.chargeCard(new Euro(amount), customer, "896983");
-            }
+            Customer customer = customerFinder.login(customerUsername);
+            chargeCard.chargeCard(new Euro(amount), customer, "896983");
         } catch (NegativePaymentException | PaymentException e) {
             exception = e;
+        } catch (CustomerNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -90,12 +86,15 @@ public class ChargeCardStepDef {
     public void laBalanceDuClientContientNbEurosCardNewEuros(int amount) {
         Euro amountEuro = new Euro(amount);
 
-            Optional<Customer> resOptional = customerRepository.findCustomerByUsername(customerUsername);
-            if(resOptional.isPresent()){
-                Customer customer = resOptional.get();
-                assertEquals(amountEuro, customer.getCustomerBalance().getEuroBalance());
-                assertEquals(amountEuro, customerRepository.findById(customer.getId()).map(foundCustomer -> foundCustomer.getCustomerBalance().getEuroBalance()).orElse(null));
-            }
+        Customer customer;
+        try {
+            customer = customerFinder.login(customerUsername);
+        } catch (CustomerNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        assertEquals(amountEuro, customer.getCustomerBalance().getEuroBalance());
+        assertEquals(amountEuro, customerRepository.findById(customer.getId()).map(foundCustomer -> foundCustomer.getCustomerBalance().getEuroBalance()).orElse(null));
     }
 
     @Alors("il y a une NegativePaymentException")

@@ -1,27 +1,25 @@
 package fr.univcotedazur.simpletcfs.controllers.dto;
 
-import fr.univcotedazur.simpletcfs.entities.Customer;
 import fr.univcotedazur.simpletcfs.entities.Question;
 
 import java.util.List;
-import java.util.UUID;
 
 public class SurveyDTO {
-    UUID id;
+    Long id;
     List<CustomerDTO> participants;
     List<Question> questions;
 
-    public SurveyDTO(UUID id, List<CustomerDTO> participants, List<Question> questions) {
+    public SurveyDTO(Long id, List<CustomerDTO> participants, List<Question> questions) {
         this.id = id;
         this.participants = participants;
         this.questions = questions;
     }
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

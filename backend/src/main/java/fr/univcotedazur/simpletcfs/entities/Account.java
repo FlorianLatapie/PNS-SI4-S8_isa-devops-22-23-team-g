@@ -2,6 +2,9 @@ package fr.univcotedazur.simpletcfs.entities;
 
 import java.util.UUID;
 
+/*
+Class not used
+ */
 public class Account {
     UUID id;
     String username;

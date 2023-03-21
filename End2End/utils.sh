@@ -18,6 +18,10 @@ function assertEquals(){
     fi
 }
 
+function resetTable(){
+    docker exec db sh -c "echo 'TRUNCATE $1 RESTART IDENTITY CASCADE;' | psql -d tcf-db -U postgresuser" 
+}
+
 function testRunner(){
     globalResult=()
     failedTests=()
@@ -54,7 +58,7 @@ function testRunner(){
     printf '\n'
     if [ "$FAILED_TESTS" -eq 0 ];then
         printf "${GREEN}All tests passed${NC}\n"
-        exit 0;
+        return 0;
     else 
         printf "${RED}$FAILED_TESTS tests have failed${NC}\n"
         printf '\n'
@@ -64,6 +68,6 @@ function testRunner(){
             printf "Result: \n\t ${failedTestsResults[$i]}\n"
             printf '\n'
         done
-        exit 1;
+        return 1;
     fi
 }

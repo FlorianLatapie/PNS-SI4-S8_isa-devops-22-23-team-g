@@ -1,10 +1,8 @@
 package fr.univcotedazur.simpletcfs.repositories;
 
-import fr.univcotedazur.repositories.BasicRepositoryImpl;
 import fr.univcotedazur.simpletcfs.entities.EuroTransaction;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.UUID;
-
 @Repository
-public class EuroTransactionRepository extends BasicRepositoryImpl<EuroTransaction, UUID> {}
+public interface EuroTransactionRepository extends JpaRepository<EuroTransaction, Long> {}

@@ -42,7 +42,7 @@ class PaymentCommandsTest {
                 .andRespond(withSuccess("{\"customerDTO\":{\"name\":\"Jeanne\",\"id\":\"123\"},\"price\":\"10\",\"shopName\":\"myShopName\",\"idTransaction\":\"123456789\",\"pointsEarned\":\"1\"}",MediaType.APPLICATION_JSON));
         customerCommands.login("Jeanne");
 
-        var expected = new EuroTransactionDTO(new CliCustomer("Jeanne", 123), 10, "myShopName", 123456789, 1);
+        var expected = new EuroTransactionDTO(new CliCustomer("Jeanne", 123), 10, "myShopName", 123456789l, 1);
         assertEquals(expected, client.payWithCreditCard("10", "896983", "Jeanne"));
     }
 }

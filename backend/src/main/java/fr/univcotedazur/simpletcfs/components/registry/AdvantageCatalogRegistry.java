@@ -1,4 +1,4 @@
-package fr.univcotedazur.simpletcfs.components;
+package fr.univcotedazur.simpletcfs.components.registry;
 
 
 import fr.univcotedazur.simpletcfs.entities.AdvantageItem;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Component
 public class AdvantageCatalogRegistry implements AdvantageFinder, AdvantageModifier {
@@ -31,19 +30,19 @@ public class AdvantageCatalogRegistry implements AdvantageFinder, AdvantageModif
     }
 
     @Override
-    public AdvantageItem findAnAdvantage(UUID id) {
+    public AdvantageItem findAnAdvantage(Long id) {
         return this.advantageRepository.findById(id).orElse(null);
     }
 
     @Override
     public void addNewAdvantage(String title, Point amount, Shop shop, String description, Status type) {
         AdvantageItem advantageItem = new AdvantageItem(type, title, description, amount, shop);
-        this.advantageRepository.save(advantageItem, advantageItem.getId());
+        this.advantageRepository.save(advantageItem);
     }
 
     @Override
     public AdvantageItem updateAdvantage(AdvantageItem advantageItem) {
-        this.advantageRepository.save(advantageItem, advantageItem.getId());
+        this.advantageRepository.save(advantageItem);
         return advantageRepository.findById(advantageItem.getId()).orElse(null);
     }
 }

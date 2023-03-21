@@ -1,4 +1,4 @@
-package fr.univcotedazur.simpletcfs.components;
+package fr.univcotedazur.simpletcfs.components.registry;
 
 import fr.univcotedazur.simpletcfs.entities.ContactDetails;
 import fr.univcotedazur.simpletcfs.entities.Customer;
@@ -10,16 +10,12 @@ import fr.univcotedazur.simpletcfs.repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
-
-import java.util.UUID;
-import java.util.stream.StreamSupport;
 
 @Component
 public class CustomerRegistry implements CustomerFinder, CustomerModifier {
 
-    private final CustomerRepository customerRepository;
+    private CustomerRepository customerRepository;
     @Autowired
     public CustomerRegistry(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
@@ -45,8 +41,7 @@ public class CustomerRegistry implements CustomerFinder, CustomerModifier {
 
         System.out.println("Customer not found, creating new customer: " + username);
         Customer customer = new Customer(username);
-        customerRepository.save(customer);
-        return customer;
+        return customerRepository.save(customer);
 
     }
 
@@ -57,12 +52,7 @@ public class CustomerRegistry implements CustomerFinder, CustomerModifier {
     }
 
     private Optional<Customer> findCustomerByUsername(String username) {
-        for (Customer customer : customerRepository.findAll()) {
-            if (customer.getUsername().equals(username)) {
-                return Optional.of(customer);
-            }
-        }
-        return Optional.empty();
+        return customerRepository.findCustomerByUsername(username);
 
         /* need a test to check if this works
         return StreamSupport.stream(customerRepository.findAll().spliterator(), false)

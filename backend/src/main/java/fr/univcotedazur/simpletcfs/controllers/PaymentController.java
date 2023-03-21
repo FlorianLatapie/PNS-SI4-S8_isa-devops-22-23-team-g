@@ -21,7 +21,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.UUID;
 
 import static fr.univcotedazur.simpletcfs.controllers.CustomerController.convertCustomerToDto;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -120,7 +119,7 @@ public class PaymentController {
         } else {
             shopName = euroTransaction.getShop().getName();
         }
-        UUID id = euroTransaction.getId();
+        Long id = euroTransaction.getId();
         int pointEarned = euroTransaction.getPointEarned().getPointAmount();
         return new EuroTransactionDTO(customerDTO, price, shopName, id, pointEarned);
     }

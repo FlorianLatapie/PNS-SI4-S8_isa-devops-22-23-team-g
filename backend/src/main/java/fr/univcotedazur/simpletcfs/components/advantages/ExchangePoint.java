@@ -1,4 +1,4 @@
-package fr.univcotedazur.simpletcfs.components;
+package fr.univcotedazur.simpletcfs.components.advantages;
 
 import fr.univcotedazur.simpletcfs.entities.AdvantageItem;
 import fr.univcotedazur.simpletcfs.entities.Customer;
