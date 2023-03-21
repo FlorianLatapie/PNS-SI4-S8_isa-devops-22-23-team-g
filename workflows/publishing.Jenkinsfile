@@ -129,21 +129,21 @@ pipeline {
 }
 
 def notify(result) {
-    if(branch_name != 'develop' && branch_name != 'main') {
+    if(BRANCH_NAME != 'develop' && BRANCH_NAME != 'main') {
         return
     }
-    discordsend description: "pipeline ${parseresult(result)}", footer: "by ${commiter_name}", link: build_url, result: result, title: job_name.replaceall('%2f', '/'), webhookurl: "https://discord.com/api/webhooks/1074071003132600413/votcepidfmcotbojsjeiepzl1xf0jodyowhg9i_rqmemhajtobdx-r1ae3ylvr9ccvug"
+    discordSend description: "Pipeline ${parseResult(result)}", footer: "By ${COMMITER_NAME}", link: BUILD_URL, result: result, title: JOB_NAME.replaceAll('%2F', '/'), webhookURL: "https://discord.com/api/webhooks/1074071003132600413/voTcEpidfmcOtBOJsJEIepZl1xf0jODYOWHg9I_RQMEmHAJtoBDx-R1AE3ylVR9cCvug"
 }
 
-def parseresult(result) {
+def parseResult(result) {
     switch(result){
-        case 'success':
+        case 'SUCCESS':
             return 'successful'
-        case 'failure':
+        case 'FAILURE':
             return 'failed'
-        case 'unstable':
+        case 'UNSTABLE':
             return 'unstable'
-        case 'aborted':
+        case 'ABORTED':
             return 'aborted'
         default:
             return 'unknown'
