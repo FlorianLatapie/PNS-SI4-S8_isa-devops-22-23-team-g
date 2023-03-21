@@ -6,16 +6,6 @@ jenkins:
        - id: ${JENKINS_ADMIN_ID}
          password: ${JENKINS_ADMIN_PASSWORD}
 
-  sonarGlobalConfiguration:
-    buildWrapperEnabled: false
-    installations:
-    - credentialsId: "sonarqube-project-token"
-      name: "SonarQube"
-      serverUrl: "http://sonarqube:9000"
-      triggers:
-        skipScmCause: false
-        skipUpstreamCause: false
-
   nodes:
   - permanent:
       launcher:
@@ -30,8 +20,18 @@ jenkins:
   numExecutors: 0
 
 unclassified:
+  sonarGlobalConfiguration:
+    buildWrapperEnabled: false
+    installations:
+    - credentialsId: "sonarqube-project-token"
+      name: "SonarQube"
+      serverUrl: "http://sonarqube:9000"
+      triggers:
+        skipScmCause: false
+        skipUpstreamCause: false
   location:
     url: http://vmpx07.polytech.unice.fr:8000/
+
 credentials:
   system:
     domainCredentials:
@@ -53,3 +53,15 @@ credentials:
           id: "sonarqube-project-token"
           scope: GLOBAL
           secret: ${SONARQUBE_TOKEN}
+      - string:
+          description: "artifactory-access-token"
+          id: "artifactory-access-token"
+          scope: GLOBAL
+          secret: ${ARTIFACTORY_TOKEN}
+
+jobs:
+  - file: /var/jenkins_home/jobdsl/backend.groovy
+  - file: /var/jenkins_home/jobdsl/cli.groovy
+  - file: /var/jenkins_home/jobdsl/cicd.groovy
+  - file: /var/jenkins_home/jobdsl/deployment.groovy
+  - file: /var/jenkins_home/jobdsl/publishing.groovy

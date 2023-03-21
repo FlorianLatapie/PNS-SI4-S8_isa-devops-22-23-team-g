@@ -19,6 +19,14 @@ services:
     volumes:
       - 'jenkins_data:/var/jenkins_home'
       - '/var/run/docker.sock:/var/run/docker.sock'
+      - './jenkins_conf/casc.yaml:/var/jenkins_home/casc.yaml'
+      - './jenkins_conf/jobdsl:/var/jenkins_home/jobdsl'
+    deploy:
+      resources:
+          limits:
+            # cpus: 0.50
+            memory: 1G
+
   agent:
     privileged: true
     build:
@@ -34,6 +42,12 @@ services:
         - ./env/.secrets.env
     volumes:
      - '/var/run/docker.sock:/var/run/docker.sock'
+    deploy:
+      resources:
+          limits:
+            # cpus: 0.50
+            memory: 1G 
+
   sonarqube:
     image: sonarqube:latest
     ports:
@@ -47,6 +61,41 @@ services:
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
       - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
+    deploy:
+      resources:
+          limits:
+            # cpus: 0.50
+            memory: 2536M
+
+
+  artifactory:
+    image: ${DOCKER_REGISTRY}/jfrog/artifactory-oss:${ARTIFACTORY_VERSION}
+    container_name: artifactory
+    environment:
+      - JF_ROUTER_ENTRYPOINTS_EXTERNALPORT=${JF_ROUTER_ENTRYPOINTS_EXTERNALPORT}
+    ports:
+      - ${JF_ROUTER_ENTRYPOINTS_EXTERNALPORT}:${JF_ROUTER_ENTRYPOINTS_EXTERNALPORT}
+      - 8002:8081 
+    volumes:
+      - ${ROOT_DATA_DIR}/var:/var/opt/jfrog/artifactory
+      - /etc/localtime:/etc/localtime:ro
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "10"
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 32000
+        hard: 40000
+    deploy:
+      resources:
+          limits:
+            # cpus: 0.50
+            memory: 2560M
+
 networks:
   cicd:
 volumes:

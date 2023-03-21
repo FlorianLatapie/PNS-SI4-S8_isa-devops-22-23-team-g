@@ -1,57 +1,97 @@
 pipeline {
     agent {
-      docker { image 'maven:3.8.7-eclipse-temurin-17' }
+      docker { image 'ci/maven.artifactory' }
     }
+
     environment {
         COMMITER_NAME = sh (
               script: 'git show -s --pretty=\'%an\'',
               returnStdout: true
         ).trim()
     }
+
+
     stages {
         stage('Prepare') {
+            options {
+              timeout(time: 5, unit: 'MINUTES')   // timeout on this stage
+            }
             steps {
                 echo 'Pulling...' + env.BRANCH_NAME
                 checkout scm
             }
         }
+
         stage('Backend') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh "cd ./backend && mvn clean package sonar:sonar \
-                          -Dsonar.projectKey=maven-jenkins-pipeline \
-                          -Dsonar.host.url=http://vmpx07.polytech.unice.fr:8001 \
-                          -Dsonar.login=${env.SONAR_AUTH_TOKEN}"
+            when { changeset "backend/*"}
+            stages {
+                stage('Verify'){
+                    steps {
+                        timeout(time: 5, unit: 'MINUTES') {
+                            withSonarQubeEnv('SonarQube') {
+                                sh "cd ./backend && mvn clean verify sonar:sonar \
+                                      -Dsonar.projectKey=maven-jenkins-pipeline \
+                                      -Dsonar.host.url=http://vmpx07.polytech.unice.fr:8001 \
+                                      -Dsonar.login=${env.SONAR_AUTH_TOKEN}"
+                            }
+                        }
+                    }
                 }
-            }
-        }
-        stage("Sonar backend check") {
-            steps {
-                timeout(time: 10, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
+                stage('Quality Gate'){
+                    steps {
+                        timeout(time: 10, unit: 'MINUTES') {
+                            waitForQualityGate abortPipeline: true
+                        }
+                    }
+                }
+                stage('Build'){
+                    steps {
+                        timeout(time: 5, unit: 'MINUTES') {
+                            sh "cd ./backend && mvn -s .m2/settings.xml deploy \
+                                  -Drepo.id=snapshots"
+                        }
+                    }
                 }
             }
         }
 
         stage('CLI') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh "cd ./cli && mvn clean package sonar:sonar \
-                          -Dsonar.projectKey=maven-jenkins-pipeline \
-                          -Dsonar.host.url=http://vmpx07.polytech.unice.fr:8001 \
-                          -Dsonar.login=${env.SONAR_AUTH_TOKEN}"
+            when { changeset "cli/*"}
+            stages {
+                stage('Verify'){
+                    steps {
+                        timeout(time: 5, unit: 'MINUTES') {
+                            withSonarQubeEnv('SonarQube') {
+                                sh "cd ./cli && mvn clean verify sonar:sonar \
+                                      -Dsonar.projectKey=maven-jenkins-pipeline \
+                                      -Dsonar.host.url=http://vmpx07.polytech.unice.fr:8001 \
+                                      -Dsonar.login=${env.SONAR_AUTH_TOKEN}"
+                            }
+                        }
+                    }
+                }
+                stage('Quality Gate'){
+                    steps {
+                        timeout(time: 10, unit: 'MINUTES') {
+                            waitForQualityGate abortPipeline: true
+                        }
+                    }
+                }
+                stage('Build'){
+                    steps {
+                        timeout(time: 5, unit: 'MINUTES') {
+                            sh "cd ./cli && mvn -s .m2/settings.xml deploy \
+                                  -Drepo.id=snapshots"
+                        }
+                    }
                 }
             }
         }
-        stage("Sonar cli check") {
-            steps {
-                timeout(time: 10, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
-        
+
         stage("Notify") {
+            options {
+              timeout(time: 5, unit: 'MINUTES')   // timeout on this stage
+            }
             steps {
                 notify(currentBuild.currentResult)
             }

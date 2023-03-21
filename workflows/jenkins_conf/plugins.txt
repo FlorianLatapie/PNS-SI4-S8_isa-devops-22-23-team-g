@@ -22,3 +22,6 @@ docker-commons:latest
 docker-workflow:latest
 docker-java-api:latest
 sonar:latest
+github-scm-trait-notification-context:latest
+job-dsl:latest
+scm-filter-branch-pr:latest

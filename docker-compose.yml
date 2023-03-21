@@ -1,12 +1,11 @@
 version: "3"
 
 services:
-  # The Cookie Factory backend in SpringBoot
   tcf-server:
     image: pcollet/tcf-spring-backend
     build:
         context: ./backend
-        dockerfile: Dockerfile
+        dockerfile: dev.Dockerfile
         args:
             JAR_FILE: simpleTCFS-0.0.1-SNAPSHOT.jar
     container_name: server
@@ -18,12 +17,11 @@ services:
       - bank-system
       - postgres
 
-  # A simple java CLI
   tcf-cli:
     image: pcollet/tcf-spring-cli
     build:
         context: cli
-        dockerfile: Dockerfile
+        dockerfile: dev.Dockerfile
         args:
             JAR_FILE: cli-0.0.1-SNAPSHOT.jar
     container_name: cli
@@ -42,7 +40,7 @@ services:
     image: pcollet/tcf-bank-service
     build:
         context: bank
-        dockerfile: Dockerfile
+        dockerfile: dev.Dockerfile
     container_name: bank
   
   postgres:

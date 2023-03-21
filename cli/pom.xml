@@ -40,6 +40,14 @@
         </dependency>
     </dependencies>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>331dec1b4e3e-snapshots</name>
+            <url>http://vmpx07.polytech.unice.fr:8002/artifactory/libs-snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <build>
         <plugins>
             <plugin>
@@ -48,5 +56,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

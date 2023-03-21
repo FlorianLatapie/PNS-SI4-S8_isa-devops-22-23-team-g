@@ -12,38 +12,52 @@ source End2End/utils.sh
 # resetTable "surveys"
 # resetTable "surveys_questions"
 
-globalResult=()
+testSuiteResults=()
 
-docker-compose down && docker-compose up -d
-sleep 30
+if [[ -z "${JENKINS_URL}" ]]; then
+    docker-compose down && docker-compose up -d
+    sleep 30
+    else 
+    docker-compose up -d
+    sleep 60
+fi
 
 
 testRunner "./End2End/creditCard.json"
-globalResult+=($?) 
+testSuiteResults+=($?) 
 
 testRunner "./End2End/loyaltyCard.json"
-globalResult+=($?) 
+testSuiteResults+=($?) 
 
 testRunner "./End2End/statsGlobal.json"
-globalResult+=($?) 
+testSuiteResults+=($?) 
 
-FAILED_TESTS=0
-for localResult in "${globalResult[@]}" 
+FAILED_TESTS_SUITES=0
+for testSuite in "${testSuiteResults[@]}" 
 do
-    if [ "$localResult" -ne 0 ];then
-        FAILED_TESTS=$(($FAILED_TESTS + 1))
+    if [ "$testSuite" -ne 0 ];then
+        FAILED_TESTS_SUITES=$(($FAILED_TESTS_SUITES + 1))
     fi
 done
 
 printf '\n'
-if [ "$FAILED_TESTS" -eq 0 ];then
+
+if ! [[ -z "${JENKINS_URL}" ]]; then
+    docker-compose down
+    docker container rm cli -f
+    docker container rm server -f
+    docker container rm db -f
+    docker container rm bank -f
+fi
+
+if [ "$FAILED_TESTS_SUITES" -eq 0 ];then
     printf "${GREEN}All test suites have passed${NC}\n"
     exit 0;
 else 
-    if [ "$FAILED_TESTS" -eq 1 ];then
-        printf "${RED}$FAILED_TESTS test suite has failed${NC}\n"
+    if [ "$FAILED_TESTS_SUITES" -eq 1 ];then
+        printf "${RED}$FAILED_TESTS_SUITES Test suite has failed${NC}\n"
     else
-        printf "${RED}$FAILED_TESTS test suites have failed${NC}\n"
+        printf "${RED}$FAILED_TESTS_SUITES Test suites have failed${NC}\n"
     fi
     printf '\n'
     exit 1;

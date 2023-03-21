@@ -1,8 +1,17 @@
 #!/bin/bash
-RED='\033[0;31m'
-NC='\033[0m'
-GREEN='\033[0;32m'
-BOLD='\033[1m'
+
+if [[ -z "${JENKINS_URL}" ]]; then
+        RED='\033[0;31m'
+        NC='\033[0m'
+        GREEN='\033[0;32m'
+        BOLD='\033[1m'
+    else 
+        RED=''
+        NC=''
+        GREEN=''
+        BOLD=''
+fi
+
 function runCommand() {
     echo "$1" | socat - exec:"docker attach cli",pty
 }
