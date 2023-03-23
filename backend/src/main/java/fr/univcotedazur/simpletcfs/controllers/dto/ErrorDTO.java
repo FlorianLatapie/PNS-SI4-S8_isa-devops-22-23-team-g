@@ -21,4 +21,11 @@ public class ErrorDTO {
         this.details = details;
     }
 
+    @Override
+    public String toString() {
+        return "ErrorDTO{" +
+                "error='" + error + '\'' +
+                ", details='" + details + '\'' +
+                '}';
+    }
 }

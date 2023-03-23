@@ -28,4 +28,12 @@ public class Statistic {
     public Shop getShop() {
         return shop;
     }
+
+    @Override
+    public String toString() {
+        return "Statistic{" +
+                "statisticValues=" + statisticValues +
+                ", shop=" + shop +
+                '}';
+    }
 }

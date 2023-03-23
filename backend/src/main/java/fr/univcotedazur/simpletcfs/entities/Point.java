@@ -41,4 +41,11 @@ public class Point{
     public int hashCode() {
         return ("Point" + pointAmount).hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "Point{" +
+                "pointAmount=" + pointAmount +
+                '}';
+    }
 }

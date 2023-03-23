@@ -38,4 +38,13 @@ public class SurveyDTO {
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
     }
+
+    @Override
+    public String toString() {
+        return "SurveyDTO{" +
+                "id=" + id +
+                ", participants=" + participants +
+                ", questions=" + questions +
+                '}';
+    }
 }

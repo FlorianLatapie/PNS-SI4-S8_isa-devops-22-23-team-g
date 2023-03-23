@@ -61,4 +61,13 @@ public class Answer {
     public int hashCode() {
         return Objects.hash(answer, question);
     }
+
+    @Override
+    public String toString() {
+        return "Answer{" +
+                "id=" + id +
+                ", answer='" + answer + '\'' +
+                ", question=" + question +
+                '}';
+    }
 }

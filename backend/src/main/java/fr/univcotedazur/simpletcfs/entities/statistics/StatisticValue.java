@@ -18,4 +18,12 @@ public abstract class StatisticValue {
     }
 
     public abstract double getValue();
+
+    @Override
+    public String toString() {
+        return "StatisticValue{" +
+                "indicator=" + indicator +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

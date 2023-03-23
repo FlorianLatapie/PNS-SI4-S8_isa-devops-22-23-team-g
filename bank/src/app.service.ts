@@ -19,10 +19,15 @@ export class AppService {
   }
 
   pay(paymentDto: PaymentDto): PaymentDto {
+    console.log('paymentDto.creditCard : ' + paymentDto.creditCard + ' amount : ' + paymentDto.amount);
     if (paymentDto.creditCard.includes(AppService.magicKey)) {
         this.transactions.push(paymentDto);
+        console.log('paymentSuccess');
+        console.log('---------------------------------');
         return paymentDto;
       } else {
+        console.log('paymentRejected');
+        console.log('---------------------------------');
         throw new PaymentRejectedException(paymentDto.amount);
       }
     }

@@ -18,4 +18,11 @@ public class StatisticValueEuro extends StatisticValue {
     public double getValue() {
         return value.euroAmount();
     }
+
+    @Override
+    public String toString() {
+        return "StatisticValueEuro{" +
+                "value=" + value +
+                '}';
+    }
 }

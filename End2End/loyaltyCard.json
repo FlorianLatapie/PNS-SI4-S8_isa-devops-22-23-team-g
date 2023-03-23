@@ -3,12 +3,12 @@
     "name": "It should create an account for Christophe",
     "comment": "check if the account id is correct",
     "command": "register Christophe",
-    "expected": "Registered customer result CliCustomer{id=3, name='Christophe', points=0, euros=0.0}"
+    "expected": "Returned register with value CliCustomer{id=3, name='Christophe', points=0, euros=0.0}"
   },
   {
     "name": "It should login as Christophe",
     "command": "login Christophe",
-    "expected": "Logged in customer result CliCustomer{id=3, name='Christophe', points=0, euros=0.0}"
+    "expected": "Returned login with value CliCustomer{id=3, name='Christophe', points=0, euros=0.0}"
   },
   {
     "name": "It should accept the payment to reload the loyalty card if the credit card is valid",

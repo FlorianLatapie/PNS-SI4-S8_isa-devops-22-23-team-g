@@ -48,4 +48,14 @@ public class CustomerDTO {
     public double getEuros() {
     	return euros;
     }
+
+    @Override
+    public String toString() {
+        return "CustomerDTO{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", points=" + points +
+                ", euros=" + euros +
+                '}';
+    }
 }

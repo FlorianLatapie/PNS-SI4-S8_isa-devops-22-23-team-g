@@ -34,4 +34,11 @@ public class IBAN {
     public int hashCode() {
         return Objects.hash(iban);
     }
+
+    @Override
+    public String toString() {
+        return "IBAN{" +
+                "iban='" + iban + '\'' +
+                '}';
+    }
 }

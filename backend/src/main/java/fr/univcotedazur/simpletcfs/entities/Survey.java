@@ -65,4 +65,13 @@ public class Survey {
     public int hashCode() {
         return Objects.hash(questions);
     }
+
+    @Override
+    public String toString() {
+        return "Survey{" +
+                "id=" + id +
+                ", participants=" + participants +
+                ", questions=" + questions +
+                '}';
+    }
 }

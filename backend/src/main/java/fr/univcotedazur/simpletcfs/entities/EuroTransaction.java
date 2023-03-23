@@ -111,4 +111,16 @@ public class EuroTransaction {
     public int hashCode() {
         return Objects.hash(customer, price, shop, pointEarned, date);
     }
+
+    @Override
+    public String toString() {
+        return "EuroTransaction{" +
+                "customer=" + customer +
+                ", price=" + price +
+                ", shop=" + shop +
+                ", id=" + id +
+                ", pointEarned=" + pointEarned +
+                ", date=" + date +
+                '}';
+    }
 }

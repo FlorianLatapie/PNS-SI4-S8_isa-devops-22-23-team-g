@@ -29,9 +29,6 @@ pipeline {
 
         
         stage('Backend Unit & Integration Tests'){
-            when { 
-                expression { BACKEND_ARTIFACT_EXISTS != 'true' }
-            }
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
                     withSonarQubeEnv('SonarQube') {
@@ -45,14 +42,10 @@ pipeline {
                 timeout(time: 10, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
-                moveArtifact('backend')
             }
         }
 
         stage('CLI Unit & Integration Tests'){
-            when { 
-                expression { CLI_ARTIFACT_EXISTS != 'true' }
-            }
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
                     withSonarQubeEnv('SonarQube') {
@@ -66,7 +59,6 @@ pipeline {
                 timeout(time: 10, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
-                moveArtifact('cli')
             }
         }
 
@@ -87,11 +79,7 @@ pipeline {
             when{
                 allOf {
                     expression { env.CHANGE_ID != null } 
-                    expression { 
-                        BACKEND_ARTIFACT_EXISTS == 'true' 
-                        || CLI_ARTIFACT_EXISTS == 'true' 
-                        || BANK_ARTIFACT_EXISTS == 'true' 
-                    }
+                    expression { BACKEND_ARTIFACT_EXISTS == 'true' || CLI_ARTIFACT_EXISTS == 'true' || BANK_ARTIFACT_EXISTS == 'true' }
                 }
             }
             steps{
@@ -132,4 +120,12 @@ def exists(artifactPath) {
         script: "jf rt s --url http://vmpx07.polytech.unice.fr:8002/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} libs-snapshot-local/${artifactPath}/ --count",
         returnStdout: true
     ).trim().toInteger() != 0
+}
+
+def getNodeArtifactPath(module) {
+    def version =  sh (
+        script: "cd ./bank && cat package.json | grep version | head -1 | awk -F: '{ print \$2 }' | sed 's/[\",]//g'",
+        returnStdout: true
+    ).trim()
+    return 'fr/univ-cotedazur/bank/' + version
 }

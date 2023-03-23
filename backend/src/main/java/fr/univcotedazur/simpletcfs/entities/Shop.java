@@ -55,4 +55,13 @@ public class Shop {
         this.iban = iban;
     }
 
+    @Override
+    public String toString() {
+        return "Shop{" +
+                "name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", iban=" + iban +
+                ", id=" + id +
+                '}';
+    }
 }

@@ -8,6 +8,17 @@ do
     esac
 done
 
+if ! [[ -z "${JENKINS_URL}" ]]; then
+    if ! command -v socat &> /dev/null; then
+        echo "Installing socat"
+        sudo apt-get install socat
+    fi 
+    if ! command -v jq &> /dev/null; then
+        echo "Installing jq ..."
+        sudo apt-get install jq
+    fi 
+fi
+
 if [ "$ENV" == "prod" ] ; then
     echo "Running in production mode ..."
 elif [ "$DEMO" == "true" ] ; then

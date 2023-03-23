@@ -3,12 +3,12 @@
     "name": "It should create an account for newClient",
     "comment": "check if the account id is correct",
     "command": "register newClient",
-    "expected": "Registered customer result CliCustomer{id=5, name='newClient', points=0, euros=0.0}"
+    "expected": "Returned register with value CliCustomer{id=5, name='newClient', points=0, euros=0.0}"
   },
   {
     "name": "It should login as newClient",
     "command": "login newClient",
-    "expected": "Logged in customer result CliCustomer{id=5, name='newClient', points=0, euros=0.0}"
+    "expected": "Returned login with value CliCustomer{id=5, name='newClient', points=0, euros=0.0"
   },
   {
     "name": "It should accept newClient's payment if the card is valid",

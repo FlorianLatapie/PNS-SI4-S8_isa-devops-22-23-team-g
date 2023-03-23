@@ -93,4 +93,16 @@ public class PointTransaction {
     public int hashCode() {
         return Objects.hash(pointAmount, date, description, customer, advantageItem);
     }
+
+    @Override
+    public String toString() {
+        return "PointTransaction{" +
+                "pointAmount=" + pointAmount +
+                ", id=" + id +
+                ", date=" + date +
+                ", description='" + description + '\'' +
+                ", customer=" + customer +
+                ", advantageItem=" + advantageItem +
+                '}';
+    }
 }

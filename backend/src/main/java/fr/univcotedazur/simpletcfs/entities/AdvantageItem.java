@@ -97,4 +97,16 @@ public class AdvantageItem {
     public int hashCode() {
         return Objects.hash(type, title, description, price, shop);
     }
+
+    @Override
+    public String toString() {
+        return "AdvantageItem{" +
+                "id=" + id +
+                ", type=" + type +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", shop=" + shop +
+                '}';
+    }
 }

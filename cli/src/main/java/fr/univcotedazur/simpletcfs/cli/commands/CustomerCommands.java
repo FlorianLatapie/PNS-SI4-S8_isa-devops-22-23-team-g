@@ -19,17 +19,13 @@ public class CustomerCommands {
 
     @ShellMethod("Register a customer in the CoD backend (register CUSTOMER_NAME)")
     public CliCustomer register(String name) {
-        System.out.println("Registering customer " + name);
         CliCustomer res = restTemplate.postForObject(BASE_URI + "/register", new CliCustomer(name), CliCustomer.class);
-        System.out.println("Registered customer result " + res);
         return res;
     }
 
     @ShellMethod("Login a customer in the CoD backend (login CUSTOMER_NAME)")
     public CliCustomer login(String name) {
-        System.out.println("Logging in customer " + name);
         CliCustomer res = restTemplate.postForObject(BASE_URI + "/login", new CliCustomer(name), CliCustomer.class);
-        System.out.println("Logged in customer result " + res);
         cliContext.getCustomers().put(res.getName(), res);
         return res;
     }
