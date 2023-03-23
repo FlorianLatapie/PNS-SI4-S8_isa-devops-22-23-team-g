@@ -9,7 +9,7 @@ RUN chown 1000:1000 /.jfrog
 USER root
 RUN apt-get update && yes | apt-get install curl
 RUN curl -sSL https://get.docker.com/ | sh
-COPY ci.entrypoint.sh /usr/local/bin/entrypoint
+COPY ci.maven.entrypoint.sh /usr/local/bin/entrypoint
 RUN chmod +x /usr/local/bin/entrypoint
 RUN mkdir /.docker
 RUN chmod 775 /.docker

@@ -10,7 +10,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>fr.univcotedazur.simpletcfs</groupId>
+    <groupId>fr.univ-cotedazur</groupId>
     <artifactId>cli</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>

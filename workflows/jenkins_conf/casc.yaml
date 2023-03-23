@@ -15,6 +15,7 @@ jenkins:
           port: 22
           sshHostKeyVerificationStrategy: "nonVerifyingKeyVerificationStrategy"
       name: "jenkins_agent"
+      numExecutors: 3
       remoteFS: "/home/jenkins/agent"
       retentionStrategy: "always"
   numExecutors: 0
@@ -72,6 +73,8 @@ credentials:
 
 jobs:
   - file: /var/jenkins_home/jobdsl/backend.groovy
+  - file: /var/jenkins_home/jobdsl/bank.groovy
+  - file: /var/jenkins_home/jobdsl/feature.groovy
   - file: /var/jenkins_home/jobdsl/cli.groovy
   - file: /var/jenkins_home/jobdsl/cicd.groovy
   - file: /var/jenkins_home/jobdsl/deployment.groovy
