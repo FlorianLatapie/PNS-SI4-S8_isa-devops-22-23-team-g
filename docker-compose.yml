@@ -9,6 +9,8 @@ services:
         args:
             JAR_FILE: backend-0.0.1-SNAPSHOT.jar
     container_name: mfc-server-staging
+    ports: 
+      - 8080:8080
     environment:
       - BANK_WITH_PORT=bank-system-staging:9090
       - POSTGRES_DB_NAME=mfc-db-staging

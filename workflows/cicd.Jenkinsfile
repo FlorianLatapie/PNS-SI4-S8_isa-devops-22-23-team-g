@@ -18,7 +18,7 @@ pipeline {
         BACKEND_ARTIFACT_EXISTS = exists(BACKEND_ARTIFACT_PATH)
         CLI_ARTIFACT_EXISTS = exists(CLI_ARTIFACT_PATH)
         ARTIFACTORY_ACCESS_TOKEN = credentials('artifactory-access-token')
-        TAG_VERSION = getTag()
+        TAG_VERSION = "test0.0.1"
     }
 
     stages {
