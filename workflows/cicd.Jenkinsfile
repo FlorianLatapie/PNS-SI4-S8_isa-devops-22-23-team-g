@@ -1,33 +1,202 @@
 pipeline {
     agent {
-      docker { image 'ci/maven.artifactory' }
+      docker { 
+            image 'ci/maven.artifactory'
+            args '--privileged  -v /var/run/docker.sock:/var/run/docker.sock'
+        }
     }
 
     environment {
-        BACKEND_VERSION = getVersion('backend')
-        CLI_VERSION = getVersion('cli')
-        BACKEND_ARTIFACT_EXISTS = exists(BACKEND_VERSION)
-        CLI_ARTIFACT_EXISTS = exists(CLI_VERSION)
+        COMMITER_NAME = sh (
+              script: 'git show -s --pretty=\'%an\'',
+              returnStdout: true
+        ).trim()
+        BACKEND_ARTIFACT_PATH = getArtifactPath('backend')
+        CLI_ARTIFACT_PATH = getArtifactPath('cli')
+        BACKEND_VERSION = parseVersion(BACKEND_ARTIFACT_PATH)
+        CLI_VERSION = parseVersion(CLI_ARTIFACT_PATH)
+        BACKEND_ARTIFACT_EXISTS = exists(BACKEND_ARTIFACT_PATH)
+        CLI_ARTIFACT_EXISTS = exists(CLI_ARTIFACT_PATH)
         ARTIFACTORY_ACCESS_TOKEN = credentials('artifactory-access-token')
+        TAG_VERSION = getTag()
     }
 
     stages {
+        // stage('Gateway') {
+        //     when{
+        //         expression { CLI_ARTIFACT_EXISTS == 'true' && BACKEND_ARTIFACT_EXISTS == 'true' }
+        //     }
+        //     steps{
+        //         error(
+        //             "BACKEND and CLI artifacts already exists."
+        //         )
+        //     }
+        // }
 
         stage('Prepare') {
+            options {
+              timeout(time: 5, unit: 'MINUTES')   // timeout on this stage
+            }
             steps {
+
                 echo 'Pulling...' + env.BRANCH_NAME
                 checkout scm
-                sh "cd ./backend"
-                echo "Backend version: ${BACKEND_VERSION}"
-                echo "Cli version: ${CLI_VERSION}"
-                echo "Backend exists: ${BACKEND_ARTIFACT_EXISTS}"
-                echo "CLI exists: ${CLI_ARTIFACT_EXISTS}"
+                downloadIfExists('backend')
+                downloadIfExists('cli')
             }
+        }
+
+        stage('Backend Unit & Integration Tests'){
+            when { 
+                expression { BACKEND_ARTIFACT_EXISTS != 'true' }
+            }
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    withSonarQubeEnv('SonarQube') {
+                        sh "cd ./backend && mvn clean package sonar:sonar \
+                              -Dsonar.projectKey=maven-jenkins-pipeline \
+                              -Dsonar.host.url=http://vmpx07.polytech.unice.fr:8001 \
+                              -Dsonar.login=${env.SONAR_AUTH_TOKEN}"
+                    }
+                }
+                sh "cd ./backend && mvn verify"
+                timeout(time: 10, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+                moveArtifact('backend')
+            }
+        }
+
+        stage('CLI Unit & Integration Tests'){
+            when { 
+                expression { CLI_ARTIFACT_EXISTS != 'true' }
+            }
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    withSonarQubeEnv('SonarQube') {
+                        sh "cd ./cli && mvn clean package sonar:sonar \
+                              -Dsonar.projectKey=maven-jenkins-pipeline \
+                              -Dsonar.host.url=http://vmpx07.polytech.unice.fr:8001 \
+                              -Dsonar.login=${env.SONAR_AUTH_TOKEN}"
+                    }
+                }
+                sh "cd ./cli && mvn verify"
+                timeout(time: 10, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+                moveArtifact('cli')
+            }
+        }
+
+        stage('End2End Tests'){
+            when{
+                expression { CLI_ARTIFACT_EXISTS != 'true' || BACKEND_ARTIFACT_EXISTS != 'true' }
+            }
+            steps {
+                timeout(time: 15, unit: 'MINUTES') {
+                    echo "Building Backend Image ..."
+                    sh "docker build --build-arg JAR_FILE=${BACKEND_VERSION}.jar -t teamgisadevops2023/backend:${TAG_VERSION} ./backend"
+                    echo "Building CLI Image ..."
+                    sh "cd ./cli && docker build --build-arg JAR_FILE=${CLI_VERSION}.jar -t teamgisadevops2023/cli${TAG_VERSION} -f Dockerfile ."
+                    echo "Building Bank Image ..."
+                    sh "cd ./bank && docker build -t teamgisadevops2023/bank${TAG_VERSION} -f Dockerfile ."
+                    echo "Start System"
+                    sh "./End2End.sh"
+                }
+            }
+        }
+
+        stage('Publish Artifactory'){
+            when{
+                expression { CLI_ARTIFACT_EXISTS != 'true' || BACKEND_ARTIFACT_EXISTS != 'true' }
+            }
+            steps {
+                script {
+                    if ( CLI_ARTIFACT_EXISTS != 'true' ) {
+                        sh "cd ./cli && mvn -s .m2/settings.xml deploy \
+                            -Drepo.id=snapshots"
+                    }  
+                    if (BACKEND_ARTIFACT_EXISTS != 'true' ){
+                        sh "cd ./backend && mvn -s .m2/settings.xml deploy \
+                            -Drepo.id=snapshots"
+                    }
+                }
+            }
+        }
+
+        stage('Publish DockerHub'){
+            // when { 
+            //     expression { env.BRANCH_NAME =~ /^[0-9]+\.[0-9]+\.[0-9]+/ }
+            // }
+            environment {
+                TAG_VERSION = "test0.0.4"
+            }
+            steps {
+
+                withDockerRegistry([ credentialsId: "DockerHub", url: ""]) {
+                    sh "docker image tag teamgisadevops2023/backend:${TAG_VERSION}  teamgisadevops2023/backend:latest"
+                    sh "docker image tag teamgisadevops2023/cli:${TAG_VERSION}  teamgisadevops2023/cli:latest"
+
+                    sh "docker push teamgisadevops2023/backend:${TAG_VERSION}"
+                    sh "docker push teamgisadevops2023/cli:${TAG_VERSION}"
+                    // sh "docker push teamgisadevops2023/bank:${TAG_VERSION}"
+
+                    sh "docker push teamgisadevops2023/backend:latest"
+                    sh "docker push teamgisadevops2023/cli:latest"
+                    // sh "docker push teamgisadevops2023/bank:latest"
+                }
+
+                // withCredentials([usernamePassword(credentialsId: 'DockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                //     sh "docker login -u ${USERNAME} -p ${PASSWORD} https://index.docker.io/v1/"
+                //     sh "docker push teamgisadevops2023/backend:${TAG_VERSION}"
+                //     sh "docker push teamgisadevops2023/cli:${TAG_VERSION}"
+                //     sh "docker push teamgisadevops2023/bank:${TAG_VERSION}"
+                // }
+            }
+        }
+
+        stage('Deploy'){
+            // when { 
+            //     expression { env.BRANCH_NAME =~ /^[0-9]+\.[0-9]+\.[0-9]+/ }
+            // }
+            steps {
+                sh "docker-compose -f docker-compose.prod.yml -p mfc-prod down"
+                sh "docker-compose -f docker-compose.prod.yml -p mfc-prod up -d"
+            }
+        }
+    }
+
+    post {
+        always {
+            notify(currentBuild.currentResult)
         }
     }
 }
 
-def getVersion(module) {
+def notify(result) {
+    if(BRANCH_NAME != 'develop' && BRANCH_NAME != 'main') {
+        return
+    }
+    discordSend description: "Pipeline ${parseResult(result)}", footer: "By ${COMMITER_NAME}", link: BUILD_URL, result: result, title: JOB_NAME.replaceAll('%2F', '/'), webhookURL: "https://discord.com/api/webhooks/1074071003132600413/voTcEpidfmcOtBOJsJEIepZl1xf0jODYOWHg9I_RQMEmHAJtoBDx-R1AE3ylVR9cCvug"
+}
+
+def parseResult(result) {
+    switch(result){
+        case 'SUCCESS':
+            return 'successful'
+        case 'FAILURE':
+            return 'failed'
+        case 'UNSTABLE':
+            return 'unstable'
+        case 'ABORTED':
+            return 'aborted'
+        default:
+            return 'unknown'
+    }
+}
+
+
+def getArtifactPath(module) {
     def inputString =  sh (
           script: "cd ${module} && mvn -q -Dexec.executable=echo -Dexec.args='\${project.groupId}/\${project.artifactId}/\${project.version}' --non-recursive exec:exec 2>/dev/null",
           returnStdout: true
@@ -37,6 +206,10 @@ def getVersion(module) {
     return remainingString.replaceAll(/\./, '/') + version
 }
 
+def parseVersion(artifactPath) {
+    return artifactPath.substring(artifactPath.lastIndexOf('/') + 1)
+}
+
 def exists(artifactPath) {
     return sh (
         script: "jf rt s --url http://vmpx07.polytech.unice.fr:8002/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} libs-snapshot-local/${artifactPath}/ --count",
@@ -44,6 +217,51 @@ def exists(artifactPath) {
     ).trim().toInteger() != 0
 }
 
+def getTag() {
+     if(env.BRANCH_NAME =~ /^[0-9]+\.[0-9]+\.[0-9]+/) {
+         return env.BRANCH_NAME
+     }
+     return ""
+}
+
+def downloadIfExists(module){
+    String path = ""
+    String artifactPath = ""
+    String version = ""
+    switch(module){
+        case 'backend':
+            artifactPath = BACKEND_ARTIFACT_PATH
+            version = BACKEND_VERSION
+            path = "backend/target/${BACKEND_VERSION}.jar"
+            break
+        case 'cli':
+            artifactPath = CLI_ARTIFACT_PATH
+            version = CLI_VERSION
+            path = "./cli/target/${CLI_VERSION}.jar"
+            break 
+    }
+    sh("jf rt dl --url http://vmpx07.polytech.unice.fr:8002/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} --limit=1 libs-snapshot-local/${artifactPath}/ ./${module}/target/")
+    try {
+        sh("cd ./${module}/target/${artifactPath} && pwd && ls")
+        sh("mv ./${module}/target/${artifactPath}/*.jar ./${module}/target/ && cd ./${module}/target && ls *.jar |grep '^${version}.jar\$' || mv `ls *.jar | head -1` ${version}.jar")
+        sh("cd ./${module}/target && pwd && ls")
+    } catch (e) {
+        echo "No artifact found in Artifactory"
+    }
+}
+
+def moveArtifact(module){
+    String version = ""
+    switch(module){
+        case 'backend':
+            version = BACKEND_VERSION
+            break
+        case 'cli':
+            version = CLI_VERSION
+            break 
+    }
+    sh("cd ./${module}/target && ls *.jar |grep '^${version}.jar\$' || mv `ls *.jar | head -1` ${version}.jar")
+}
 
 def hasChangesIn(module) {
     currentBuild.description = currentBuild.previousBuild.description

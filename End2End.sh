@@ -1,26 +1,40 @@
 #!/bin/bash
 source End2End/utils.sh
 
-# resetTable "answers"
-# resetTable "advantage_items"
-# resetTable "customers"
-# resetTable "euro_transactions"
-# resetTable "point_transactions"
-# resetTable "questions"
-# resetTable "shop_keeper_accounts"
-# resetTable "shops"
-# resetTable "surveys"
-# resetTable "surveys_questions"
+while getopts d flag
+do
+    case "${flag}" in
+        d) DEMO=true;;
+    esac
+done
+
+if [ "$ENV" == "prod" ] ; then
+    echo "Running in production mode ..."
+elif [ "$DEMO" == "true" ] ; then
+    echo "Running in demo mode ..."
+else 
+    echo "Running in staging mode ..."
+fi
+
+if [ "$ENV" == "prod" ] || [ "$DEMO" == "true" ]; then
+    COMPOSE_CMD="docker-compose -f docker-compose.prod.yml -p mfc-prod"
+else
+    COMPOSE_CMD="docker-compose"
+fi
 
 testSuiteResults=()
 
 if [[ -z "${JENKINS_URL}" ]]; then
-    docker-compose down && docker-compose up -d
-    sleep 30
+    eval "$COMPOSE_CMD down" && eval "$COMPOSE_CMD up -d"
     else 
-    docker-compose up -d
-    sleep 60
+    eval "$COMPOSE_CMD up -d"
 fi
+
+if [ "$ENV" == "prod" ] || [ "$DEMO" == "true" ]; then
+    CONTAINER_NAME="mfc-cli-prod"
+fi
+
+waitForCLIStart
 
 
 testRunner "./End2End/creditCard.json"

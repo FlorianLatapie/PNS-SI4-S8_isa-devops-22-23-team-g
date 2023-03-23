@@ -1,5 +1,4 @@
 [
-  { "name": "", "command": "login Jeanne", "expected": "", "comment": "buffer test" },
   {
     "name": "It should create account for Jeanne",
     "command": "register Jeanne",

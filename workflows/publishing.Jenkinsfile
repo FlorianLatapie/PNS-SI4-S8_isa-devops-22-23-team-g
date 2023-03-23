@@ -92,18 +92,18 @@ pipeline {
                     echo "Build Backend Image ..."
                     sh "ls"
                     // sh "cd ./backend/target/fr/univ-cotedazur/simpleTCFS/ && pwd && ls"
-                    sh "docker build --build-arg JAR_FILE=${BACKEND_VERSION}.jar -t pcollet/tcf-spring-backend ./backend"
+                    sh "docker build --build-arg JAR_FILE=${BACKEND_VERSION}.jar -t teamgisadevops2023/backend ./backend"
                     echo "Build CLI Image ..."
-                    sh "cd ./cli && docker build --build-arg JAR_FILE=${CLI_VERSION}.jar -t pcollet/tcf-spring-cli -f Dockerfile ."
+                    sh "cd ./cli && docker build --build-arg JAR_FILE=${CLI_VERSION}.jar -t teamgisadevops2023/cli -f Dockerfile ."
                     echo "Build Bank Image ..."
-                    sh "cd ./bank && docker build -t pcollet/tcf-bank-service -f Dockerfile ."
+                    sh "cd ./bank && docker build -t teamgisadevops2023/bank-service -f Dockerfile ."
                     echo "Start System"
                     sh "./End2End.sh"
                 }
             }
         }
 
-        stage('Publish'){
+        stage('Publish Artifactory'){
             when { 
                 expression { env.BRANCH_NAME =~ 'main'}
             }

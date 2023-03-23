@@ -58,6 +58,17 @@ credentials:
           id: "artifactory-access-token"
           scope: GLOBAL
           secret: ${ARTIFACTORY_TOKEN}
+      - string:
+          description: "dockerhub-access-token"
+          id: "dockerhub-access-token"
+          scope: GLOBAL
+          secret: ${DOCKERHUB_TOKEN}
+      - usernamePassword:
+          id: "DockerHub"
+          description: "DockerHub"
+          password: ${DOCKERHUB_PASSWORD}
+          scope: GLOBAL
+          username: "teamgisadevops2023"
 
 jobs:
   - file: /var/jenkins_home/jobdsl/backend.groovy

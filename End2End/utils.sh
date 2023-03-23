@@ -1,5 +1,6 @@
 #!/bin/bash
 
+CONTAINER_NAME="mfc-cli-staging"
 if [[ -z "${JENKINS_URL}" ]]; then
         RED='\033[0;31m'
         NC='\033[0m'
@@ -12,8 +13,30 @@ if [[ -z "${JENKINS_URL}" ]]; then
         BOLD=''
 fi
 
+
 function runCommand() {
-    echo "$1" | socat - exec:"docker attach cli",pty
+    echo "$1" | socat - exec:"docker attach $CONTAINER_NAME",pty
+    sleep 1
+    docker logs "$CONTAINER_NAME" --tail=3
+}
+
+function waitForCLIStart(){
+   printf '\n'
+   waitFor="Started CliApplication in"
+   while ! docker logs "$CONTAINER_NAME" --tail=1 | grep -q "$waitFor"; do
+        echo "Waiting for CLI to start ..."
+        sleep 5
+    done 
+    echo "CLI has started!"
+    printf '\n'
+}
+
+function waitEnterKey(){
+    read -p "Press [ENTER] to continue" -s -r -n 1 key  
+
+    if [[ $key != "" ]]; then 
+        waitEnterKey 
+    fi
 }
 
 function assertEquals(){
@@ -54,6 +77,9 @@ function testRunner(){
         failedTests+=("$NAME")
         failedTestsExpected+=("$EXPECTED")
         failedTestsResults+=("$RESULT")
+      fi
+      if [ "$DEMO" == "true" ]; then
+        waitEnterKey
       fi
     done
     FAILED_TESTS=0
