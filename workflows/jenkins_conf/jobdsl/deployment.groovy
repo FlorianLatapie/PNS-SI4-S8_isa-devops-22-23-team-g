@@ -25,7 +25,14 @@ multibranchPipelineJob('deployment') {
                 regex('^main$')
                 tagRegex('^[0-9]+\\.[0-9]+\\.[0-9]+$')
               }
+              gitHubTagDiscovery()
               gitHubIgnoreDraftPullRequestFilter()
+            }
+          }
+          buildStrategies{
+            buildTags {
+              atLeastDays('-1')
+              atMostDays('1')
             }
           }
         }

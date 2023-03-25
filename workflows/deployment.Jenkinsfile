@@ -142,7 +142,7 @@ def exists(artifactPath) {
 }
 
 def getTag() {
-     if(env.BRANCH_NAME =~ /^.[0-9]+\.[0-9]+\.[0-9]+/) {
+     if(env.BRANCH_NAME =~ /^[0-9]+\.[0-9]+\.[0-9]+/) {
          return env.BRANCH_NAME
      }
      return ""
@@ -218,19 +218,17 @@ def hasChangesIn(activeBuild, module) {
 }
 
 def downloadIfExistsNode(module){
-    String path = ""
     String artifactPath = ""
     String version = ""
     switch(module){
         case 'bank':
             artifactPath = BANK_ARTIFACT_PATH
             version = BANK_VERSION
-            path = "bank/${BACKEND_VERSION}.zip"
             break
     }
-    sh("jf rt dl --url http://vmpx07.polytech.unice.fr:8002/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} --limit=1 libs-snapshot-local/${artifactPath}/ ./${module}/")
+    sh("jf rt dl --url http://vmpx07.polytech.unice.fr:8002/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} --limit=1 generic-releases-local/${artifactPath}/ ./${module}/")
     try {
-        sh("cd ./${module}/ && unzip ${version}.zip && ls")
+        sh("cd ./${module}/ && unzip ./${artifactPath}/dist.zip")
     } catch (e) {
         echo "No artifact found in Artifactory"
     }

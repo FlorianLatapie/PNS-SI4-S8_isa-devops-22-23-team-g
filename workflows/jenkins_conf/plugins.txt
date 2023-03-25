@@ -25,3 +25,4 @@ sonar:latest
 github-scm-trait-notification-context:latest
 job-dsl:latest
 scm-filter-branch-pr:latest
+basic-branch-build-strategies:latest

@@ -21,21 +21,10 @@ pipeline {
         CLI_ARTIFACT_EXISTS = exists(CLI_ARTIFACT_PATH)
         BANK_ARTIFACT_EXISTS = exists(BANK_ARTIFACT_PATH)
         ARTIFACTORY_ACCESS_TOKEN = credentials('artifactory-access-token')
-        // TAG_VERSION = getTag()
-        TAG_VERSION = "test0.0.1"
+        TAG_VERSION = getTag()
     }
 
     stages {
-        // stage('Gateway') {
-        //     when{
-        //         expression { CLI_ARTIFACT_EXISTS == 'true' && BACKEND_ARTIFACT_EXISTS == 'true' }
-        //     }
-        //     steps{
-        //         error(
-        //             "BACKEND and CLI artifacts already exists."
-        //         )
-        //     }
-        // }
 
         stage('Prepare') {
             options {
@@ -53,16 +42,18 @@ pipeline {
 
             }
         }
+
+        stage('Check Tag Trigger'){
+            when { 
+                expression { env.BRANCH_NAME =~ /^test[0-9]+\.[0-9]+\.[0-9]+/ }
+            }
+            steps {
+                echo "Triggered by tag ${TAG_VERSION}"
+            }
+        }
+
         
         stage('Bank Tests & Linting'){
-            // environment {
-            //     // BANK_ARTIFACT_PATH = getNodeArtifactPath('bank')
-            //     // BANK_VERSION = parseVersion(BANK_ARTIFACT_PATH)
-            //     // ARTIFACTORY_ACCESS_TOKEN = credentials('artifactory-access-token')
-            //     BANK_ARTIFACT_PATH = getNodeArtifactPath('bank')
-            //     BANK_VERSION = '0.0.1'
-            //     ARTIFACTORY_ACCESS_TOKEN = credentials('artifactory-access-token')
-            // }
             steps {
                 sh "pwd"
                 sh "cd ./bank && npm ci"
@@ -70,20 +61,17 @@ pipeline {
                 sh "cd ./bank && npm run test"
                 sh "cd ./bank && npm run build"
                 sh "cd ./bank/dist && ls"
-                    // 'fr/univ-cotedazur/bank/' + version  generic-releases-local
-                sh "cd ./bank && zip -r '${BANK_VERSION}.zip' dist"
-                // sh "jf rt u froggy.tgz generic-releases-local/fr/univ-cotedazur/bank/0.0.1/ --url http://vmpx07.polytech.unice.fr:8000/artifactory --user admin --password ${env.ARTIFACTORY_ACCESS_TOKEN} --props 'vcs.revision=${env.GIT_COMMIT}'"
+                sh "cd ./bank && zip -r 'dist.zip' dist"
+                sh "cd ./bank && jf rt u 'dist.zip' --url http://vmpx07.polytech.unice.fr:8002/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} generic-releases-local/fr/univ-cotedazur/bank/${BANK_VERSION}/"
+                sh "cd ./bank && rm -rf dist"
+                sh "cd ./bank && rm -rf 'dist.zip'"
                 sh "cd ./bank && ls"
+                downloadIfExistsNode('bank')
 
-                // sh "mv ./bank/dist /home/jenkins/agent/workspace/"
-                // moveArtifact('backend')
             }
         }
 
         stage('Backend Unit & Integration Tests'){
-            // when { 
-            //     expression { BACKEND_ARTIFACT_EXISTS != 'true' }
-            // }
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
                     withSonarQubeEnv('SonarQube') {
@@ -102,9 +90,6 @@ pipeline {
         }
 
         stage('CLI Unit & Integration Tests'){
-            // when { 
-            //     expression { CLI_ARTIFACT_EXISTS != 'true' }
-            // }
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
                     withSonarQubeEnv('SonarQube') {
@@ -123,6 +108,9 @@ pipeline {
         }
 
         stage('End2End Tests'){
+            environment{
+                TAG_VERSION = 'test0.0.1'
+            }
             steps {
                 timeout(time: 15, unit: 'MINUTES') {
                     echo "Building Backend Image ..."
@@ -137,76 +125,74 @@ pipeline {
             }
         }
 
-        stage('Publish Artifactory'){
-            // when{
-            //     expression { CLI_ARTIFACT_EXISTS != 'true' || BACKEND_ARTIFACT_EXISTS != 'true'}
-            // }
-            steps {
-                script {
-                    if ( CLI_ARTIFACT_EXISTS != 'true' ) {
-                        sh "cd ./cli && mvn -s .m2/settings.xml deploy \
-                            -Drepo.id=snapshots"
-                    }  
-                    if (BACKEND_ARTIFACT_EXISTS != 'true' ){
-                        sh "cd ./backend && mvn -s .m2/settings.xml deploy \
-                            -Drepo.id=snapshots"
-                    }
-                    if( BANK_ARTIFACT_EXISTS != 'true' ){
-                        sh "cd ./bank && jf rt u '${BANK_VERSION}.zip' --url http://vmpx07.polytech.unice.fr:8002/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} generic-releases-local/fr/univ-cotedazur/bank/"
-                    }
-                }
-            }
-        }
+        // stage('Publish Artifactory'){
+        //     steps {
+        //         script {
+        //             if ( CLI_ARTIFACT_EXISTS != 'true' ) {
+        //                 sh "cd ./cli && mvn -s .m2/settings.xml deploy \
+        //                     -Drepo.id=snapshots"
+        //             }  
+        //             if (BACKEND_ARTIFACT_EXISTS != 'true' ){
+        //                 sh "cd ./backend && mvn -s .m2/settings.xml deploy \
+        //                     -Drepo.id=snapshots"
+        //             }
+        //             if( BANK_ARTIFACT_EXISTS != 'true' ){
+        //                 sh "cd ./bank && jf rt u '${BANK_VERSION}.zip' --url http://vmpx07.polytech.unice.fr:8002/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} generic-releases-local/fr/univ-cotedazur/bank/"
+        //             }
+        //         }
+        //     }
+        // }
 
-        stage('Publish DockerHub'){
-            // when { 
-            //     expression { env.BRANCH_NAME =~ /^[0-9]+\.[0-9]+\.[0-9]+/ }
-            // }
-            environment {
-                TAG_VERSION = "test0.0.1"
-            }
-            steps {
-                withDockerRegistry([ credentialsId: "DockerHub", url: ""]) {
-                    // sh "docker image tag teamgisadevops2023/backend:${TAG_VERSION}  teamgisadevops2023/backend:latest"
-                    // sh "docker image tag teamgisadevops2023/cli:${TAG_VERSION}  teamgisadevops2023/cli:latest"
-                    sh "docker push teamgisadevops2023/backend:${TAG_VERSION}"
-                    sh "docker push teamgisadevops2023/cli:${TAG_VERSION}"
-                    sh "docker push teamgisadevops2023/bank:${TAG_VERSION}"
-                    // sh "docker push teamgisadevops2023/backend:latest"
-                    // sh "docker push teamgisadevops2023/cli:latest"
-                    // sh "docker push teamgisadevops2023/bank:latest"
-                }
-                // withCredentials([usernamePassword(credentialsId: 'DockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                //     sh "docker login -u ${USERNAME} -p ${PASSWORD} https://index.docker.io/v1/"
-                //     sh "docker push teamgisadevops2023/backend:${TAG_VERSION}"
-                //     sh "docker push teamgisadevops2023/cli:${TAG_VERSION}"
-                //     sh "docker push teamgisadevops2023/bank:${TAG_VERSION}"
-                // }
-            }
-        }
+        // stage('Publish DockerHub'){
+        //     // when { 
+        //     //     expression { env.BRANCH_NAME =~ /^[0-9]+\.[0-9]+\.[0-9]+/ }
+        //     // }
+        //     environment {
+        //         TAG_VERSION = "test0.0.1"
+        //     }
+        //     steps {
+        //         withDockerRegistry([ credentialsId: "DockerHub", url: ""]) {
+        //             // sh "docker image tag teamgisadevops2023/backend:${TAG_VERSION}  teamgisadevops2023/backend:latest"
+        //             // sh "docker image tag teamgisadevops2023/cli:${TAG_VERSION}  teamgisadevops2023/cli:latest"
+        //             sh "docker push teamgisadevops2023/backend:${TAG_VERSION}"
+        //             sh "docker push teamgisadevops2023/cli:${TAG_VERSION}"
+        //             sh "docker push teamgisadevops2023/bank:${TAG_VERSION}"
+        //             // sh "docker push teamgisadevops2023/backend:latest"
+        //             // sh "docker push teamgisadevops2023/cli:latest"
+        //             // sh "docker push teamgisadevops2023/bank:latest"
+        //         }
+        //         // withCredentials([usernamePassword(credentialsId: 'DockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+        //         //     sh "docker login -u ${USERNAME} -p ${PASSWORD} https://index.docker.io/v1/"
+        //         //     sh "docker push teamgisadevops2023/backend:${TAG_VERSION}"
+        //         //     sh "docker push teamgisadevops2023/cli:${TAG_VERSION}"
+        //         //     sh "docker push teamgisadevops2023/bank:${TAG_VERSION}"
+        //         // }
+        //     }
+        // }
 
-        stage('Deploy'){
-            // when { 
-            //     expression { env.BRANCH_NAME =~ /^[0-9]+\.[0-9]+\.[0-9]+/ }
-            // }
-            steps {
-                sh "docker-compose -f docker-compose.prod.yml -p mfc-prod down"
-                sh "docker-compose -f docker-compose.prod.yml -p mfc-prod up -d"
-            }
-        }
+        // stage('Deploy'){
+        //     // when { 
+        //     //     expression { env.BRANCH_NAME =~ /^[0-9]+\.[0-9]+\.[0-9]+/ }
+        //     // }
+        //     steps {
+        //         sh "docker-compose -f docker-compose.prod.yml -p mfc-prod down"
+        //         sh "docker-compose -f docker-compose.prod.yml -p mfc-prod up -d"
+        //     }
+        // }
+
         stage('Cleanup'){
             steps {
                 sh "cd ./bank && jf rt del --url http://vmpx07.polytech.unice.fr:8002/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} generic-releases-local/fr/univ-cotedazur/bank/${BANK_VERSION}.zip"
-                delete('cli')
-                delete('backend')
-                withCredentials([usernamePassword(credentialsId: 'DockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    script{
-                        def DOCKER_TOKEN = getDockerToken()
-                        sh("curl \"https://hub.docker.com/v2/repositories/teamgisadevops2023/backend/tags/${TAG_VERSION}\" -X DELETE -H \'Authorization: JWT ${DOCKER_TOKEN}\'")
-                        sh("curl \"https://hub.docker.com/v2/repositories/teamgisadevops2023/cli/tags/${TAG_VERSION}\" -X DELETE -H \'Authorization: JWT ${DOCKER_TOKEN}\'")
-                        sh("curl \"https://hub.docker.com/v2/repositories/teamgisadevops2023/bank/tags/${TAG_VERSION}\" -X DELETE -H \'Authorization: JWT ${DOCKER_TOKEN}\'")
-                    }
-                }
+                // delete('cli')
+                // delete('backend')
+                // withCredentials([usernamePassword(credentialsId: 'DockerHub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                //     script{
+                //         def DOCKER_TOKEN = getDockerToken()
+                //         sh("curl \"https://hub.docker.com/v2/repositories/teamgisadevops2023/backend/tags/${TAG_VERSION}\" -X DELETE -H \'Authorization: JWT ${DOCKER_TOKEN}\'")
+                //         sh("curl \"https://hub.docker.com/v2/repositories/teamgisadevops2023/cli/tags/${TAG_VERSION}\" -X DELETE -H \'Authorization: JWT ${DOCKER_TOKEN}\'")
+                //         sh("curl \"https://hub.docker.com/v2/repositories/teamgisadevops2023/bank/tags/${TAG_VERSION}\" -X DELETE -H \'Authorization: JWT ${DOCKER_TOKEN}\'")
+                //     }
+                // }
             }
         }
     }
@@ -263,7 +249,7 @@ def exists(artifactPath) {
 }
 
 def getTag() {
-     if(env.BRANCH_NAME =~ /^[0-9]+\.[0-9]+\.[0-9]+/) {
+     if(env.BRANCH_NAME =~ /^test[0-9]+\.[0-9]+\.[0-9]+/) {
          return env.BRANCH_NAME
      }
      return ""
@@ -375,4 +361,24 @@ def getDockerToken() {
         script: "curl -s -H \"Content-Type: application/json\" -X POST -H \"Content-Type: application/json\" -d '{\"username\":\"${USERNAME}\", \"password\":\"${PASSWORD}\"}' \"https://hub.docker.com/v2/users/login/\" | jq -r .token && curl \"https://hub.docker.com/v2/repositories/teamgisadevops2023/backend/tags/${TAG_VERSION}\"",
         returnStdout: true
     ).trim()
+}
+
+def downloadIfExistsNode(module){
+    String artifactPath = ""
+    String version = ""
+    switch(module){
+        case 'bank':
+            artifactPath = BANK_ARTIFACT_PATH
+            version = BANK_VERSION
+            break
+    }
+    sh("jf rt dl --url http://vmpx07.polytech.unice.fr:8002/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} --limit=1 generic-releases-local/${artifactPath}/ ./${module}/")
+    sh("ls")
+    try {
+        // sh("cd ./${module}/${artifactPath} && pwd && ls")
+        sh("cd ./${module}/ && unzip ./${artifactPath}/dist.zip && ls")
+        // sh("cd ./${module}/dist && pwd && ls")
+    } catch (e) {
+        echo "No artifact found in Artifactory"
+    }
 }
