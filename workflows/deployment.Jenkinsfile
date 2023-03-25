@@ -44,9 +44,9 @@ pipeline {
                     echo "Building Backend Image ..."
                     sh "docker build --build-arg JAR_FILE=${BACKEND_VERSION}.jar -t teamgisadevops2023/backend:${TAG_VERSION} ./backend"
                     echo "Building CLI Image ..."
-                    sh "cd ./cli && docker build --build-arg JAR_FILE=${CLI_VERSION}.jar -t teamgisadevops2023/cli${TAG_VERSION} -f Dockerfile ."
+                    sh "cd ./cli && docker build --build-arg JAR_FILE=${CLI_VERSION}.jar -t teamgisadevops2023/cli:${TAG_VERSION} -f Dockerfile ."
                     echo "Building Bank Image ..."
-                    sh "cd ./bank && docker build -t teamgisadevops2023/bank${TAG_VERSION} -f Dockerfile ."
+                    sh "cd ./bank && docker build -t teamgisadevops2023/bank:${TAG_VERSION} -f Dockerfile ."
                     echo "Start System"
                     sh "./End2End.sh"
                 }
