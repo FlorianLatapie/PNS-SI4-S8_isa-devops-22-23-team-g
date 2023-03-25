@@ -1,6 +1,6 @@
 pipeline {
     agent {
-      docker { image 'ci/maven.artifactory' }
+      docker { image 'ci/pipeline' }
     }
 
     environment {
@@ -26,7 +26,7 @@ pipeline {
                 timeout(time: 5, unit: 'MINUTES') {
                     withSonarQubeEnv('SonarQube') {
                         sh "cd ./backend && mvn clean package sonar:sonar \
-                              -Dsonar.projectKey=maven-jenkins-pipeline \
+                              -Dsonar.projectKey=mfc-backend \
                               -Dsonar.host.url=http://vmpx07.polytech.unice.fr:8001 \
                               -Dsonar.login=${env.SONAR_AUTH_TOKEN}"
                     }

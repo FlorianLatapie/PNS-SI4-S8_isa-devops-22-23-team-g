@@ -1,7 +1,7 @@
 pipeline {
     agent {
       docker { 
-            image 'ci/maven.artifactory'
+            image 'ci/pipeline'
             args '--privileged  -v /var/run/docker.sock:/var/run/docker.sock'
         }
     }
@@ -12,27 +12,19 @@ pipeline {
               returnStdout: true
         ).trim()
         BACKEND_ARTIFACT_PATH = getArtifactPath('backend')
-        CLI_ARTIFACT_PATH = getArtifactPath('cli')
         BACKEND_VERSION = parseVersion(BACKEND_ARTIFACT_PATH)
-        CLI_VERSION = parseVersion(CLI_ARTIFACT_PATH)
         BACKEND_ARTIFACT_EXISTS = exists(BACKEND_ARTIFACT_PATH)
+        CLI_ARTIFACT_PATH = getArtifactPath('cli')
+        CLI_VERSION = parseVersion(CLI_ARTIFACT_PATH)
         CLI_ARTIFACT_EXISTS = exists(CLI_ARTIFACT_PATH)
+        BANK_ARTIFACT_PATH = getNodeArtifactPath('bank')
+        BANK_ARTIFACT_EXISTS = exists(BANK_ARTIFACT_PATH)
+        BANK_VERSION = parseVersion(BANK_ARTIFACT_PATH)
         ARTIFACTORY_ACCESS_TOKEN = credentials('artifactory-access-token')
         TAG_VERSION = getTag()
     }
 
     stages {
-        stage('Gateway') {
-            when{
-                expression { CLI_ARTIFACT_EXISTS == 'true' && BACKEND_ARTIFACT_EXISTS == 'true' }
-            }
-            steps{
-                error(
-                    "BACKEND and CLI artifacts already exists."
-                )
-            }
-        }
-
         stage('Prepare') {
             options {
               timeout(time: 5, unit: 'MINUTES')   // timeout on this stage
@@ -42,55 +34,11 @@ pipeline {
                 checkout scm
                 downloadIfExists('backend')
                 downloadIfExists('cli')
-            }
-        }
-
-        stage('Backend Unit & Integration Tests'){
-            when { 
-                expression { BACKEND_ARTIFACT_EXISTS != 'true' }
-            }
-            steps {
-                timeout(time: 5, unit: 'MINUTES') {
-                    withSonarQubeEnv('SonarQube') {
-                        sh "cd ./backend && mvn clean package sonar:sonar \
-                              -Dsonar.projectKey=maven-jenkins-pipeline \
-                              -Dsonar.host.url=http://vmpx07.polytech.unice.fr:8001 \
-                              -Dsonar.login=${env.SONAR_AUTH_TOKEN}"
-                    }
-                }
-                sh "cd ./backend && mvn verify"
-                timeout(time: 10, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-                moveArtifact('backend')
-            }
-        }
-
-        stage('CLI Unit & Integration Tests'){
-            when { 
-                expression { CLI_ARTIFACT_EXISTS != 'true' }
-            }
-            steps {
-                timeout(time: 5, unit: 'MINUTES') {
-                    withSonarQubeEnv('SonarQube') {
-                        sh "cd ./cli && mvn clean package sonar:sonar \
-                              -Dsonar.projectKey=maven-jenkins-pipeline \
-                              -Dsonar.host.url=http://vmpx07.polytech.unice.fr:8001 \
-                              -Dsonar.login=${env.SONAR_AUTH_TOKEN}"
-                    }
-                }
-                sh "cd ./cli && mvn verify"
-                timeout(time: 10, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-                moveArtifact('cli')
+                downloadIfExistsNode('bank')
             }
         }
 
         stage('End2End Tests'){
-            when{
-                expression { CLI_ARTIFACT_EXISTS != 'true' || BACKEND_ARTIFACT_EXISTS != 'true' }
-            }
             steps {
                 timeout(time: 15, unit: 'MINUTES') {
                     echo "Building Backend Image ..."
@@ -101,24 +49,6 @@ pipeline {
                     sh "cd ./bank && docker build -t teamgisadevops2023/bank${TAG_VERSION} -f Dockerfile ."
                     echo "Start System"
                     sh "./End2End.sh"
-                }
-            }
-        }
-
-        stage('Publish Artifactory'){
-            when{
-                expression { CLI_ARTIFACT_EXISTS != 'true' || BACKEND_ARTIFACT_EXISTS != 'true' }
-            }
-            steps {
-                script {
-                    if ( CLI_ARTIFACT_EXISTS != 'true' ) {
-                        sh "cd ./cli && mvn -s .m2/settings.xml deploy \
-                            -Drepo.id=snapshots"
-                    }  
-                    if (BACKEND_ARTIFACT_EXISTS != 'true' ){
-                        sh "cd ./backend && mvn -s .m2/settings.xml deploy \
-                            -Drepo.id=snapshots"
-                    }
                 }
             }
         }
@@ -189,6 +119,15 @@ def getArtifactPath(module) {
     def version = inputString.substring(inputString.lastIndexOf('/') + 1)
     def remainingString = inputString.substring(0, inputString.lastIndexOf('/') + 1)
     return remainingString.replaceAll(/\./, '/') + version
+}
+
+
+def getNodeArtifactPath(module) {
+    def version =  sh (
+          script: "cd ./${module} && npm pkg get version",
+          returnStdout: true
+    ).trim().replaceAll('"', '')
+    return 'fr/univ-cotedazur/bank/' + version
 }
 
 def parseVersion(artifactPath) {
@@ -276,4 +215,23 @@ def hasChangesIn(activeBuild, module) {
         }
     }
     return hasChangesIn(activeBuild.previousBuild, module)
+}
+
+def downloadIfExistsNode(module){
+    String path = ""
+    String artifactPath = ""
+    String version = ""
+    switch(module){
+        case 'bank':
+            artifactPath = BANK_ARTIFACT_PATH
+            version = BANK_VERSION
+            path = "bank/${BACKEND_VERSION}.zip"
+            break
+    }
+    sh("jf rt dl --url http://vmpx07.polytech.unice.fr:8002/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} --limit=1 libs-snapshot-local/${artifactPath}/ ./${module}/")
+    try {
+        sh("cd ./${module}/ && unzip ${version}.zip && ls")
+    } catch (e) {
+        echo "No artifact found in Artifactory"
+    }
 }

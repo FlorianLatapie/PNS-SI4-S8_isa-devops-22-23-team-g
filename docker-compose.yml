@@ -7,7 +7,7 @@ services:
         context: ./backend
         dockerfile: dev.Dockerfile
         args:
-            JAR_FILE: backend-0.0.1-SNAPSHOT.jar
+            JAR_FILE: mfc-backend-0.0.1-SNAPSHOT.jar
     container_name: mfc-server-staging
     ports: 
       - 8080:8080
@@ -26,7 +26,7 @@ services:
         context: cli
         dockerfile: dev.Dockerfile
         args:
-            JAR_FILE: cli-0.0.1-SNAPSHOT.jar
+            JAR_FILE: mfc-cli-0.0.1-SNAPSHOT.jar
     container_name: mfc-cli-staging
     environment:
       - SERVER_WITH_PORT=mfc-server-staging:8080

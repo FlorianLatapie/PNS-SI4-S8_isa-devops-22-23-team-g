@@ -1,6 +1,6 @@
 pipeline {
     agent {
-      docker { image 'ci/maven.artifactory' }
+      docker { image 'ci/pipeline' }
     }
 
     environment {

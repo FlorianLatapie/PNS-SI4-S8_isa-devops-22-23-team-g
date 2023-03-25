@@ -1,6 +1,6 @@
 pipeline {
     agent {
-      docker { image 'ci/node.artifactory' }
+      docker { image 'ci/pipeline' }
     }
 
     environment {
@@ -73,6 +73,6 @@ def getNodeArtifactPath(module) {
     def version =  sh (
           script: "cd ./${module} && npm pkg get version",
           returnStdout: true
-    ).trim()
+    ).trim().replaceAll('"', '')
     return 'fr/univ-cotedazur/bank/' + version
 }

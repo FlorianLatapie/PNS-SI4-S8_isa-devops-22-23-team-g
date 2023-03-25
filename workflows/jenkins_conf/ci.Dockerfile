@@ -22,5 +22,13 @@ RUN chmod +x /usr/local/bin/docker-compose
 RUN apt-get install jq -y
 RUN apt-get install socat -y
 
+RUN curl -sL https://deb.nodesource.com/setup_18.x -o /tmp/nodesource_setup.sh
+RUN chmod +x /tmp/nodesource_setup.sh
+RUN /tmp/nodesource_setup.sh
+RUN apt install nodejs
+RUN mkdir /.npm
+RUN chown 1000:1000 /.npm
+RUN apt-get install zip -y
+
 ENTRYPOINT ["/usr/local/bin/mvn-entrypoint.sh"]
 CMD ["mvn"]

@@ -74,5 +74,20 @@ Exécutez le fichier [rsa-key](./user-scripts/rsa-key.sh)
 #### Script
 
 ### SonarQube
+Pour chaque projet, à partir de la page d'accueil
+ - Create project
+    - Project display name: nom du projet
+    - Project key: nom-du-projet
+    - Main branch name: main
+
+Création du token d'authentification:
+ - Administrator (en haut à droit) -> My Account -> Security -> Generate Tokens
+    - name: sonarqube-global-token
+    - type: Global Analysis Token
+    - Expires In: au choix
+ - Copier ce token d'authentification dans :
+    - isa-devops-22-23-team-g-23/workflows/env/.secrets.env
+    - SONARQUBE_TOKEN=token_genere
+Redémarrer Jenkins, cette variable d'environnement sera utilisée par Jenkins CASC pour initialiser le token SonarQube
 
 #### Script

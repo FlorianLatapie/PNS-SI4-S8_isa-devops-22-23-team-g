@@ -24,7 +24,7 @@ unclassified:
   sonarGlobalConfiguration:
     buildWrapperEnabled: false
     installations:
-    - credentialsId: "sonarqube-project-token"
+    - credentialsId: "sonarqube-global-token"
       name: "SonarQube"
       serverUrl: "http://sonarqube:9000"
       triggers:
@@ -50,8 +50,8 @@ credentials:
           scope: GLOBAL
           username: "FlorianLatapie"
       - string:
-          description: "sonarqube-project-token"
-          id: "sonarqube-project-token"
+          description: "sonarqube-global-token"
+          id: "sonarqube-global-token"
           scope: GLOBAL
           secret: ${SONARQUBE_TOKEN}
       - string:

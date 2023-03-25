@@ -1,7 +1,7 @@
 pipeline {
     agent {
       docker { 
-            image 'ci/maven.artifactory'
+            image 'ci/pipeline'
             args '--privileged  -v /var/run/docker.sock:/var/run/docker.sock'
         }
     }
@@ -12,22 +12,25 @@ pipeline {
               returnStdout: true
         ).trim()
         BACKEND_ARTIFACT_PATH = getArtifactPath('backend')
-        CLI_ARTIFACT_PATH = getArtifactPath('cli')
         BACKEND_VERSION = parseVersion(BACKEND_ARTIFACT_PATH)
-        CLI_VERSION = parseVersion(CLI_ARTIFACT_PATH)
         BACKEND_ARTIFACT_EXISTS = exists(BACKEND_ARTIFACT_PATH)
+        CLI_ARTIFACT_PATH = getArtifactPath('cli')
+        CLI_VERSION = parseVersion(CLI_ARTIFACT_PATH)
         CLI_ARTIFACT_EXISTS = exists(CLI_ARTIFACT_PATH)
+        BANK_ARTIFACT_PATH = getNodeArtifactPath('bank')
+        BANK_ARTIFACT_EXISTS = exists(BANK_ARTIFACT_PATH)
+        BANK_VERSION = parseVersion(BANK_ARTIFACT_PATH)
         ARTIFACTORY_ACCESS_TOKEN = credentials('artifactory-access-token')
     }
 
     stages {
         stage('Gateway') {
             when{
-                expression { CLI_ARTIFACT_EXISTS == 'true' && BACKEND_ARTIFACT_EXISTS == 'true' }
+                expression { CLI_ARTIFACT_EXISTS == 'true' && BACKEND_ARTIFACT_EXISTS == 'true' && BANK_ARTIFACT_EXISTS == 'true' }
             }
             steps{
                 error(
-                    "BACKEND and CLI artifacts already exists."
+                    "BACKEND, CLI and BANK artifacts already exists."
                 )
             }
         }
@@ -41,6 +44,7 @@ pipeline {
                 checkout scm
                 downloadIfExists('backend')
                 downloadIfExists('cli')
+                downloadIfExistsNode('bank')
             }
         }
 
@@ -52,7 +56,7 @@ pipeline {
                 timeout(time: 5, unit: 'MINUTES') {
                     withSonarQubeEnv('SonarQube') {
                         sh "cd ./backend && mvn clean package sonar:sonar \
-                              -Dsonar.projectKey=maven-jenkins-pipeline \
+                              -Dsonar.projectKey=mfc-backend \
                               -Dsonar.host.url=http://vmpx07.polytech.unice.fr:8001 \
                               -Dsonar.login=${env.SONAR_AUTH_TOKEN}"
                     }
@@ -73,7 +77,7 @@ pipeline {
                 timeout(time: 5, unit: 'MINUTES') {
                     withSonarQubeEnv('SonarQube') {
                         sh "cd ./cli && mvn clean package sonar:sonar \
-                              -Dsonar.projectKey=maven-jenkins-pipeline \
+                              -Dsonar.projectKey=mfc-cli \
                               -Dsonar.host.url=http://vmpx07.polytech.unice.fr:8001 \
                               -Dsonar.login=${env.SONAR_AUTH_TOKEN}"
                     }
@@ -86,12 +90,24 @@ pipeline {
             }
         }
 
+        stage('Bank Tests & Linting'){
+            when { 
+                expression { BANK_ARTIFACT_EXISTS != 'true' }
+            }
+            steps {
+                sh "cd ./bank && npm ci"
+                sh "cd ./bank && npm run lint"
+                sh "cd ./bank && npm run test"
+                sh "cd ./bank && npm run build"
+                sh "cd ./bank && zip -r '${BANK_VERSION}.zip' dist"
+            }
+        }
+
         stage('End2End Tests'){
             steps {
                 timeout(time: 15, unit: 'MINUTES') {
                     echo "Build Backend Image ..."
                     sh "ls"
-                    // sh "cd ./backend/target/fr/univ-cotedazur/simpleTCFS/ && pwd && ls"
                     sh "docker build --build-arg JAR_FILE=${BACKEND_VERSION}.jar -t teamgisadevops2023/backend ./backend"
                     echo "Build CLI Image ..."
                     sh "cd ./cli && docker build --build-arg JAR_FILE=${CLI_VERSION}.jar -t teamgisadevops2023/cli -f Dockerfile ."
@@ -108,13 +124,18 @@ pipeline {
                 expression { env.BRANCH_NAME =~ 'main'}
             }
             steps {
-                timeout(time: 5, unit: 'MINUTES') {
-                    sh "cd ./cli && mvn -s .m2/settings.xml deploy \
-                          -Drepo.id=snapshots"
-                }
-                timeout(time: 5, unit: 'MINUTES') {
-                    sh "cd ./backend && mvn -s .m2/settings.xml deploy \
-                          -Drepo.id=snapshots"
+                script {
+                    if ( CLI_ARTIFACT_EXISTS != 'true' ) {
+                        sh "cd ./cli && mvn -s .m2/settings.xml deploy \
+                            -Drepo.id=snapshots"
+                    }  
+                    if (BACKEND_ARTIFACT_EXISTS != 'true' ){
+                        sh "cd ./backend && mvn -s .m2/settings.xml deploy \
+                            -Drepo.id=snapshots"
+                    }
+                    if( BANK_ARTIFACT_EXISTS != 'true' ){
+                        sh "cd ./bank && jf rt u '${BANK_VERSION}.zip' --url http://vmpx07.polytech.unice.fr:8002/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} generic-releases-local/fr/univ-cotedazur/bank/"
+                    }
                 }
             }
         }
@@ -161,6 +182,14 @@ def getArtifactPath(module) {
     return remainingString.replaceAll(/\./, '/') + version
 }
 
+def getNodeArtifactPath(module) {
+    def version =  sh (
+          script: "cd ./${module} && npm pkg get version",
+          returnStdout: true
+    ).trim().replaceAll('"', '')
+    return 'fr/univ-cotedazur/bank/' + version
+}
+
 def parseVersion(artifactPath) {
     return artifactPath.substring(artifactPath.lastIndexOf('/') + 1)
 }
@@ -193,6 +222,26 @@ def downloadIfExists(module){
         sh("cd ./${module}/target/${artifactPath} && pwd && ls")
         sh("mv ./${module}/target/${artifactPath}/*.jar ./${module}/target/ && cd ./${module}/target && ls *.jar |grep '^${version}.jar\$' || mv `ls *.jar | head -1` ${version}.jar")
         sh("cd ./${module}/target && pwd && ls")
+    } catch (e) {
+        echo "No artifact found in Artifactory"
+    }
+}
+
+
+def downloadIfExistsNode(module){
+    String path = ""
+    String artifactPath = ""
+    String version = ""
+    switch(module){
+        case 'bank':
+            artifactPath = BANK_ARTIFACT_PATH
+            version = BANK_VERSION
+            path = "bank/${BACKEND_VERSION}.zip"
+            break
+    }
+    sh("jf rt dl --url http://vmpx07.polytech.unice.fr:8002/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} --limit=1 libs-snapshot-local/${artifactPath}/ ./${module}/")
+    try {
+        sh("cd ./${module}/ && unzip ${version}.zip && ls")
     } catch (e) {
         echo "No artifact found in Artifactory"
     }

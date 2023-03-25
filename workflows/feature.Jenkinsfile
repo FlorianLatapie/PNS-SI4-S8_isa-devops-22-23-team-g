@@ -1,6 +1,6 @@
 pipeline {
     agent {
-      docker { image 'ci/maven.artifactory' }
+      docker { image 'ci/pipeline' }
     }
 
     environment {
@@ -33,7 +33,7 @@ pipeline {
                 timeout(time: 5, unit: 'MINUTES') {
                     withSonarQubeEnv('SonarQube') {
                         sh "cd ./backend && mvn clean package sonar:sonar \
-                              -Dsonar.projectKey=maven-jenkins-pipeline \
+                              -Dsonar.projectKey=mfc-backend \
                               -Dsonar.host.url=http://vmpx07.polytech.unice.fr:8001 \
                               -Dsonar.login=${env.SONAR_AUTH_TOKEN}"
                     }
@@ -50,7 +50,7 @@ pipeline {
                 timeout(time: 5, unit: 'MINUTES') {
                     withSonarQubeEnv('SonarQube') {
                         sh "cd ./cli && mvn clean package sonar:sonar \
-                              -Dsonar.projectKey=maven-jenkins-pipeline \
+                              -Dsonar.projectKey=mfc-cli \
                               -Dsonar.host.url=http://vmpx07.polytech.unice.fr:8001 \
                               -Dsonar.login=${env.SONAR_AUTH_TOKEN}"
                     }
@@ -63,11 +63,6 @@ pipeline {
         }
 
         stage('Bank Tests & Linting'){
-            agent {
-              docker { 
-                image 'ci/node.artifactory' 
-              }
-            }
             steps {
                 sh "cd ./bank && npm ci"
                 sh "cd ./bank && npm run lint"
@@ -124,8 +119,8 @@ def exists(artifactPath) {
 
 def getNodeArtifactPath(module) {
     def version =  sh (
-        script: "cd ./bank && cat package.json | grep version | head -1 | awk -F: '{ print \$2 }' | sed 's/[\",]//g'",
-        returnStdout: true
-    ).trim()
+          script: "cd ./${module} && npm pkg get version",
+          returnStdout: true
+    ).trim().replaceAll('"', '')
     return 'fr/univ-cotedazur/bank/' + version
 }

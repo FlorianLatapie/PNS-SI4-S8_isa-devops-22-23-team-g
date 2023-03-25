@@ -11,11 +11,11 @@
     </parent>
 
     <groupId>fr.univ-cotedazur</groupId>
-    <artifactId>cli</artifactId>
+    <artifactId>mfc-cli</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>cli</name>
-    <description>cli</description>
+    <name>mfc-cli</name>
+    <description>mfc-cli</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -45,10 +45,15 @@
     </dependencies>
 
     <distributionManagement>
+        <repository>
+            <id>central</id>
+            <name>94921b123542-releases</name>
+            <url>http://vmpx07.polytech.unice.fr:8002/artifactory/libs-snapshot-local</url>
+        </repository>
         <snapshotRepository>
             <id>snapshots</id>
-            <name>331dec1b4e3e-snapshots</name>
-            <url>http://vmpx07.polytech.unice.fr:8002/artifactory/libs-snapshot</url>
+            <name>94921b123542-snapshots</name>
+            <url>http://vmpx07.polytech.unice.fr:8002/artifactory/libs-snapshot-local</url>
         </snapshotRepository>
     </distributionManagement>
 
