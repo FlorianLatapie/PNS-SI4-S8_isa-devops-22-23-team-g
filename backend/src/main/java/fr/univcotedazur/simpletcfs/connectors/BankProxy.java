@@ -1,7 +1,7 @@
 package fr.univcotedazur.simpletcfs.connectors;
 
-import fr.univcotedazur.simpletcfs.connectors.externaldto.externaldto.PaymentDTO;
-import fr.univcotedazur.simpletcfs.entities.Customer;
+import fr.univcotedazur.simpletcfs.connectors.externalDTO.BankPaymentDTO;
+import fr.univcotedazur.simpletcfs.entities.Euro;
 import fr.univcotedazur.simpletcfs.interfaces.Bank;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -12,28 +12,26 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class BankProxy implements Bank {
-
     @Value("${bank.host.baseurl}")
-    private String bankHostandPort;
+    private String bankHostAndPort;
 
     private RestTemplate restTemplate = new RestTemplate();
 
     @Override
-    public boolean pay(Customer customer, double value) {
+    public boolean pay(String creditCard, Euro price) { //pour ne pas avoir de bad request il faut include "896983" dans le numéro de carte
         try {
-            ResponseEntity<PaymentDTO> result = restTemplate.postForEntity(
-                    bankHostandPort + "/cctransactions",
-                    new PaymentDTO(customer.getCreditCard(), value),
-                    PaymentDTO.class
+            ResponseEntity<BankPaymentDTO> result = restTemplate.postForEntity(
+                    bankHostAndPort + "/cctransactions",
+                    new BankPaymentDTO(creditCard,(double)price.getCentsAmount()/100),
+                    BankPaymentDTO.class
             );
             return (result.getStatusCode().equals(HttpStatus.CREATED));
-        }
-        catch (HttpClientErrorException errorException) {
+        } catch (HttpClientErrorException errorException) {
             if (errorException.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+                System.out.println("Payment failed");
                 return false;
             }
             throw errorException;
         }
     }
-
 }

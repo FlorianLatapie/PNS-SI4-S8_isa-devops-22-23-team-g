@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+
 @Aspect
 @Component
 public class ControllerLogger {
@@ -19,7 +21,7 @@ public class ControllerLogger {
 
     @Before("allControllerMethods()")
     public void logMethodNameAndParametersAtEntry(JoinPoint joinPoint) {
-        LOG.info(PREFIX + joinPoint.getThis() + ":Called {}", joinPoint.getSignature().getName() + " " + joinPoint.getArgs());
+        LOG.info(PREFIX + joinPoint.getThis() + ":Called {}", joinPoint.getSignature().getName() + " " + Arrays.toString(joinPoint.getArgs()));
     }
 
     @AfterReturning(pointcut = "allControllerMethods()", returning = "resultVal")

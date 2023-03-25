@@ -41,7 +41,7 @@ Configuration of logs can be done by changing some properties, either by passing
 
 would turn off all logs at all levels.
 
-More configuration options are available in a configuration file (and XML file named `logback-spring.xml`). When found by SpringBoot, it is automatically used to configure the way logs are writtent. In TCF we use the following:
+More configuration options are available in a configuration file (and XML file named `logback-spring.xml`). When found by SpringBoot, it is automatically used to configure the way logs are written. In TCF we use the following:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>

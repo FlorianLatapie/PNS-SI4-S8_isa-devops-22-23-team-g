@@ -1,11 +1,13 @@
 package fr.univcotedazur.simpletcfs.repositories;
 
-import fr.univcotedazur.repositories.BasicRepositoryImpl;
 import fr.univcotedazur.simpletcfs.entities.Customer;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.UUID;
+import java.util.Optional;
 
 @Repository
-public class CustomerRepository extends BasicRepositoryImpl<Customer, UUID> {
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
+
+    Optional<Customer> findCustomerByUsername(String username);
 }

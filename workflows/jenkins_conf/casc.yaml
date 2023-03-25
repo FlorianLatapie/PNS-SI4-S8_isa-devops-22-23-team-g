@@ -1,0 +1,81 @@
+jenkins:
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+       - id: ${JENKINS_ADMIN_ID}
+         password: ${JENKINS_ADMIN_PASSWORD}
+
+  nodes:
+  - permanent:
+      launcher:
+        ssh:
+          credentialsId: "jenkins_agent_key"
+          host: "agent"
+          port: 22
+          sshHostKeyVerificationStrategy: "nonVerifyingKeyVerificationStrategy"
+      name: "jenkins_agent"
+      numExecutors: 3
+      remoteFS: "/home/jenkins/agent"
+      retentionStrategy: "always"
+  numExecutors: 0
+
+unclassified:
+  sonarGlobalConfiguration:
+    buildWrapperEnabled: false
+    installations:
+    - credentialsId: "sonarqube-global-token"
+      name: "SonarQube"
+      serverUrl: "http://sonarqube:9000"
+      triggers:
+        skipScmCause: false
+        skipUpstreamCause: false
+  location:
+    url: http://vmpx07.polytech.unice.fr:8000/
+
+credentials:
+  system:
+    domainCredentials:
+    - credentials:
+      - basicSSHUserPrivateKey:
+          id: "jenkins_agent_key"
+          privateKeySource:
+            directEntry:
+              privateKey: ${AGENT_KEY}
+          scope: SYSTEM
+          username: "jenkins"
+      - usernamePassword:
+          id: "FlorianGitHub"
+          password: ${GITHUB_TOKEN}
+          scope: GLOBAL
+          username: "FlorianLatapie"
+      - string:
+          description: "sonarqube-global-token"
+          id: "sonarqube-global-token"
+          scope: GLOBAL
+          secret: ${SONARQUBE_TOKEN}
+      - string:
+          description: "artifactory-access-token"
+          id: "artifactory-access-token"
+          scope: GLOBAL
+          secret: ${ARTIFACTORY_TOKEN}
+      - string:
+          description: "dockerhub-access-token"
+          id: "dockerhub-access-token"
+          scope: GLOBAL
+          secret: ${DOCKERHUB_TOKEN}
+      - usernamePassword:
+          id: "DockerHub"
+          description: "DockerHub"
+          password: ${DOCKERHUB_PASSWORD}
+          scope: GLOBAL
+          username: "teamgisadevops2023"
+
+jobs:
+  - file: /var/jenkins_home/jobdsl/backend.groovy
+  - file: /var/jenkins_home/jobdsl/bank.groovy
+  - file: /var/jenkins_home/jobdsl/feature.groovy
+  - file: /var/jenkins_home/jobdsl/cli.groovy
+  - file: /var/jenkins_home/jobdsl/cicd.groovy
+  - file: /var/jenkins_home/jobdsl/deployment.groovy
+  - file: /var/jenkins_home/jobdsl/publishing.groovy

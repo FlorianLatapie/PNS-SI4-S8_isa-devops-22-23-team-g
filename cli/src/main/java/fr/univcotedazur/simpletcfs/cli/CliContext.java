@@ -10,14 +10,14 @@ import java.util.stream.Collectors;
 @Component
 public class CliContext {
 
-    private Map<String, CliCustomer> customers;
-
-    public Map<String, CliCustomer> getCustomers() {
-        return customers;
-    }
+    private final Map<String, CliCustomer> customers;
 
     public CliContext() {
         customers = new HashMap<>();
+    }
+
+    public Map<String, CliCustomer> getCustomers() {
+        return customers;
     }
 
     @Override

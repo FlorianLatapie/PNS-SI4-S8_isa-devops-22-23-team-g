@@ -42,7 +42,7 @@ This annotation will enable the Spring container to create all found components 
 
 Required interfaces for implementing customers' carts are `Payment` to process the cart for payment and `CustomerRepository`, a kind of mocked implementation for the pure volatile release of the system.  It must be noted that the implementation extends a generic interface that ressembles the *Repository* concept in Domain-Driven Design (DDD). The full version with persistence, using a DB and SpringData/JPA, will use a similar interface (it will not be implemented with full DDD principles).
 
-Both interfaces are used in the delcaration for two attributes of the component.
+Both interfaces are used in the declaration for two attributes of the component.
 The `@Autowired` annotation is placed on the constructor that initializes both attributes. This annotation will enable the Spring container to inject the reference to the single component implementing this interface when initializing the container. If any `@Autowired` attribute cannot be injected, the Spring container will raise an exception and stop, before any functional calls through interfaces can be triggered.
 
 Note that for component implementation (not testing), it is preferable to inject at the constructor level rather than at the attribute level, so that all dependencies are well initialized at construction time of the component.

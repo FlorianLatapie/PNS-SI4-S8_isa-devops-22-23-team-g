@@ -20,5 +20,4 @@ export class AppController {
       throw new HttpException('business error: ' + e.message, HttpStatus.BAD_REQUEST);
     }
   }
-
 }

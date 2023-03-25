@@ -1,0 +1,8 @@
+register Christophe
+login Christophe
+reload-loyalty-card 10 896983 Christophe
+reload-loyalty-card 10 896982 Christophe // Error 402 : Payment refused by the bank (896982 different form the magic key)
+reload-loyalty-card -10 896983 Christophe // Error 403 : Negative amount
+pay-with-loyalty-card 10 Christophe
+pay-with-loyalty-card 10 Christophe // Error 402 : Not enough money on the account
+pay-with-loyalty-card -10 Christophe // Error 403 : Negative amount

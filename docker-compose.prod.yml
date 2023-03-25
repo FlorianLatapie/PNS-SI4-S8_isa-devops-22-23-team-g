@@ -1,0 +1,47 @@
+version: "3"
+
+services:
+  mfc-server-prod:
+    image: teamgisadevops2023/backend
+    container_name: mfc-server-prod
+    environment:
+      - BANK_WITH_PORT=bank-system-prod:9090
+      - POSTGRES_HOST=mfc-postgres-prod:5432
+      - POSTGRES_DB_NAME=mfc-db-prod
+    entrypoint: "bash -c '/opt/app/wait-for-it.sh $${POSTGRES_HOST} -- java -jar /opt/app/app.jar --bank.host.baseurl=http://$${BANK_WITH_PORT}'"
+    ports: 
+      - 80:8080
+    depends_on:
+      - bank-system-prod
+      - mfc-postgres-prod
+
+  mfc-cli-prod:
+    image: teamgisadevops2023/cli
+    container_name: mfc-cli-prod
+    environment:
+      - SERVER_WITH_PORT=mfc-server-prod:8080
+    entrypoint: "bash -c '/opt/app/wait-for-it.sh $${SERVER_WITH_PORT} -- java -jar /opt/app/app.jar'"
+    depends_on:
+      - mfc-server-prod
+    volumes:
+      - ./cli/demo:/opt/app/demo
+    stdin_open: true
+    tty: true
+
+  bank-system-prod:
+    image: teamgisadevops2023/bank
+    build:
+        context: bank
+        dockerfile: dev.Dockerfile
+    container_name: bank-system-prod
+  
+  mfc-postgres-prod:
+    image: postgres:15.2
+    container_name: mfc-db-prod
+    environment:
+      - POSTGRES_PASSWORD=postgrespass
+      - POSTGRES_USER=postgresuser
+      - POSTGRES_DB=mfc-db-prod
+networks:
+  default:
+    name: mfc-network-prod

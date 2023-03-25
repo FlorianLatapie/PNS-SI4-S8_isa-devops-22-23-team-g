@@ -110,7 +110,7 @@ Besides, one can note that we use here the `Item` from the entity package, as no
     public static final String CART_URI = "/{customerId}/cart";
 ...
     @PostMapping(path = CART_URI, consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Item> updateCustomerCart(@PathVariable("customerId") UUID customerId, @RequestBody Item it) throws CustomerIdNotFoundException, NegativeQuantityException {
+    public ResponseEntity<Item> updateCustomerCart(@PathVariable("customerId") Long customerId, @RequestBody Item it) throws CustomerIdNotFoundException, NegativeQuantityException {
         int newQuantity = cart.update(retrieveCustomer(customerId), it);
         return ResponseEntity.ok(new Item(it.getCookie(), newQuantity));
     } 

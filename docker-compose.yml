@@ -1,31 +1,57 @@
 version: "3"
 
 services:
-  # The Cookie Factory backend in SpringBoot
-  tcf-server:
-    image: pcollet/tcf-spring-backend
-    container_name: server
+  mfc-server-staging:
+    image: teamgisadevops2023/backend
+    build:
+        context: ./backend
+        dockerfile: dev.Dockerfile
+        args:
+            JAR_FILE: mfc-backend-0.0.1-SNAPSHOT.jar
+    container_name: mfc-server-staging
+    ports: 
+      - 8080:8080
     environment:
-      - BANK_WITH_PORT=bank-system:9090
-    entrypoint: "bash -c '/opt/app/wait-for-it.sh $${BANK_WITH_PORT} -- java -jar /opt/app/app.jar --bank.host.baseurl=http://$${BANK_WITH_PORT}'"
+      - BANK_WITH_PORT=bank-system-staging:9090
+      - POSTGRES_DB_NAME=mfc-db-staging
+      - POSTGRES_HOST=mfc-postgres-staging:5432
+    entrypoint: "bash -c '/opt/app/wait-for-it.sh $${POSTGRES_HOST} -- java -jar /opt/app/app.jar --bank.host.baseurl=http://$${BANK_WITH_PORT}'"
     depends_on:
-      - bank-system
+      - bank-system-staging
+      - mfc-postgres-staging
 
-  # A simple java CLI
-  tcf-cli:
-    image: pcollet/tcf-spring-cli
-    container_name: cli
+  mfc-cli-staging:
+    image: teamgisadevops2023/cli
+    build:
+        context: cli
+        dockerfile: dev.Dockerfile
+        args:
+            JAR_FILE: mfc-cli-0.0.1-SNAPSHOT.jar
+    container_name: mfc-cli-staging
     environment:
-      - SERVER_WITH_PORT=tcf-server:8080
+      - SERVER_WITH_PORT=mfc-server-staging:8080
     entrypoint: "bash -c '/opt/app/wait-for-it.sh $${SERVER_WITH_PORT} -- java -jar /opt/app/app.jar'"
     depends_on:
-      - tcf-server
+      - mfc-server-staging
     volumes:
-      - ./cli/demo.txt:/opt/app/demo.txt
+      - ./cli/demo:/opt/app/demo
     stdin_open: true
     tty: true
 
-  # An external bank service in NestJs
-  bank-system:
-    image: pcollet/tcf-bank-service
-    container_name: bank
+  bank-system-staging:
+    image: teamgisadevops2023/bank
+    build:
+        context: bank
+        dockerfile: dev.Dockerfile
+    container_name: bank-system-staging
+  
+  mfc-postgres-staging:
+    image: postgres:15.2
+    container_name: mfc-db-staging
+    environment:
+      - POSTGRES_PASSWORD=postgrespass
+      - POSTGRES_USER=postgresuser
+      - POSTGRES_DB=mfc-db-staging
+networks:
+  default:
+    name: mfc-network-staging

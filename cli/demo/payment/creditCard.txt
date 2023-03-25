@@ -1,0 +1,16 @@
+// create a new account
+register Jeanne
+
+// try to create a new account with an existing name
+register Jeanne // Error : 409 Conflict
+
+// login permit to recover the UUID of the account
+login Jeanne
+
+// payment accepted by the bank (because of the number of the credit card "896983" being the magic key)
+pay-with-credit-card 10 896983 Jeanne
+
+// payment failure by the bank
+pay-with-credit-card 10 896982 Jeanne // Error : 402 Payment Refused by the bank
+
+pay-with-credit-card -10 896983 Jeanne // Error : 403 Negative amount

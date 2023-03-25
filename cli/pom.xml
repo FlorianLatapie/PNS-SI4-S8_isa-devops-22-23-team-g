@@ -10,12 +10,12 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>fr.univcotedazur.simpletcfs</groupId>
-    <artifactId>cli</artifactId>
+    <groupId>fr.univ-cotedazur</groupId>
+    <artifactId>mfc-cli</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>cli</name>
-    <description>cli</description>
+    <name>mfc-cli</name>
+    <description>mfc-cli</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,7 +38,24 @@
             <artifactId>spring-shell-starter</artifactId>
             <version>2.1.4</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <name>94921b123542-releases</name>
+            <url>http://vmpx07.polytech.unice.fr:8002/artifactory/libs-snapshot-local</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>94921b123542-snapshots</name>
+            <url>http://vmpx07.polytech.unice.fr:8002/artifactory/libs-snapshot-local</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <build>
         <plugins>
@@ -48,5 +65,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

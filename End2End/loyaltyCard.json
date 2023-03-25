@@ -1,0 +1,44 @@
+[
+  {
+    "name": "It should create an account for Christophe",
+    "comment": "check if the account id is correct",
+    "command": "register Christophe",
+    "expected": "Returned register with value CliCustomer{id=3, name='Christophe', points=0, euros=0.0}"
+  },
+  {
+    "name": "It should login as Christophe",
+    "command": "login Christophe",
+    "expected": "Returned login with value CliCustomer{id=3, name='Christophe', points=0, euros=0.0}"
+  },
+  {
+    "name": "It should accept the payment to reload the loyalty card if the credit card is valid",
+    "comment": "check why the transaction id is null",
+    "command": "reload-loyalty-card 10 896983 Christophe",
+    "expected": "EuroTransactionDTO\\[customerDTO=CliCustomer{id=3, name='Christophe', points=0, euros=10.0}, price=10.0, shopName=Unknown, idTransaction=null, pointsEarned=0\\]"
+  },
+  {
+    "name": "It should NOT accept the payment to reload the loyalty card if the credit card is invalid",
+    "command": "reload-loyalty-card 10 896982 Christophe",
+    "expected": "402 : \\[no body\\]"
+  },
+  {
+    "name": "It should NOT accept the payment to reload the loyalty card if the amount is negative",
+    "command": "reload-loyalty-card -10 896983 Christophe",
+    "expected": "403 : \\[no body\\]"
+  },
+  {
+    "name": "It should accept the payment with the loyalty card if it has enough credit",
+    "command": "pay-with-loyalty-card 10 Christophe",
+    "expected": "EuroTransactionDTO\\[customerDTO=CliCustomer{id=3, name='Christophe', points=20, euros=0.0}, price=10.0, shopName=Unknown, idTransaction=4, pointsEarned=0\\]"
+  },
+  {
+    "name": "It should NOT accept the payment with the loyalty card if it does not have enough credit",
+    "command": "pay-with-loyalty-card 10 Christophe",
+    "expected": "402 : \\[no body\\]"
+  },
+  {
+    "name": "It should NOT accept the payment with the loyalty card if the amount is negative",
+    "command": "pay-with-loyalty-card -10 Christophe",
+    "expected": "403 : \\[no body\\]"
+  }
+]
