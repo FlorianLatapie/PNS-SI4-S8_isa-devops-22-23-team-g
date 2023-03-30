@@ -46,7 +46,7 @@ public class Cashier implements Payment, ChargeCard {
         Point pointEarned;
         if (bankProxy.pay(creditCard,amount)){
             // on ajoute 2 fois le montant d'euro en point, (les euros sont en centimes)
-            pointEarned = pointsRewards.gain(customer, new Point((amount.getCentsAmount() / 100 ) * 2));
+            pointEarned = pointsRewards.gain(customer, amount);
         }else{
             throw new PaymentException();
         }
@@ -65,7 +65,7 @@ public class Cashier implements Payment, ChargeCard {
         }
         // points earned are 2 times the amount of euro, euros are in cents
         customer.getCustomerBalance().removeEuro(amount);
-        Point pointEarned = pointsRewards.gain(customer, new Point((amount.getCentsAmount() / 100) * 2));
+        Point pointEarned = pointsRewards.gain(customer, amount);
 
         // need to register the transaction in BD
         EuroTransaction euroTransaction = new EuroTransaction(customer, shop, amount, pointEarned);
