@@ -4,7 +4,6 @@ import fr.univcotedazur.simpletcfs.controllers.dto.CustomerDTO;
 import fr.univcotedazur.simpletcfs.controllers.dto.ErrorDTO;
 import fr.univcotedazur.simpletcfs.controllers.dto.SurveyDTO;
 import fr.univcotedazur.simpletcfs.entities.Survey;
-import fr.univcotedazur.simpletcfs.exceptions.SurveyAlreadyExistsException;
 import fr.univcotedazur.simpletcfs.interfaces.SurveyFinder;
 import fr.univcotedazur.simpletcfs.interfaces.SurveyModifier;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +25,10 @@ import static fr.univcotedazur.simpletcfs.controllers.CustomerController.convert
 public class SurveyController {
     public static final String BASE_URI = "/surveys";
 
-
+    @Autowired
     private SurveyModifier surveyModifier;
+    @Autowired
+    private SurveyFinder surveyFinder;
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     // The 422 (Unprocessable Entity) status code means the server understands the content type of the request entity
@@ -58,4 +59,11 @@ public class SurveyController {
         return new SurveyDTO(survey.getId(),participants,survey.getQuestions());
     }
 
+    @GetMapping(path = "/all")
+    public List<SurveyDTO> getAllSurveys() {
+        System.out.println("Getting all surveys");
+        List<SurveyDTO> surveyDTOS = new ArrayList<>();
+        surveyFinder.findAll().forEach(survey -> surveyDTOS.add(convertSurveyToDto(survey)));
+        return surveyDTOS;
+    }
 }
