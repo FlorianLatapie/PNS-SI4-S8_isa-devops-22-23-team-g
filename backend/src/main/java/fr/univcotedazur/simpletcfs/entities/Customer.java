@@ -18,10 +18,14 @@ public class Customer {
     String username;
 
     private String licensePlate;
+
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.CLASSIC;
+
     @Embedded
     private CustomerBalance customerBalance;
-    @Transient
-    private Date lastEuroTransactionDate = new Date(Long.MIN_VALUE);
+
+    private Date lastEuroTransactionDate = new Date(0);
     public Customer() {
     }
 
@@ -106,5 +110,13 @@ public class Customer {
     @Override
     public int hashCode() {
         return Objects.hash(username);
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public Status getStatus() {
+        return status;
     }
 }

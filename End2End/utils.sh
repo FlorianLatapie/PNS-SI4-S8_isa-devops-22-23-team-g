@@ -40,7 +40,7 @@ function waitEnterKey(){
 }
 
 function assertEquals(){
-    echo "$2" |grep -q "$1"
+    echo "$2" |grep -Eq "$1"
     if [ $? -eq 0 ]; then
         printf "${GREEN}Test passed${NC}\n"
         return 0
@@ -69,6 +69,13 @@ function testRunner(){
       NAME=$(_jq '.name')
       printf "\n%s\n" "$NAME"
       printf "Running command: %s\n" "$COMMAND"
+      seedCommands="$(_jq '.seedCommands')"
+      if [ "$seedCommands" != "null"  ]; then
+        items="$(echo "$seedCommands" | jq -c -r '.[]')"
+        for item in "${items[@]}"; do
+            VOID=$(runCommand "$item")
+        done
+      fi
       RESULT=$(runCommand "$COMMAND")
       assertEquals "$EXPECTED" "$RESULT"
       globalResult+=($?) 

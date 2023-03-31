@@ -1,6 +1,7 @@
 package fr.univcotedazur.simpletcfs.controllers.dto;
 
 import fr.univcotedazur.simpletcfs.entities.Customer;
+import fr.univcotedazur.simpletcfs.entities.Status;
 
 import javax.validation.constraints.NotBlank;
 
@@ -13,17 +14,23 @@ public class CustomerDTO {
 
     private final int points;
     private final double euros;
+    private final String status;
 
     /*
     @Pattern(regexp = "\\d{10}+", message = "Credit card should be exactly 10 digits")
     private String creditCard;
      */
 
-    public CustomerDTO(Long id, String name, int points, double euros) {
+    public CustomerDTO(Long id, String name, int points, double euros, Status status) {
         this.id = id;
         this.name = name;
         this.points = points;
         this.euros = euros;
+        if(status != null) {
+            this.status = status.toString();
+        } else {
+            this.status = "";
+        }
     }
 
     public CustomerDTO(Customer customer) {
@@ -31,6 +38,7 @@ public class CustomerDTO {
         this.name = customer.getUsername();
         this.points = customer.getCustomerBalance().getPointBalance().getPointAmount();
         this.euros = customer.getCustomerBalance().getEuroBalance().euroAmount();
+        this.status = customer.getStatus().toString();
     }
 
     public Long getId() {
@@ -49,6 +57,11 @@ public class CustomerDTO {
     	return euros;
     }
 
+    public String getStatus() {
+    	return status;
+    }
+
+
     @Override
     public String toString() {
         return "CustomerDTO{" +
@@ -56,6 +69,7 @@ public class CustomerDTO {
                 ", name='" + name + '\'' +
                 ", points=" + points +
                 ", euros=" + euros +
+                ", status=" + status +
                 '}';
     }
 }

@@ -66,15 +66,15 @@ class CustomerCommandsTest {
         server
                 .expect(requestTo("/customers/login"))
                 .andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess("{\"name\":\"test\"}", MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess("{\"name\":\"test\", \"status\": \"CLASSIC\"}", MediaType.APPLICATION_JSON));
 
         server
                 .expect(requestTo("/customers/login"))
                 .andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess("{\"name\":\"test2\"}", MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess("{\"name\":\"test2\", \"status\": \"CLASSIC\"}", MediaType.APPLICATION_JSON));
         client.login("test");
         client.login("test2");
 
-        assertEquals("{test2=CliCustomer{id=null, name='test2', points=0, euros=0.0}, test=CliCustomer{id=null, name='test', points=0, euros=0.0}}", client.customers());
+        assertEquals("{test2=CliCustomer{id=null, name='test2', points=0, euros=0.0, status=CLASSIC}, test=CliCustomer{id=null, name='test', points=0, euros=0.0, status=CLASSIC}}", client.customers());
     }
 }

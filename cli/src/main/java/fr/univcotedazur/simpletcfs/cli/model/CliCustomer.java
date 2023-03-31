@@ -8,13 +8,11 @@ public class CliCustomer {
 
     private Long id;
     private String name;
-
     private int points;
-
     private double euros;
+    private String status;
 
-    public CliCustomer() {
-    }
+    public CliCustomer() {}
 
     public CliCustomer(String name, long id){
         this(name);
@@ -40,6 +38,30 @@ public class CliCustomer {
         return euros;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
+    public void setEuros(double euros) {
+        this.euros = euros;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -50,7 +72,7 @@ public class CliCustomer {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, points, euros);
+        return Objects.hash(id, name, points, euros, status);
     }
 
     @Override
@@ -60,6 +82,7 @@ public class CliCustomer {
                 ", name='" + name + '\'' +
                 ", points=" + points +
                 ", euros=" + euros +
+                ", status=" + status +
                 '}';
     }
 }
