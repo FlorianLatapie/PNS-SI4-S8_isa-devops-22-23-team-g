@@ -12,10 +12,10 @@ Fonctionnalité: Acheter un produit en euro
     Exemples:
     # Need also to test later for float values
       | nbEuros | nbPoints |
-      | 0            | 0   |
-      | 1            | 2   |
-      | 5            | 10     |
-      | 10           | 20     |
+      | 0       | 0        |
+      | 1       | 2        |
+      | 5       | 10       |
+      | 10      | 20       |
 
   Plan du scénario: Scénario: Payer un montant négatif avec une carte de crédit
     Quand le client paye un montant négatif <nbEuros> en euro
@@ -26,7 +26,6 @@ Fonctionnalité: Acheter un produit en euro
       | -1      |
       | -5      |
       | -10     |
-
 
 
   Plan du Scénario: Scénario: Payer avec la carte de fidélité
@@ -41,3 +40,15 @@ Fonctionnalité: Acheter un produit en euro
       | 50          | 50      | 100      | 0               |
       | 40          | 30      | 60       | 10              |
       | 0           | 0       | 0        | 0               |
+
+
+  Scénario: obtenir le statut VFP
+    Etant donné que le client a payé la semaine dernière
+    Quand le client paye cette semaine
+    Alors il obtient le statut VFP
+
+
+  Scénario: perdre statut VFP
+    Etant donné que le client n'a rien payé récemment
+    Quand le client paye cette semaine
+    Alors il reste statut CLASSIC

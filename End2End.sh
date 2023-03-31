@@ -47,7 +47,6 @@ fi
 
 waitForCLIStart
 
-
 testRunner "./End2End/creditCard.json"
 testSuiteResults+=($?) 
 
@@ -56,6 +55,10 @@ testSuiteResults+=($?)
 
 testRunner "./End2End/statsGlobal.json"
 testSuiteResults+=($?) 
+
+testRunner "./End2End/VFP.json"
+testSuiteResults+=($?) 
+
 
 FAILED_TESTS_SUITES=0
 for testSuite in "${testSuiteResults[@]}" 

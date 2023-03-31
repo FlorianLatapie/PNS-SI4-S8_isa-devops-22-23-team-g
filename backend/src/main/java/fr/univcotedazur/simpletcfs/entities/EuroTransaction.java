@@ -33,21 +33,20 @@ public class EuroTransaction {
 
     }
 
-    public EuroTransaction(Customer customer, Euro price) {
+    public EuroTransaction(Customer customer, Euro price, Date date) {
         this.customer = customer;
         this.price = price;
         this.pointEarned = new Point(0);
+        this.date = date;
     }
 
-    public EuroTransaction(Customer customer, Shop shop, Euro price) {
-        this(customer, price);
+    public EuroTransaction(Customer customer, Shop shop, Euro price, Date date) {
+        this(customer, price, date);
         this.shop = shop;
     }
 
-    public EuroTransaction(Customer customer, Shop shop, Euro price, Point pointEarned) {
-        this.customer = customer;
-        this.shop = shop;
-        this.price = price;
+    public EuroTransaction(Customer customer, Shop shop, Euro price, Point pointEarned, Date date) {
+        this(customer, shop, price, date);
         this.pointEarned = pointEarned;
     }
 

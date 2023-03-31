@@ -13,18 +13,20 @@ import fr.univcotedazur.simpletcfs.repositories.CustomerRepository;
 import io.cucumber.java.Before;
 import io.cucumber.java.fr.Alors;
 import io.cucumber.java.fr.Etantdonné;
+import io.cucumber.java.fr.Etantdonnéque;
 import io.cucumber.java.fr.Quand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.util.Calendar;
 import java.util.Date;
 
 import static fr.univcotedazur.simpletcfs.cucumber.ChargeCardStepDef.MAGIC_CARD_NUMBER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
@@ -52,6 +54,8 @@ public class EuroPaymentTest {
     private String customerName = "customer";
 
     private Exception exception;
+
+    private Date date = new Date();
 
     @Autowired // Spring/Cucumber bug workaround: autowired the mock declared in the Config class
     private BankProxy bankMock;
@@ -84,7 +88,7 @@ public class EuroPaymentTest {
         Customer customer = customerRepository.findCustomerByUsername(customerName).get();
         try{
             // x100 car la l'attribut de euro est en centimes
-            payment.payWithCreditCard(new Euro(int1 * 100), customer, shop, MAGIC_CARD_NUMBER);
+            payment.payWithCreditCard(new Euro(int1 * 100), customer, shop, MAGIC_CARD_NUMBER, date);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -103,7 +107,7 @@ public class EuroPaymentTest {
         Customer customer = customerRepository.findCustomerByUsername(customerName).get();
         try{
             // x100 car la l'attribut de euro est en centimes
-            payment.payWithCreditCard(new Euro(int1 * 100), customer, shop, MAGIC_CARD_NUMBER);
+            payment.payWithCreditCard(new Euro(int1 * 100), customer, shop, MAGIC_CARD_NUMBER, date);
         }catch (NegativePaymentException | PaymentException e){
             exception = e;
         }
@@ -130,7 +134,7 @@ public class EuroPaymentTest {
         Customer customer = customerRepository.findCustomerByUsername(customerName).get();
         try{
             // x100 car la l'attribut de euro est en centimes
-            payment.payWithLoyaltyCard(new Euro(int1 * 100), customer, shop);
+            payment.payWithLoyaltyCard(new Euro(int1 * 100), customer, shop, date);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -142,5 +146,55 @@ public class EuroPaymentTest {
         assertEquals(new Euro(int1 * 100).getCentsAmount(), customer.getCustomerBalance().getEuroBalance().getCentsAmount());
     }
 
+    @Etantdonnéque("le client a payé la semaine dernière")
+    public void leClientAPayéLaSemaineDernière() {
+        // reset customer
+        Customer customer = customerRepository.findCustomerByUsername(customerName).get();
+        customer.setStatus(Status.CLASSIC);
+        customer.setLastEuroTransactionDate(new Date(0));
 
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DAY_OF_YEAR, -5);
+        Date previousDate = calendar.getTime();
+
+        try {
+            payment.payWithCreditCard(new Euro(100), customer, shop, MAGIC_CARD_NUMBER, previousDate);
+        } catch (PaymentException | NegativePaymentException e) {
+            exception = e;
+        }
+    }
+
+    @Quand("le client paye cette semaine")
+    public void leClientPayeCetteSemaine() {
+        Customer customer = customerRepository.findCustomerByUsername(customerName).get();
+
+        try {
+            payment.payWithCreditCard(new Euro(100), customer, shop, MAGIC_CARD_NUMBER, date);
+        } catch (PaymentException | NegativePaymentException e) {
+            exception = e;
+        }
+    }
+
+    @Alors("il obtient le statut VFP")
+    public void ilObtientLeStatutVFP() {
+        Customer customer = customerRepository.findCustomerByUsername(customerName).get();
+
+        assertEquals(Status.VFP, customer.getStatus());
+    }
+
+    @Etantdonnéque("le client n'a rien payé récemment")
+    public void leClientNARienPayéRécemment() {
+        Customer customer = customerRepository.findCustomerByUsername(customerName).get();
+
+        customer.setStatus(Status.CLASSIC);
+        customer.setLastEuroTransactionDate(new Date(0));
+    }
+
+    @Alors("il reste statut CLASSIC")
+    public void ilResteStatutCLASSIC() {
+        Customer customer = customerRepository.findCustomerByUsername(customerName).get();
+
+        assertEquals(Status.CLASSIC, customer.getStatus());
+    }
 }

@@ -74,7 +74,7 @@ public class ChargeCardStepDef {
     public void leClientPayeUnMontantNbEurosEnEuroCard(int amount) {
         try {
             Customer customer = customerFinder.login(customerUsername);
-            chargeCard.chargeCard(new Euro(amount), customer, "896983");
+            chargeCard.chargeCard(new Euro(amount), customer, "896983", null);
         } catch (NegativePaymentException | PaymentException e) {
             exception = e;
         } catch (CustomerNotFoundException e) {

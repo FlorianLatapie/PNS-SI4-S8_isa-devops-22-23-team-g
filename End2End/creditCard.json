@@ -2,7 +2,7 @@
   {
     "name": "It should create account for Jeanne",
     "command": "register Jeanne",
-    "expected": "Returned register with value CliCustomer{id=1, name='Jeanne', points=0, euros=0.0}"
+    "expected": "Returned register with value CliCustomer{id=[0-9]+, name='Jeanne', points=0, euros=0.0, status=CLASSIC}"
   },
   {
     "name": "It should not create an account for Jeanne if one already exists",
@@ -12,12 +12,12 @@
   {
     "name": "It should login as Jeanne",
     "command": "login Jeanne",
-    "expected": "Returned login with value CliCustomer{id=1, name='Jeanne', points=0, euros=0.0}"
+    "expected": "Returned login with value CliCustomer{id=[0-9]+, name='Jeanne', points=0, euros=0.0, status=CLASSIC}"
   },
   {
     "name": "It should accept Jeanne's payment if the card is valid",
     "command": "pay-with-credit-card 10 896983 Jeanne",
-    "expected": "EuroTransactionDTO\\[customerDTO=CliCustomer{id=1, name='Jeanne', points=20, euros=0.0}, price=10.0, shopName=Unknown, idTransaction=2, pointsEarned=0\\]"
+    "expected": "EuroTransactionDTO\\[customerDTO=CliCustomer{id=[0-9]+, name='Jeanne', points=20, euros=0.0, status=CLASSIC}, price=10.0, shopName=Unknown, idTransaction=2, pointsEarned=0\\]"
   },
   {
     "name": "It should NOT accept Jeanne's payment if the card is invalid",

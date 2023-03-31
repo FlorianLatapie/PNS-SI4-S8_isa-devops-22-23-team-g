@@ -7,13 +7,11 @@ import fr.univcotedazur.simpletcfs.controllers.dto.payement.PaymentDTO;
 import fr.univcotedazur.simpletcfs.entities.Customer;
 import fr.univcotedazur.simpletcfs.entities.Euro;
 import fr.univcotedazur.simpletcfs.entities.EuroTransaction;
-import fr.univcotedazur.simpletcfs.exceptions.CustomerNotFoundException;
-import fr.univcotedazur.simpletcfs.exceptions.NegativeEuroBalanceException;
-import fr.univcotedazur.simpletcfs.exceptions.NegativePaymentException;
-import fr.univcotedazur.simpletcfs.exceptions.PaymentException;
+import fr.univcotedazur.simpletcfs.exceptions.*;
 import fr.univcotedazur.simpletcfs.interfaces.ChargeCard;
 import fr.univcotedazur.simpletcfs.interfaces.CustomerFinder;
 import fr.univcotedazur.simpletcfs.interfaces.Payment;
+import fr.univcotedazur.simpletcfs.time.TimeProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +37,8 @@ public class PaymentController {
     @Autowired
     private CustomerFinder customerFinder;
 
+    @Autowired
+    private TimeProvider currentTime;
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler({MethodArgumentNotValidException.class})
@@ -56,7 +56,7 @@ public class PaymentController {
             System.out.println("Customer id " + customerId);
             System.out.println("PaymentDTO " + paymentDTO);
 
-            EuroTransaction euroTransaction = payment.payWithCreditCard(new Euro(paymentDTO.price()), retrieveCustomer(customerId), null, paymentDTO.creditCard());
+            EuroTransaction euroTransaction = payment.payWithCreditCard(new Euro(paymentDTO.price()), retrieveCustomer(customerId), null, paymentDTO.creditCard(), currentTime.now());
 
             System.out.println("Payment done");
 
@@ -76,7 +76,7 @@ public class PaymentController {
             System.out.println("Customer id " + customerId);
             System.out.println("PaymentDTO " + paymentDTO);
 
-            EuroTransaction euroTransaction = chargeCard.chargeCard(new Euro(paymentDTO.price()), retrieveCustomer(customerId), paymentDTO.creditCard());
+            EuroTransaction euroTransaction = chargeCard.chargeCard(new Euro(paymentDTO.price()), retrieveCustomer(customerId), paymentDTO.creditCard(), currentTime.now());
             System.out.println("Payment done");
 
             return ResponseEntity.status(HttpStatus.CREATED).body(convertEuroTransactionToDto(euroTransaction));
@@ -95,7 +95,7 @@ public class PaymentController {
             System.out.println("Customer id " + customerId);
             System.out.println("PaymentDTO " + paymentDTO);
 
-            EuroTransaction euroTransaction = payment.payWithLoyaltyCard(new Euro(paymentDTO.price()), retrieveCustomer(customerId), null);
+            EuroTransaction euroTransaction = payment.payWithLoyaltyCard(new Euro(paymentDTO.price()), retrieveCustomer(customerId), null, currentTime.now());
 
             System.out.println("Payment done");
 

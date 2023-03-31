@@ -1,0 +1,8 @@
+[
+  {
+    "name": "It should award the VFP status",
+    "seedCommands": ["register Michu", "login Michu", "pay-with-credit-card 100 896983 Michu", "pay-with-credit-card 100 896983 Michu", "login Michu"],
+    "command": "login Michu",
+    "expected": "CliCustomer{id=[0-9]+, name='Michu', points=[0-9]+, euros=0.0, status=VFP}"
+  }
+]

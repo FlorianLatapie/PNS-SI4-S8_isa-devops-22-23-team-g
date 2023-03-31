@@ -1,23 +1,22 @@
 package fr.univcotedazur.simpletcfs.components.payment;
 
 import fr.univcotedazur.simpletcfs.components.advantages.AdvantageCashier;
+import fr.univcotedazur.simpletcfs.components.advantages.StatusUpdater;
 import fr.univcotedazur.simpletcfs.components.registry.EuroTransactionRegistry;
 import fr.univcotedazur.simpletcfs.connectors.BankProxy;
 import fr.univcotedazur.simpletcfs.entities.*;
-import fr.univcotedazur.simpletcfs.exceptions.EuroBalanceException;
-import fr.univcotedazur.simpletcfs.exceptions.NegativeEuroBalanceException;
-import fr.univcotedazur.simpletcfs.exceptions.NegativePaymentException;
-import fr.univcotedazur.simpletcfs.exceptions.PaymentException;
+import fr.univcotedazur.simpletcfs.exceptions.*;
 import fr.univcotedazur.simpletcfs.interfaces.ChargeCard;
 import fr.univcotedazur.simpletcfs.interfaces.Payment;
+import fr.univcotedazur.simpletcfs.interfaces.StatusModifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
-
 
 @Transactional
 @Component
@@ -28,17 +27,20 @@ public class Cashier implements Payment, ChargeCard {
 
     private EuroTransactionRegistry euroTransactionRegistry;
 
+    private StatusModifier statusUpdater;
+
     @Autowired
-    public Cashier(AdvantageCashier advantageCashier, BankProxy bankProxy, PointsRewards pointsRewards, EuroTransactionRegistry euroTransactionRegistry) {
+    public Cashier(AdvantageCashier advantageCashier, BankProxy bankProxy, PointsRewards pointsRewards, EuroTransactionRegistry euroTransactionRegistry, StatusUpdater statusUpdater) {
         this.advantageCashier = advantageCashier;
         this.bankProxy = bankProxy;
         this.pointsRewards = pointsRewards;
         this.euroTransactionRegistry = euroTransactionRegistry;
+        this.statusUpdater = statusUpdater;
     }
 
     // TODO: merge the two methods below if possible
     @Override
-    public EuroTransaction payWithCreditCard(Euro amount, Customer customer, Shop shop, String creditCard) throws PaymentException, NegativePaymentException {
+    public EuroTransaction payWithCreditCard(Euro amount, Customer customer, Shop shop, String creditCard, Date date) throws PaymentException, NegativePaymentException {
         if(amount.getCentsAmount() < 0){
             throw new NegativePaymentException();
         }
@@ -46,57 +48,60 @@ public class Cashier implements Payment, ChargeCard {
         Point pointEarned;
         if (bankProxy.pay(creditCard,amount)){
             // on ajoute 2 fois le montant d'euro en point, (les euros sont en centimes)
-            pointEarned = pointsRewards.gain(customer, new Point((amount.getCentsAmount() / 100 ) * 2));
+            pointEarned = pointsRewards.gain(customer, amount);
         }else{
             throw new PaymentException();
         }
 
         // need to register the transaction in DB
 
-        EuroTransaction euroTransaction = new EuroTransaction(customer, shop, amount, pointEarned);
+        EuroTransaction euroTransaction = new EuroTransaction(customer, shop, amount, pointEarned, date);
         euroTransactionRegistry.add(euroTransaction);
+        statusUpdater.updateStatus(customer, euroTransaction);
         return euroTransaction;
     }
 
     @Override
-    public EuroTransaction payWithLoyaltyCard(Euro amount, Customer customer, Shop shop) throws NegativePaymentException, NegativeEuroBalanceException {
+    public EuroTransaction payWithLoyaltyCard(Euro amount, Customer customer, Shop shop, Date date) throws NegativePaymentException, NegativeEuroBalanceException {
         if (amount.getCentsAmount() < 0) {
             throw new NegativePaymentException();
         }
         // points earned are 2 times the amount of euro, euros are in cents
         customer.getCustomerBalance().removeEuro(amount);
-        Point pointEarned = pointsRewards.gain(customer, new Point((amount.getCentsAmount() / 100) * 2));
+        Point pointEarned = pointsRewards.gain(customer, amount);
 
         // need to register the transaction in BD
-        EuroTransaction euroTransaction = new EuroTransaction(customer, shop, amount, pointEarned);
+        EuroTransaction euroTransaction = new EuroTransaction(customer, shop, amount, pointEarned, date);
         euroTransactionRegistry.add(euroTransaction);
+        // StatusUpdater.updateStatus(customer, euroTransaction);
         return euroTransaction;
     }
 
     @Override
-    public EuroTransaction payWithCreditCard(Euro amount, List<AdvantageItem> advantages, Shop shop, Customer customer, String creditCard) throws PaymentException, NegativePaymentException {
+    public EuroTransaction payWithCreditCard(Euro amount, List<AdvantageItem> advantages, Shop shop, Customer customer, String creditCard, Date date) throws PaymentException, NegativePaymentException {
         // TODO : add the EuroTransaction to the registry
-        EuroTransaction euroTransaction = payWithCreditCard(amount, customer, shop, creditCard);
+        EuroTransaction euroTransaction = payWithCreditCard(amount, customer, shop, creditCard, date);
         // TODO : need to use the advantages cashier to debit the advantages of the consumer
         return euroTransaction;
     }
 
     //TODO Write the function
     @Override
-    public EuroTransaction payWithAccountMoney(Euro amount, Customer customer, Shop shop) throws EuroBalanceException {
+    public EuroTransaction payWithAccountMoney(Euro amount, Customer customer, Shop shop, Date date) throws EuroBalanceException {
         // TODO : add the EuroTransaction to the registry
-        return new EuroTransaction(customer, shop, amount);
+        return new EuroTransaction(customer, shop, amount, date);
     }
+
 
     //TODO Write the function
     @Override
-    public EuroTransaction payWithAccountMoney(Euro amount, List<AdvantageItem> advantages, Customer customer, Shop shop) throws EuroBalanceException {
+    public EuroTransaction payWithAccountMoney(Euro amount, List<AdvantageItem> advantages, Customer customer, Shop shop, Date date) throws EuroBalanceException {
         // TODO : add the EuroTransaction to the registry
-        return new EuroTransaction(customer, shop, amount);
+        return new EuroTransaction(customer, shop, amount, date);
     }
 
     @Override
-    public EuroTransaction chargeCard(Euro amount, Customer customer, String creditCard) throws NegativePaymentException, PaymentException {
+    public EuroTransaction chargeCard(Euro amount, Customer customer, String creditCard, Date date) throws NegativePaymentException, PaymentException {
         if(amount.getCentsAmount() < 0){
             throw new NegativePaymentException();
         }
@@ -113,6 +118,6 @@ public class Cashier implements Payment, ChargeCard {
             e.printStackTrace();
         }
 
-        return new EuroTransaction(customer, amount);
+        return new EuroTransaction(customer, amount, date);
     }
 }

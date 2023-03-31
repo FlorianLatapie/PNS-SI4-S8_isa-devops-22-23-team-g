@@ -4,7 +4,7 @@ import fr.univcotedazur.simpletcfs.components.registry.SurveyRegistry;
 import fr.univcotedazur.simpletcfs.entities.Customer;
 import fr.univcotedazur.simpletcfs.entities.Survey;
 import fr.univcotedazur.simpletcfs.exceptions.AlreadyAnsweredException;
-import fr.univcotedazur.simpletcfs.interfaces.addAnswer;
+import fr.univcotedazur.simpletcfs.interfaces.SurveyAddAnswer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Component
 @Transactional
-public class SurveyResponse implements addAnswer {
+public class SurveyResponse implements SurveyAddAnswer {
     SurveyRegistry surveyRegistry;
 
     @Autowired
