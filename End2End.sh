@@ -59,6 +59,9 @@ testSuiteResults+=($?)
 testRunner "./End2End/VFP.json"
 testSuiteResults+=($?) 
 
+testRunner "./End2End/advantages.json"
+testSuiteResults+=($?) 
+
 
 FAILED_TESTS_SUITES=0
 for testSuite in "${testSuiteResults[@]}" 

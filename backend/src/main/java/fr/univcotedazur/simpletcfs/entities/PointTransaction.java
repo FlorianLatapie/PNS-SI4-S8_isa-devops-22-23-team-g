@@ -25,10 +25,16 @@ public class PointTransaction {
 
     }
 
-    PointTransaction(Point pointAmount, Date date, String description, Customer customer, AdvantageItem advantageItem) {
+    public PointTransaction(Point pointAmount, Date date, String description, Customer customer, AdvantageItem advantageItem) {
         this.pointAmount = pointAmount;
         this.date = date;
         this.description = description;
+        this.customer = customer;
+        this.advantageItem = advantageItem;
+    }
+
+    public PointTransaction(Point pointAmount, Customer customer, AdvantageItem advantageItem) {
+        this.pointAmount = pointAmount;
         this.customer = customer;
         this.advantageItem = advantageItem;
     }
@@ -79,6 +85,10 @@ public class PointTransaction {
 
     public void setAdvantageItem(AdvantageItem advantageItem) {
         this.advantageItem = advantageItem;
+    }
+
+    public int getPrice() {
+        return pointAmount.getPointAmount();
     }
 
     @Override

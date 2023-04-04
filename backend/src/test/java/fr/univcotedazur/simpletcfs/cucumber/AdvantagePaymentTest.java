@@ -3,10 +3,14 @@ package fr.univcotedazur.simpletcfs.cucumber;
 import fr.univcotedazur.simpletcfs.components.advantages.AdvantageCashier;
 import fr.univcotedazur.simpletcfs.components.advantages.AdvantageManager;
 import fr.univcotedazur.simpletcfs.components.advantages.ExchangePoint;
+import fr.univcotedazur.simpletcfs.components.registry.AdvantageCatalogRegistry;
 import fr.univcotedazur.simpletcfs.entities.*;
 import fr.univcotedazur.simpletcfs.exceptions.CustomerDoesntHaveAdvantageException;
+import fr.univcotedazur.simpletcfs.exceptions.NegativePaymentException;
 import fr.univcotedazur.simpletcfs.exceptions.NegativePointBalanceException;
+import fr.univcotedazur.simpletcfs.exceptions.PaymentException;
 import fr.univcotedazur.simpletcfs.interfaces.AdvantageAdder;
+import fr.univcotedazur.simpletcfs.interfaces.Payment;
 import io.cucumber.java.fr.Alors;
 import io.cucumber.java.fr.Et;
 import io.cucumber.java.fr.Etantdonné;
@@ -36,12 +40,19 @@ public class AdvantagePaymentTest {
     AdvantageManager advantageManager;
     @Autowired
     ExchangePoint pointPayement;
+    
+    @Autowired
+    AdvantageCatalogRegistry advantageCatalogRegistry;
 
     AdvantageItem advantage;
     AdvantageItem advantage2;
 
     Exception exception;
+    
+    Shop shop;
 
+    @Autowired
+    Payment payment;
 
 
     @Etantdonné("un invité ayant {int} points de fidélité")
@@ -53,7 +64,9 @@ public class AdvantagePaymentTest {
 
     @Quand("le client achète un produit coûtant {int} points de fidélité")
     public void leClientAchèteUnProduitCoûtantPointsDeFidélité(int price) throws NegativePointBalanceException {
-        advantage = new AdvantageItem(Status.CLASSIC,"Cucumber","Beautiful Cucumber" ,new Point(price),null);
+        shop = new Shop("shop", "Paris", new IBAN("1234"));
+        advantage = advantageCatalogRegistry.addNewAdvantage("Cucumber",new Point(price), shop,"Beautiful Cucumber" , Status.CLASSIC);
+
         advantageManager.addAdvantage(customer, advantage);
 
         pointPayement.payPoints(customer, advantage);
@@ -80,7 +93,8 @@ public class AdvantagePaymentTest {
 
     @Quand("le client achète un produit trop cher pour lui coûtant {int} points de fidélité")
     public void leClientAchèteUnProduitTropCherPourLuiCoûtantPointsDeFidélité(int price) throws NegativePointBalanceException {
-        advantage = new AdvantageItem(Status.CLASSIC,"Very Very expensive Cucumber","Beautiful and Expensive Cucumber" ,new Point(price),null);
+        shop = new Shop("shop", "Paris", new IBAN("1234"));
+        advantage = advantageCatalogRegistry.addNewAdvantage("Very Very expensive Cucumber",new Point(price), shop,"Beautiful and Expensive Cucumber" , Status.CLASSIC);
         assertThrows(NegativePointBalanceException.class, () -> pointPayement.payPoints(customer, advantage));
     }
 
@@ -96,7 +110,7 @@ public class AdvantagePaymentTest {
     }
 
     @Quand("le client dépense son avantage")
-    public void le_client_dépense_son_avantage() throws CustomerDoesntHaveAdvantageException {
+    public void le_client_dépense_son_avantage() throws CustomerDoesntHaveAdvantageException, PaymentException, NegativePaymentException {
         advantageCashier.debitAdvantage(customer, advantage);
     }
     @Alors("le client n'a plus cet avantage")

@@ -1,0 +1,38 @@
+// create a new account
+register Robert
+
+// login permit to recover the UUID of the account
+login Robert
+
+// payment accepted by the bank (because of the number of the credit card "896983" being the magic key)
+pay-with-credit-card 50 896983 Robert
+
+// recuperer le catalogue d avantages
+get-catalog
+
+// buy a croissant with points
+pay-points Croissant Robert
+
+// buy a juice with points
+pay-points Jus Robert
+
+// buy a second juice with points
+pay-points Jus Robert
+
+// display customer advantages
+get-customer-advantages Robert
+
+// use your advantage to get your croissant
+debit-advantage Croissant Robert
+
+// display customer advantages
+get-customer-advantages Robert
+
+// use your advantage to get your juice
+debit-advantage Jus Robert
+
+// display customer advantages
+get-customer-advantages Robert
+
+// try to use advantage to get a Coffee (not possessed)
+debit-advantage Café Robert

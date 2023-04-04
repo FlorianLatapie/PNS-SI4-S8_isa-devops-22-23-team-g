@@ -13,7 +13,7 @@
   {
     "name": "It should accept newClient's payment if the card is valid",
     "command": "pay-with-credit-card 100 896983 newClient",
-    "expected": "EuroTransactionDTO\\[customerDTO=CliCustomer{id=[0-9]+, name='newClient', points=200, euros=0.0, status=CLASSIC}, price=100.0, shopName=Unknown, idTransaction=6, pointsEarned=0\\]"
+    "expected": "EuroTransactionDTO\\[customerDTO=CliCustomer{id=[0-9]+, name='newClient', points=200, euros=0.0, status=CLASSIC}, price=100.0, shopName=Unknown, idTransaction=[0-9]+, pointsEarned=0\\]"
   },
   {
     "name": "It should return the stats from all shops",

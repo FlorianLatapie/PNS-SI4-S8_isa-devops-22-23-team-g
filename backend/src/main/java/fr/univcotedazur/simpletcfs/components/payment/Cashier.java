@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.xml.crypto.Data;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -78,10 +76,11 @@ public class Cashier implements Payment, ChargeCard {
     }
 
     @Override
-    public EuroTransaction payWithCreditCard(Euro amount, List<AdvantageItem> advantages, Shop shop, Customer customer, String creditCard, Date date) throws PaymentException, NegativePaymentException {
+    public EuroTransaction payWithCreditCard(Euro amount, List<AdvantageItem> advantages, Shop shop, Customer customer, String creditCard, Date date) throws PaymentException, NegativePaymentException, CustomerDoesntHaveAdvantageException{
         // TODO : add the EuroTransaction to the registry
         EuroTransaction euroTransaction = payWithCreditCard(amount, customer, shop, creditCard, date);
         // TODO : need to use the advantages cashier to debit the advantages of the consumer
+        advantageCashier.debitAllAdvantage(customer, advantages);
         return euroTransaction;
     }
 

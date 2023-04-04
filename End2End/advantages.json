@@ -1,0 +1,34 @@
+[
+  {
+    "name": "It retrieve advantage catalog",
+    "seedCommands": ["register Robert", "login Robert", "pay-with-credit-card 50 896983 Robert"],
+    "command": "get-catalog",
+    "expected": "name: Croissant  price: 20  description: un délicieux croissant, croquant, gourmand  shop: Unknown  type: CLASSIC\nname: Chocolatine  price: 30  description: une chocoloatine fondante  shop: Unknown  type: CLASSIC\nname: Café  price: 10  description: un café bien chaud  shop: Unknown  type: CLASSIC\nname: Thé  price: 10  description: un thé vert aromatisé  shop: Unknown  type: CLASSIC\nname: Jus  price: 10  description: un jus de fruit frais  shop: Unknown  type: CLASSIC"
+  },
+  {
+    "name": "It should buy an advantage with points",
+    "command": "pay-points Croissant Robert",
+    "expected": "PointTransactionDTO[customerDTO=CliCustomer{id=[0-9]+, name='Robert', points=80, euros=0.0, status=CLASSIC}, avantageName=Croissant, price=20]"
+  },
+  {
+    "name": "It should print multiple items in customer advantages",
+    "seedCommands": ["pay-points Jus Robert", "pay-points Jus Robert"],
+    "command": "get-customer-advantages Robert",
+    "expected": "name: Croissant  price: 20  description: un délicieux croissant, croquant, gourmand  shop: Unknown  type: CLASSIC\nname: Jus  price: 10  description: un jus de fruit frais  shop: Unknown  type: CLASSIC\nname: Jus  price: 10  description: un jus de fruit frais  shop: Unknown  type: CLASSIC"
+  },
+  {
+    "name": "It should debit an advantage",
+    "command": "debit-advantage Croissant Robert",
+    "expected": "AdvantageTransactionDTO\\[customerDTO=CliCustomer{id=[0-9]+, name='Robert', points=60, euros=0.0, status=CLASSIC}, advantageName=Croissant\\]"
+  },
+  {
+    "name": "It should have one less advantage in advantage list",
+    "command": "get-customer-advantages Robert",
+    "expected": "name: Jus  price: 10  description: un jus de fruit frais  shop: Unknown  type: CLASSIC\nname: Jus  price: 10  description: un jus de fruit frais  shop: Unknown  type: CLASSIC"
+  },
+  {
+    "name": "It should not debit an advantage the customer does not have",
+    "command": "debit-advantage Café Robert",
+    "expected": "403 : \\[no body\\]"
+  }
+]
