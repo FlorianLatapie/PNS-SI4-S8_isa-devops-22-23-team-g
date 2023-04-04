@@ -21,8 +21,7 @@ public class AdvantageItem {
     private String description;
     private Point price;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @Transient
     private Shop shop;
 
     public AdvantageItem() {

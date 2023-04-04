@@ -3,9 +3,11 @@ package fr.univcotedazur.simpletcfs.entities;
 import fr.univcotedazur.simpletcfs.exceptions.NegativeEuroBalanceException;
 import fr.univcotedazur.simpletcfs.exceptions.NegativePointBalanceException;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
-import javax.persistence.Transient;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -16,10 +18,10 @@ public class CustomerBalance {
 
     private Point pointBalance;
 
-    @Transient
+    @ManyToMany() // cascade = CascadeType.REMOVE fetch = FetchType.EAGER : caused some problems
     private List<AdvantageItem> advantageItem;
-    @Embedded
 
+    @Embedded
     private Euro euroBalance;
 
 
@@ -50,6 +52,7 @@ public class CustomerBalance {
     }
 
     public void addAdvantageItem(AdvantageItem advantageItem) {
+
         this.advantageItem.add(advantageItem);
     }
 

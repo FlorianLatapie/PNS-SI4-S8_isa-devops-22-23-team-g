@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface AdvantageFinder {
     List<AdvantageItem> findAllAdvantages(Shop shop);
+    List<AdvantageItem> findAllAdvantages();
     AdvantageItem findAnAdvantage(Long id);
 }
 

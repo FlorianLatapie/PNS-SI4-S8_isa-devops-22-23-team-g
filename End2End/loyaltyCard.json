@@ -29,7 +29,7 @@
   {
     "name": "It should accept the payment with the loyalty card if it has enough credit",
     "command": "pay-with-loyalty-card 10 Christophe",
-    "expected": "EuroTransactionDTO\\[customerDTO=CliCustomer{id=[0-9]+, name='Christophe', points=20, euros=0.0, status=CLASSIC}, price=10.0, shopName=Unknown, idTransaction=4, pointsEarned=0\\]"
+    "expected": "EuroTransactionDTO\\[customerDTO=CliCustomer{id=[0-9]+, name='Christophe', points=20, euros=0.0, status=CLASSIC}, price=10.0, shopName=Unknown, idTransaction=[0-9]+, pointsEarned=0\\]"
   },
   {
     "name": "It should NOT accept the payment with the loyalty card if it does not have enough credit",
