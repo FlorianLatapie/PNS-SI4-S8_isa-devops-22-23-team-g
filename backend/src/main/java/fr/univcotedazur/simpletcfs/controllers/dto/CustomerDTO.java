@@ -15,17 +15,14 @@ public class CustomerDTO {
     private final int points;
     private final double euros;
     private final String status;
+    private final String licensePlate;
 
-    /*
-    @Pattern(regexp = "\\d{10}+", message = "Credit card should be exactly 10 digits")
-    private String creditCard;
-     */
-
-    public CustomerDTO(Long id, String name, int points, double euros, Status status) {
+    public CustomerDTO(Long id, String name, int points, double euros, Status status, String licensePlate) {
         this.id = id;
         this.name = name;
         this.points = points;
         this.euros = euros;
+        this.licensePlate = licensePlate;
         if(status != null) {
             this.status = status.toString();
         } else {
@@ -39,6 +36,7 @@ public class CustomerDTO {
         this.points = customer.getCustomerBalance().getPointBalance().getPointAmount();
         this.euros = customer.getCustomerBalance().getEuroBalance().euroAmount();
         this.status = customer.getStatus().toString();
+        this.licensePlate = customer.getLicensePlate();
     }
 
     public Long getId() {
@@ -61,6 +59,10 @@ public class CustomerDTO {
     	return status;
     }
 
+    public String getLicensePlate() {
+    	return licensePlate;
+    }
+
 
     @Override
     public String toString() {
@@ -70,6 +72,7 @@ public class CustomerDTO {
                 ", points=" + points +
                 ", euros=" + euros +
                 ", status=" + status +
+                ", licensePlate=" + licensePlate +
                 '}';
     }
 }

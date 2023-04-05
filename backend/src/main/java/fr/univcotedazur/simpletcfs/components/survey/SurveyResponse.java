@@ -31,7 +31,7 @@ public class SurveyResponse implements SurveyAddAnswer {
         Survey survey = surveyOpt.get();
         if(!survey.getParticipants().contains(customer)){
             surveyRegistry.addAnswer(answer,question,surveyID);
-            surveyRegistry.findById(surveyID).get().getParticipants().add(customer);
+            surveyRegistry.findById(surveyID).ifPresent(foundSurvey -> foundSurvey.getParticipants().add(customer));
         }
         else {
             throw new AlreadyAnsweredException("The client already contribute to this survey");

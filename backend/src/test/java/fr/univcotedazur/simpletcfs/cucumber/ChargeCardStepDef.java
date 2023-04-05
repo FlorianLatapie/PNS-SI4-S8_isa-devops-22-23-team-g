@@ -16,15 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-
-import javax.transaction.Transactional;
-import java.util.Optional;
 
 @SpringBootTest
 @Transactional
@@ -57,7 +53,7 @@ public class ChargeCardStepDef {
         when(bankMock.pay(anyString(), any(Euro.class))).thenAnswer(invocation -> {
             String cardNumber = invocation.getArgument(0);
             Euro amount = invocation.getArgument(1);
-            return cardNumber.contains(MAGIC_CARD_NUMBER) && amount.getCentsAmount() > 0;
+            return cardNumber.contains(MAGIC_CARD_NUMBER) && amount.getCentsAmount() >= 0;
         });
     }
 

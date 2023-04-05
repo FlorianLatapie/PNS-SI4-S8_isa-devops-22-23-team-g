@@ -28,7 +28,6 @@ public class BankProxy implements Bank {
             return (result.getStatusCode().equals(HttpStatus.CREATED));
         } catch (HttpClientErrorException errorException) {
             if (errorException.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
-                System.out.println("Payment failed");
                 return false;
             }
             throw errorException;

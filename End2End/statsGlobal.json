@@ -3,17 +3,17 @@
     "name": "It should create an account for newClient",
     "comment": "check if the account id is correct",
     "command": "register newClient",
-    "expected": "Returned register with value CliCustomer{id=[0-9]+, name='newClient', points=0, euros=0.0, status=CLASSIC}"
+    "expected": "Returned register with value CliCustomer{id=[0-9]+, name='newClient', points=0, euros=0.0, status=CLASSIC, licensePlate=null}"
   },
   {
     "name": "It should login as newClient",
     "command": "login newClient",
-    "expected": "Returned login with value CliCustomer{id=[0-9]+, name='newClient', points=0, euros=0.0, status=CLASSIC}"
+    "expected": "Returned login with value CliCustomer{id=[0-9]+, name='newClient', points=0, euros=0.0, status=CLASSIC, licensePlate=null}"
   },
   {
     "name": "It should accept newClient's payment if the card is valid",
     "command": "pay-with-credit-card 100 896983 newClient",
-    "expected": "EuroTransactionDTO\\[customerDTO=CliCustomer{id=[0-9]+, name='newClient', points=200, euros=0.0, status=CLASSIC}, price=100.0, shopName=Unknown, idTransaction=[0-9]+, pointsEarned=0\\]"
+    "expected": "EuroTransactionDTO\\[customerDTO=CliCustomer{id=[0-9]+, name='newClient', points=200, euros=0.0, status=CLASSIC, licensePlate=null}, price=100.0, shopName=Unknown, idTransaction=[0-9]+, pointsEarned=0\\]"
   },
   {
     "name": "It should return the stats from all shops",

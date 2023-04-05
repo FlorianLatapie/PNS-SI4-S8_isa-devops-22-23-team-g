@@ -48,7 +48,7 @@ public class Cashier implements Payment, ChargeCard {
             // on ajoute 2 fois le montant d'euro en point, (les euros sont en centimes)
             pointEarned = pointsRewards.gain(customer, amount);
         }else{
-            throw new PaymentException();
+            throw new PaymentException(amount, customer, date);
         }
 
         // need to register the transaction in DB
@@ -71,31 +71,24 @@ public class Cashier implements Payment, ChargeCard {
         // need to register the transaction in BD
         EuroTransaction euroTransaction = new EuroTransaction(customer, shop, amount, pointEarned, date);
         euroTransactionRegistry.add(euroTransaction);
-        // StatusUpdater.updateStatus(customer, euroTransaction);
         return euroTransaction;
     }
 
     @Override
-    public EuroTransaction payWithCreditCard(Euro amount, List<AdvantageItem> advantages, Shop shop, Customer customer, String creditCard, Date date) throws PaymentException, NegativePaymentException, CustomerDoesntHaveAdvantageException{
-        // TODO : add the EuroTransaction to the registry
+    public EuroTransaction payWithCreditCard(Euro amount, List<AdvantageItem> advantages, Shop shop, Customer customer, String creditCard, Date date) throws PaymentException, NegativePaymentException, CustomerDoesntHaveAdvantageException, ParkingException {
         EuroTransaction euroTransaction = payWithCreditCard(amount, customer, shop, creditCard, date);
-        // TODO : need to use the advantages cashier to debit the advantages of the consumer
         advantageCashier.debitAllAdvantage(customer, advantages);
         return euroTransaction;
     }
 
-    //TODO Write the function
     @Override
     public EuroTransaction payWithAccountMoney(Euro amount, Customer customer, Shop shop, Date date) throws EuroBalanceException {
-        // TODO : add the EuroTransaction to the registry
         return new EuroTransaction(customer, shop, amount, date);
     }
 
 
-    //TODO Write the function
     @Override
     public EuroTransaction payWithAccountMoney(Euro amount, List<AdvantageItem> advantages, Customer customer, Shop shop, Date date) throws EuroBalanceException {
-        // TODO : add the EuroTransaction to the registry
         return new EuroTransaction(customer, shop, amount, date);
     }
 
@@ -105,16 +98,13 @@ public class Cashier implements Payment, ChargeCard {
             throw new NegativePaymentException();
         }
         if (!bankProxy.pay(creditCard, amount)) {
-            throw new PaymentException();
+            throw new PaymentException(amount, customer, date);
         }
 
-        // amount is already checked to be positive above, can't throw exception but need to catch it
         try {
             customer.getCustomerBalance().setEuroBalance(customer.getCustomerBalance().getEuroBalance().add(amount));
-            //customer.setCustomerBalance(new CustomerBalance(new Point(-1), new ArrayList<>(), new Euro(-1)));
         } catch (Exception e) {
             System.err.println("Error while adding (" + amount + ") euro to customer balance, this should not happen");
-            e.printStackTrace();
         }
 
         return new EuroTransaction(customer, amount, date);

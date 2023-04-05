@@ -6,13 +6,15 @@ services:
     container_name: mfc-server-prod
     environment:
       - BANK_WITH_PORT=bank-system-prod:9090
+      - PARKING_WITH_PORT=parking-system-prod:9080
       - POSTGRES_HOST=mfc-postgres-prod:5432
       - POSTGRES_DB_NAME=mfc-db-prod
-    entrypoint: "bash -c '/opt/app/wait-for-it.sh $${POSTGRES_HOST} -- java -jar /opt/app/app.jar --bank.host.baseurl=http://$${BANK_WITH_PORT}'"
+    entrypoint: "bash -c '/opt/app/wait-for-it.sh $${POSTGRES_HOST} -- java -jar /opt/app/app.jar --bank.host.baseurl=http://$${BANK_WITH_PORT} --parking.host.baseurl=http://$${PARKING_WITH_PORT}'"
     ports: 
       - 80:8080
     depends_on:
       - bank-system-prod
+      - parking-system-prod
       - mfc-postgres-prod
 
   mfc-cli-prod:
@@ -34,6 +36,14 @@ services:
         context: bank
         dockerfile: dev.Dockerfile
     container_name: bank-system-prod
+
+  parking-system-prod:
+    image: teamgisadevops2023/parking
+    build:
+        context: parking
+        dockerfile: dev.Dockerfile
+    container_name: parking-system-prod
+  
   
   mfc-postgres-prod:
     image: postgres:15.2

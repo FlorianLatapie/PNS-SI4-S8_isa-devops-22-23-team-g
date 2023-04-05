@@ -27,6 +27,7 @@ public class AdvantageCatalogRegistry implements AdvantageFinder, AdvantageModif
         this.addNewAdvantage( "Café", new Point(10),null,  "un café bien chaud", Status.CLASSIC);
         this.addNewAdvantage( "Thé", new Point(10), null,  "un thé vert aromatisé", Status.CLASSIC);
         this.addNewAdvantage( "Jus", new Point(10), null,  "un jus de fruit frais",Status.CLASSIC);
+        this.addNewAdvantage( "Parking", new Point(20), null,  "un ticket pour le parking", Status.VFP);
     }
 
     @Override

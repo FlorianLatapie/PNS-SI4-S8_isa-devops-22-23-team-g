@@ -17,17 +17,22 @@ public class CustomerCommands {
     @Autowired
     private CliContext cliContext;
 
-    @ShellMethod("Register a customer in the CoD backend (register CUSTOMER_NAME)")
+    @ShellMethod("Register a customer in the backend (register CUSTOMER_NAME)")
     public CliCustomer register(String name) {
-        CliCustomer res = restTemplate.postForObject(BASE_URI + "/register", new CliCustomer(name), CliCustomer.class);
+        return restTemplate.postForObject(BASE_URI + "/register", new CliCustomer(name), CliCustomer.class);
+    }
+
+    @ShellMethod("Login a customer in the backend (login CUSTOMER_NAME)")
+    public CliCustomer login(String name) {
+        CliCustomer res = restTemplate.postForObject(BASE_URI + "/login", new CliCustomer(name), CliCustomer.class);
+        if(res == null) return null;
+        cliContext.getCustomers().put(res.getName(), res);
         return res;
     }
 
-    @ShellMethod("Login a customer in the CoD backend (login CUSTOMER_NAME)")
-    public CliCustomer login(String name) {
-        CliCustomer res = restTemplate.postForObject(BASE_URI + "/login", new CliCustomer(name), CliCustomer.class);
-        cliContext.getCustomers().put(res.getName(), res);
-        return res;
+    @ShellMethod("Set the license plate for a customer in the backend (registerWithLicensePlate CUSTOMER_NAME LICENCE_PLATE)")
+    public CliCustomer registerWithLicensePlate(String name, String licencePlate) {
+        return restTemplate.postForObject(BASE_URI + "/registerWithLicensePlate", new CliCustomer(name, licencePlate), CliCustomer.class);
     }
 
     @ShellMethod("List all customers")

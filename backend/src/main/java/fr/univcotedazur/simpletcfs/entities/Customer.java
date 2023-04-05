@@ -3,7 +3,6 @@ package fr.univcotedazur.simpletcfs.entities;
 import fr.univcotedazur.simpletcfs.exceptions.NegativeEuroBalanceException;
 import fr.univcotedazur.simpletcfs.exceptions.NegativePointBalanceException;
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 import java.util.*;
 
@@ -17,7 +16,7 @@ public class Customer {
 
     String username;
 
-    private String licensePlate;
+    String licensePlate;
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.CLASSIC;
@@ -33,6 +32,13 @@ public class Customer {
         this.username = username;
         this.customerBalance = new CustomerBalance();
     }
+
+    public Customer(String username, String licensePlate) {
+        this.username = username;
+        this.licensePlate = licensePlate;
+        this.customerBalance = new CustomerBalance();
+    }
+
 
     public String getLicensePlate() {
         return licensePlate;
@@ -54,7 +60,7 @@ public class Customer {
         try {
             customerBalance.removePoint(point);
         } catch (NegativePointBalanceException e) {
-            e.printStackTrace();
+
         }
     }
 

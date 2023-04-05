@@ -38,7 +38,7 @@ pipeline {
             when{
                 allOf {
                     expression { env.CHANGE_ID != null } 
-                    expression { BACKEND_ARTIFACT_EXISTS == 'true' }
+                    expression { BANK_ARTIFACT_EXISTS == 'true' }
                 }
             }
             steps {

@@ -43,17 +43,20 @@ public class CustomerController {
     }
 
     @PostMapping(path = "register", consumes = APPLICATION_JSON_VALUE) // path is a REST CONTROLLER NAME
-    public ResponseEntity<CustomerDTO> register(@RequestBody @Valid CustomerDTO customerDTO) {
+    public ResponseEntity<CustomerDTO> register(@RequestBody @Valid CustomerDTO customerDTO) throws CustomerAlreadyExistsException {
         // Note that there is no validation at all on the CustomerDto mapped
-        try {
-            System.out.println("Registering customer " + customerDTO.getName());
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(convertCustomerToDto(customerModifier.signup(customerDTO.getName(), null)));
-        } catch (CustomerAlreadyExistsException e) {
-            // Note: Returning 409 (Conflict) can also be seen a security/privacy vulnerability, exposing a service for account enumeration
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
+        System.out.println("Registering customer " + customerDTO.getName());
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(convertCustomerToDto(customerModifier.signup(customerDTO.getName(), null)));
     }
+
+    @PostMapping(path = "registerWithLicensePlate", consumes = APPLICATION_JSON_VALUE) // path is a REST CONTROLLER NAME
+    public ResponseEntity<CustomerDTO> registerWithLicensePlate(@RequestBody @Valid CustomerDTO customerDTO) throws CustomerAlreadyExistsException {
+        System.out.println("Registering customer " + customerDTO.getName());
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(convertCustomerToDto(customerModifier.signup(customerDTO.getName(), null, customerDTO.getLicensePlate())));
+    }
+
 
     @PostMapping(path = "login", consumes = APPLICATION_JSON_VALUE) // path is a REST CONTROLLER NAME
     public ResponseEntity<CustomerDTO> login(@RequestBody @Valid CustomerDTO customerDTO) {

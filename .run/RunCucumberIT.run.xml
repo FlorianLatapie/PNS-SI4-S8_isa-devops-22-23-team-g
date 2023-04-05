@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="RunCucumberIT" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
-    <module name="simpleTCFS" />
+    <module name="mfc-backend" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="fr.univcotedazur.simpletcfs.*" />

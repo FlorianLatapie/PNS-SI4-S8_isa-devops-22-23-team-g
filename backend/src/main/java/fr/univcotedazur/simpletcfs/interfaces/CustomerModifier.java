@@ -7,6 +7,7 @@ import fr.univcotedazur.simpletcfs.exceptions.CustomerNotFoundException;
 
 public interface CustomerModifier {
     Customer signup(String username, ContactDetails contactDetails) throws CustomerAlreadyExistsException;
+    Customer signup(String username, ContactDetails contactDetails, String licensePlate) throws CustomerAlreadyExistsException;
     Customer update(Customer customer) throws CustomerNotFoundException;
 }
 

@@ -42,8 +42,20 @@ public class CustomerRegistry implements CustomerFinder, CustomerModifier {
         System.out.println("Customer not found, creating new customer: " + username);
         Customer customer = new Customer(username);
         return customerRepository.save(customer);
-
     }
+
+    @Override
+    public Customer signup(String username, ContactDetails contactDetails, String licensePlate) throws CustomerAlreadyExistsException {
+        System.out.println("Customer trying to signup: " + username);
+        Optional<Customer> customerOpt = findCustomerByUsername(username);
+        if (customerOpt.isPresent()) {
+            throw new CustomerAlreadyExistsException("Customer already exists");
+        }
+        System.out.println("Customer not found, creating new customer: " + username);
+        Customer customer = new Customer(username, licensePlate);
+        return customerRepository.save(customer);
+    }
+
 
     // TODO: implement
     @Override

@@ -7,17 +7,19 @@ services:
         context: ./backend
         dockerfile: dev.Dockerfile
         args:
-            JAR_FILE: mfc-backend-0.1.0-SNAPSHOT.jar
+            JAR_FILE: mfc-backend-1.1.0-SNAPSHOT.jar
     container_name: mfc-server-staging
     ports: 
       - 8080:8080
     environment:
       - BANK_WITH_PORT=bank-system-staging:9090
+      - PARKING_WITH_PORT=parking-system-staging:9080
       - POSTGRES_DB_NAME=mfc-db-staging
       - POSTGRES_HOST=mfc-postgres-staging:5432
-    entrypoint: "bash -c '/opt/app/wait-for-it.sh $${POSTGRES_HOST} -- java -jar /opt/app/app.jar --bank.host.baseurl=http://$${BANK_WITH_PORT}'"
+    entrypoint: "bash -c '/opt/app/wait-for-it.sh $${POSTGRES_HOST} -- java -jar /opt/app/app.jar --bank.host.baseurl=http://$${BANK_WITH_PORT} --parking.host.baseurl=http://$${PARKING_WITH_PORT}'"
     depends_on:
       - bank-system-staging
+      - parking-system-staging
       - mfc-postgres-staging
 
   mfc-cli-staging:
@@ -26,7 +28,7 @@ services:
         context: cli
         dockerfile: dev.Dockerfile
         args:
-            JAR_FILE: mfc-cli-0.1.0-SNAPSHOT.jar
+            JAR_FILE: mfc-cli-1.0.0-SNAPSHOT.jar
     container_name: mfc-cli-staging
     environment:
       - SERVER_WITH_PORT=mfc-server-staging:8080
@@ -44,6 +46,15 @@ services:
         context: bank
         dockerfile: dev.Dockerfile
     container_name: bank-system-staging
+
+  parking-system-staging:
+    image: teamgisadevops2023/parking
+    build:
+        context: parking
+        dockerfile: dev.Dockerfile
+    container_name: parking-system-staging
+    ports: 
+      - 9080:9080
   
   mfc-postgres-staging:
     image: postgres:15.2

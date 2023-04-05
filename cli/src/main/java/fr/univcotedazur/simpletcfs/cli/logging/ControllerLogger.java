@@ -13,7 +13,7 @@ import java.util.Arrays;
 public class ControllerLogger {
 
     private static final Logger LOG = LoggerFactory.getLogger(ControllerLogger.class);
-    private static final String PREFIX = "TCFS:Commands:";
+    private static final String PREFIX = "MFC:Commands:";
 
     @Pointcut("execution(public * fr.univcotedazur.simpletcfs.cli.commands..*(..))")
     private void allCommandsMethods() {
