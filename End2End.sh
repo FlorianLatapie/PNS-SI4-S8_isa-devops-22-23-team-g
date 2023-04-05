@@ -1,11 +1,12 @@
 #!/bin/bash
 source End2End/utils.sh
 
-while getopts d flag
-do
-    case "${flag}" in
-        d) DEMO=true;;
-    esac
+while getopts "d:f:" opt; do
+  case $opt in
+    d) DEMO=true        ;;
+    f) file="$OPTARG"
+       DEMO=true   ;;
+  esac
 done
 
 if ! [[ -z "${JENKINS_URL}" ]]; then
@@ -47,21 +48,25 @@ fi
 
 waitForCLIStart
 
-testRunner "./End2End/creditCard.json"
-testSuiteResults+=($?) 
+if [ -z "$file" ]; then
+    testRunner "./End2End/creditCard.json"
+    testSuiteResults+=($?) 
 
-testRunner "./End2End/loyaltyCard.json"
-testSuiteResults+=($?) 
+    testRunner "./End2End/loyaltyCard.json"
+    testSuiteResults+=($?) 
 
-testRunner "./End2End/statsGlobal.json"
-testSuiteResults+=($?) 
+    testRunner "./End2End/statsGlobal.json"
+    testSuiteResults+=($?) 
 
-testRunner "./End2End/VFP.json"
-testSuiteResults+=($?) 
+    testRunner "./End2End/VFP.json"
+    testSuiteResults+=($?) 
 
-testRunner "./End2End/advantages.json"
-testSuiteResults+=($?) 
-
+    testRunner "./End2End/advantages.json"
+    testSuiteResults+=($?) 
+    else 
+    testRunner "$file"
+    testSuiteResults+=($?) 
+fi
 
 FAILED_TESTS_SUITES=0
 for testSuite in "${testSuiteResults[@]}" 

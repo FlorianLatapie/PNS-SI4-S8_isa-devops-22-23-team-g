@@ -1,0 +1,45 @@
+[
+  {
+    "name": "INITIALIZATION",
+    "comment":"start the script with: ./End2End.sh -f ./End2End/demo.json",
+    "seedCommands": ["register-with-license-plate Jean 896983 "],
+    "command": "login Jean",
+    "expected": ""
+  },
+  {
+    "name": "PAYMENT: It should NOT accept Jean's payment if the card is invalid",
+    "command": "reload-loyalty-card 10 896982 Jean",
+    "expected": ""
+  },
+  {
+    "name": "PAYMENT: It should accept Jean's payment if the card is valid",
+    "command": "reload-loyalty-card 10 896983 Jean",
+    "expected": ""
+  },
+  {
+    "name": "PAYMENT: It should accept the payment with the loyalty card if it has enough credit",
+    "command": "pay-with-loyalty-card 10 Jean",
+    "expected": ""
+  },
+  {
+    "name": "STATUS: It should not have the VFP status",
+    "command": "login Jean",
+    "expected": ""
+  },
+  {
+    "name": "STATUS: It should award the VFP status",
+    "seedCommands": ["pay-with-card 10 896983 jean"],
+    "command": "login Jean",
+    "expected": ""
+  },
+  {
+    "name": "ADVANTAGE: It should retrieve advantage catalog",
+    "command": "get-catalog",
+    "expected": ""
+  },
+  {
+    "name": "ADVANTAGE: It should buy the Parking advantage with points",
+    "command": "pay-points Parking Jean",
+    "expected": ""
+  }
+]
