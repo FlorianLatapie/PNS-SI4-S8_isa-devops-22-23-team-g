@@ -1,0 +1,15 @@
+register-with-license-plate Robert 896983
+
+login Robert
+get-catalog
+
+pay-with-credit-card 50 896983 Robert
+pay-with-credit-card 50 896983 Robert
+pay-with-credit-card 50 896983 Robert
+pay-with-credit-card 50 896983 Robert
+pay-with-credit-card 50 896983 Robert
+
+pay-points Parking Robert
+get-customer-advantages Robert
+debit-advantage Parking Robert
+get-customer-advantages Robert

@@ -8,7 +8,7 @@
   {
     "name": "It should buy an advantage with points",
     "command": "pay-points Croissant Robert",
-    "expected": "PointTransactionDTO[customerDTO=CliCustomer{id=[0-9]+, name='Robert', points=80, euros=0.0, status=CLASSIC}, avantageName=Croissant, price=20]"
+    "expected": "PointTransactionDTO[customerDTO=CliCustomer{id=[0-9]+, name='Robert', points=80, euros=0.0, status=CLASSIC, licensePlate=null}, avantageName=Croissant, price=20]"
   },
   {
     "name": "It should print multiple items in customer advantages",
@@ -19,7 +19,7 @@
   {
     "name": "It should debit an advantage",
     "command": "debit-advantage Croissant Robert",
-    "expected": "AdvantageTransactionDTO\\[customerDTO=CliCustomer{id=[0-9]+, name='Robert', points=60, euros=0.0, status=CLASSIC}, advantageName=Croissant\\]"
+    "expected": "AdvantageTransactionDTO\\[customerDTO=CliCustomer{id=[0-9]+, name='Robert', points=60, euros=0.0, status=CLASSIC, licensePlate=null}, advantageName=Croissant\\]"
   },
   {
     "name": "It should have one less advantage in advantage list",
@@ -29,6 +29,22 @@
   {
     "name": "It should not debit an advantage the customer does not have",
     "command": "debit-advantage Café Robert",
-    "expected": "403 : \\[no body\\]"
+    "expected": "403 : \"{\"error\":\"Customer does not have advantage\",\"details\":null}\""
+  },
+  {
+    "name": "It should not buy the Parking advantage with points if no license plate",
+    "command": "debit-advantage Parking Robert",
+    "expected": "403 : \"{\"error\":\"Customer does not have advantage\",\"details\":null}\""
+  },
+  {
+    "name": "It should buy the Parking advantage with points",
+    "seedCommands": ["register-with-license-plate Georges 896983 ", "login Georges", "pay-with-credit-card 50 896983 Georges"],
+    "command": "pay-points Parking Georges",
+    "expected": "PointTransactionDTO\\[customerDTO=CliCustomer{id=[0-9]+, name='Georges', points=80, euros=0.0, status=CLASSIC, licensePlate=896983}, avantageName=Parking, price=20\\]"
+  },
+  {
+    "name": "It should debit the Parking advantage",
+    "command": "debit-advantage Parking Georges",
+    "expected": "AdvantageTransactionDTO\\[customerDTO=CliCustomer{id=18, name='Georges', points=80, euros=0.0, status=CLASSIC, licensePlate=896983}, advantageName=Parking\\]"
   }
 ]

@@ -3,7 +3,6 @@ package fr.univcotedazur.simpletcfs.cli;
 import fr.univcotedazur.simpletcfs.cli.model.CliCustomer;
 import org.springframework.stereotype.Component;
 import fr.univcotedazur.simpletcfs.cli.model.AdvantageItemDTO;
-import fr.univcotedazur.simpletcfs.cli.model.AdvantageTransactionDTO;
 
 import java.util.HashMap;
 import java.util.Map;

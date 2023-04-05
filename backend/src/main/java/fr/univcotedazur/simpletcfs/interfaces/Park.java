@@ -1,8 +1,10 @@
 package fr.univcotedazur.simpletcfs.interfaces;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 public interface Park {
-    boolean parkForFree(String licensePlate, Date startTime, Date endTime); 
-    boolean parkForDuration(String licensePlate, Date startTime, int minutesDuration);
+    boolean parkForFree(String licensePlate);
+    boolean parkForDuration(String licensePlate, Timestamp duration);
+
+
 }

@@ -3,11 +3,9 @@ package fr.univcotedazur.simpletcfs.entities;
 import fr.univcotedazur.simpletcfs.exceptions.NegativeEuroBalanceException;
 import fr.univcotedazur.simpletcfs.exceptions.NegativePointBalanceException;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

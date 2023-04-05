@@ -51,18 +51,11 @@ public class PaymentController {
 
     @PostMapping(path = "/{customerId}/payWithCreditCard", consumes = APPLICATION_JSON_VALUE) // path is a REST CONTROLLER NAME
     public ResponseEntity<EuroTransactionDTO> payWithCreditCard(@PathVariable("customerId") Long customerId, @RequestBody @Valid PaymentDTO paymentDTO) throws CustomerNotFoundException {
-        // Note that there is no validation at all on the CustomerDto mapped
         try {
-            System.out.println("Customer id " + customerId);
-            System.out.println("PaymentDTO " + paymentDTO);
-
             EuroTransaction euroTransaction = payment.payWithCreditCard(new Euro(paymentDTO.price()), retrieveCustomer(customerId), null, paymentDTO.creditCard(), currentTime.now());
-
-            System.out.println("Payment done");
 
             return ResponseEntity.status(HttpStatus.CREATED).body(convertEuroTransactionToDto(euroTransaction));
         } catch (PaymentException e) {
-            System.out.println("Payment failed");
             return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).build();
         } catch (NegativePaymentException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -71,17 +64,10 @@ public class PaymentController {
 
     @PostMapping(path = "/{customerId}/loadCard", consumes = APPLICATION_JSON_VALUE) // path is a REST CONTROLLER NAME
     public ResponseEntity<EuroTransactionDTO> loadCard(@PathVariable("customerId") Long customerId, @RequestBody @Valid PaymentDTO paymentDTO) throws CustomerNotFoundException {
-        // Note that there is no validation at all on the CustomerDto mapped
         try {
-            System.out.println("Customer id " + customerId);
-            System.out.println("PaymentDTO " + paymentDTO);
-
             EuroTransaction euroTransaction = chargeCard.chargeCard(new Euro(paymentDTO.price()), retrieveCustomer(customerId), paymentDTO.creditCard(), currentTime.now());
-            System.out.println("Payment done");
-
             return ResponseEntity.status(HttpStatus.CREATED).body(convertEuroTransactionToDto(euroTransaction));
         } catch (PaymentException e) {
-            System.out.println("Payment failed");
             return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).build();
         } catch (NegativePaymentException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -90,18 +76,10 @@ public class PaymentController {
 
     @PostMapping(path = "/{customerId}/payWithLoyaltyCard", consumes = APPLICATION_JSON_VALUE) // path is a REST CONTROLLER NAME
     public ResponseEntity<EuroTransactionDTO> payWithLoyaltyCard(@PathVariable("customerId") Long customerId, @RequestBody @Valid PaymentDTO paymentDTO) throws CustomerNotFoundException {
-        // Note that there is no validation at all on the CustomerDto mapped
         try {
-            System.out.println("Customer id " + customerId);
-            System.out.println("PaymentDTO " + paymentDTO);
-
             EuroTransaction euroTransaction = payment.payWithLoyaltyCard(new Euro(paymentDTO.price()), retrieveCustomer(customerId), null, currentTime.now());
-
-            System.out.println("Payment done");
-
             return ResponseEntity.status(HttpStatus.CREATED).body(convertEuroTransactionToDto(euroTransaction));
         } catch (NegativeEuroBalanceException e) {
-            // Should never happen
             return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).build();
         } catch (NegativePaymentException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -110,7 +88,6 @@ public class PaymentController {
 
 
     static EuroTransactionDTO convertEuroTransactionToDto(EuroTransaction euroTransaction) {
-        System.out.println("Converting transaction of Customer :" + euroTransaction.getCustomer() + " to DTO");
         CustomerDTO customerDTO = convertCustomerToDto(euroTransaction.getCustomer());
         double price = euroTransaction.getPrice().euroAmount();
         String shopName;
@@ -125,20 +102,6 @@ public class PaymentController {
     }
 
     private Customer retrieveCustomer(Long customerId) throws CustomerNotFoundException {
-        System.out.println("Customer Id in retrieve Customer " + customerId);
-        // TODO : need to debug
-        Customer customer = customerFinder.findCustomer(customerId);
-        System.out.println("after retrieve customer" + customer);
-        return customer;
+        return customerFinder.findCustomer(customerId);
     }
-
-    /*
-    //add a new payment to registry
-    @PostMapping(path = "add", consumes = APPLICATION_JSON_VALUE) // path is a REST CONTROLLER NAME
-    public ResponseEntity<PaymentDTO> add(@RequestBody @Valid PaymentDTO paymentDTO) {
-        System.out.println("Adding payment with value of " + paymentDTO.getPrice());
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(convertEuroTransactionToDto(euroRegistry.add(new EuroTransaction(paymentDTO.getCustomer(),paymentDTO.getShop(),paymentDTO.getPrice()))));
-    }
-    */
 }

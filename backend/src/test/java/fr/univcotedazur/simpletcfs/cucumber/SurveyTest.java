@@ -1,9 +1,7 @@
 package fr.univcotedazur.simpletcfs.cucumber;
 
 
-import fr.univcotedazur.simpletcfs.components.registry.CustomerRegistry;
 import fr.univcotedazur.simpletcfs.components.registry.QuestionRegistry;
-import fr.univcotedazur.simpletcfs.components.registry.SurveyRegistry;
 import fr.univcotedazur.simpletcfs.components.survey.SurveyResponse;
 import fr.univcotedazur.simpletcfs.components.survey.SurveyResult;
 import fr.univcotedazur.simpletcfs.entities.Customer;
@@ -16,7 +14,6 @@ import fr.univcotedazur.simpletcfs.interfaces.CustomerFinder;
 import fr.univcotedazur.simpletcfs.interfaces.CustomerModifier;
 import fr.univcotedazur.simpletcfs.interfaces.SurveyFinder;
 import fr.univcotedazur.simpletcfs.interfaces.SurveyModifier;
-import fr.univcotedazur.simpletcfs.repositories.SurveyRepository;
 import io.cucumber.java.fr.Alors;
 import io.cucumber.java.fr.Etantdonné;
 import io.cucumber.java.fr.Quand;
@@ -25,8 +22,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 @SpringBootTest
 @Transactional

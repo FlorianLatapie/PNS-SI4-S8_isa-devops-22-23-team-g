@@ -7,7 +7,6 @@ import fr.univcotedazur.simpletcfs.entities.Customer;
 import fr.univcotedazur.simpletcfs.entities.Survey;
 import fr.univcotedazur.simpletcfs.exceptions.AlreadyAnsweredException;
 import fr.univcotedazur.simpletcfs.interfaces.SurveyAddAnswer;
-import fr.univcotedazur.simpletcfs.interfaces.SurveyModifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static fr.univcotedazur.simpletcfs.controllers.CustomerController.convertCustomerToDto;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -28,10 +26,6 @@ public class AnswerSurveyController {
     private SurveyAddAnswer surveyAddAnswer;
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    // The 422 (Unprocessable Entity) status code means the server understands the content type of the request entity
-    // (hence a 415(Unsupported Media Type) status code is inappropriate), and the syntax of the request entity is
-    // correct (thus a 400 (Bad Request) status code is inappropriate) but was unable to process the contained
-    // instructions.
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ErrorDTO handleExceptions(MethodArgumentNotValidException e) {
         ErrorDTO errorDTO = new ErrorDTO();
@@ -40,13 +34,6 @@ public class AnswerSurveyController {
         return errorDTO;
     }
 
-    @ExceptionHandler({AlreadyAnsweredException.class})
-    public ErrorDTO handleExceptions(AlreadyAnsweredException e) {
-        ErrorDTO errorDTO = new ErrorDTO();
-        errorDTO.setError("Client already answered to this survey");
-        errorDTO.setDetails(e.getMessage());
-        return errorDTO;
-    }
 
     @PostMapping(path = "post", consumes = APPLICATION_JSON_VALUE,params = "surveyID,answer,questionID")
     public ResponseEntity<SurveyDTO> addSurvey(@RequestBody Long surveyID, @RequestBody String answer, @RequestBody Long questionID, @RequestBody Customer customer) throws AlreadyAnsweredException {
@@ -54,7 +41,6 @@ public class AnswerSurveyController {
         try {
             survey = surveyAddAnswer.addAnswer(answer,surveyID,questionID, customer);
         } catch (AlreadyAnsweredException e) {
-            handleExceptions(e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         System.out.println("Adding new answer for client : " + customer.getUsername() + " to survey " + surveyID);

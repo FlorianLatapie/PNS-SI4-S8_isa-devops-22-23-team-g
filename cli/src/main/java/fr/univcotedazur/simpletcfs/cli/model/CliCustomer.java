@@ -11,6 +11,7 @@ public class CliCustomer {
     private int points;
     private double euros;
     private String status;
+    private String licensePlate;
 
     public CliCustomer() {}
 
@@ -21,6 +22,12 @@ public class CliCustomer {
     public CliCustomer(String name) {
         this.name = name;
     }
+
+    public CliCustomer(String name, String licensePlate){
+        this(name);
+        this.licensePlate = licensePlate;
+    }
+
 
     public Long getId() {
         return id;
@@ -42,6 +49,11 @@ public class CliCustomer {
         return status;
     }
 
+    public String getLicensePlate() {
+        return licensePlate;
+    }
+
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -61,6 +73,11 @@ public class CliCustomer {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public void setLicensePlate(String licensePlate) {
+        this.licensePlate = licensePlate;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -83,6 +100,7 @@ public class CliCustomer {
                 ", points=" + points +
                 ", euros=" + euros +
                 ", status=" + status +
+                ", licensePlate=" + licensePlate +
                 '}';
     }
 }

@@ -5,12 +5,11 @@ import fr.univcotedazur.simpletcfs.components.advantages.AdvantageManager;
 import fr.univcotedazur.simpletcfs.components.advantages.ExchangePoint;
 import fr.univcotedazur.simpletcfs.components.registry.AdvantageCatalogRegistry;
 import fr.univcotedazur.simpletcfs.entities.*;
-import fr.univcotedazur.simpletcfs.exceptions.CustomerDoesntHaveAdvantageException;
-import fr.univcotedazur.simpletcfs.exceptions.NegativePaymentException;
-import fr.univcotedazur.simpletcfs.exceptions.NegativePointBalanceException;
-import fr.univcotedazur.simpletcfs.exceptions.PaymentException;
+import fr.univcotedazur.simpletcfs.exceptions.*;
 import fr.univcotedazur.simpletcfs.interfaces.AdvantageAdder;
+import fr.univcotedazur.simpletcfs.interfaces.Park;
 import fr.univcotedazur.simpletcfs.interfaces.Payment;
+import io.cucumber.java.Before;
 import io.cucumber.java.fr.Alors;
 import io.cucumber.java.fr.Et;
 import io.cucumber.java.fr.Etantdonné;
@@ -22,11 +21,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class AdvantagePaymentTest {
 
+
+    String MAGIC_PARK_NUMBER = "896983";
     @Autowired
     AdvantageAdder advantageAdder;
 
@@ -53,6 +56,17 @@ public class AdvantagePaymentTest {
 
     @Autowired
     Payment payment;
+
+    @Autowired
+    private Park parkMock;
+
+    @Before
+    public void setUp() {
+        when(parkMock.parkForFree(anyString())).thenAnswer(invocation -> {
+            String licensePlate = invocation.getArgument(0);
+            return licensePlate.contains(MAGIC_PARK_NUMBER);
+        });
+    }
 
 
     @Etantdonné("un invité ayant {int} points de fidélité")
@@ -104,13 +118,14 @@ public class AdvantagePaymentTest {
     @Etantdonné("un client possèdant un avantage")
     public void un_client_possèdant_un_avantage() {
         advantage = mock(AdvantageItem.class);
+        when(advantage.getTitle() ).thenReturn("");
         customerBalance = new CustomerBalance(new Point(0), new ArrayList<>(Arrays.asList(advantage)),new Euro(0));
         customer = new Customer("test");
         customer.setCustomerBalance(customerBalance);
     }
 
     @Quand("le client dépense son avantage")
-    public void le_client_dépense_son_avantage() throws CustomerDoesntHaveAdvantageException, PaymentException, NegativePaymentException {
+    public void le_client_dépense_son_avantage() throws CustomerDoesntHaveAdvantageException, PaymentException, NegativePaymentException, ParkingException {
         advantageCashier.debitAdvantage(customer, advantage);
     }
     @Alors("le client n'a plus cet avantage")
@@ -121,14 +136,16 @@ public class AdvantagePaymentTest {
     @Etantdonné("un client possèdant plusieurs avantage")
     public void unClientPossèdantPlusieursAvantage() {
         advantage = mock(AdvantageItem.class);
+        when(advantage.getTitle() ).thenReturn("");
         advantage2 = mock(AdvantageItem.class);
+        when(advantage2.getTitle() ).thenReturn("");
         customerBalance = new CustomerBalance(new Point(0), new ArrayList<>(Arrays.asList(advantage,advantage2)),new Euro(0));
         customer = new Customer("test");
         customer.setCustomerBalance(customerBalance);
     }
 
     @Quand("le client dépense tout ses avantages")
-    public void leClientDépenseToutSesAvantages() throws CustomerDoesntHaveAdvantageException {
+    public void leClientDépenseToutSesAvantages() throws CustomerDoesntHaveAdvantageException, ParkingException {
         advantageCashier.debitAdvantage(customer, advantage);
         advantageCashier.debitAdvantage(customer, advantage2);
     }

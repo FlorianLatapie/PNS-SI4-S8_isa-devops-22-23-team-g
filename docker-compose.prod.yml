@@ -9,7 +9,7 @@ services:
       - PARKING_WITH_PORT=parking-system-prod:9080
       - POSTGRES_HOST=mfc-postgres-prod:5432
       - POSTGRES_DB_NAME=mfc-db-prod
-    entrypoint: "bash -c '/opt/app/wait-for-it.sh $${POSTGRES_HOST} -- java -jar /opt/app/app.jar --bank.host.baseurl=http://$${BANK_WITH_PORT}'"
+    entrypoint: "bash -c '/opt/app/wait-for-it.sh $${POSTGRES_HOST} -- java -jar /opt/app/app.jar --bank.host.baseurl=http://$${BANK_WITH_PORT} --parking.host.baseurl=http://$${PARKING_WITH_PORT}'"
     ports: 
       - 80:8080
     depends_on:

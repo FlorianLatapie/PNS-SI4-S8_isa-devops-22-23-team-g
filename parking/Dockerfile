@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY ./dist ./dist
 
-EXPOSE 9090
+EXPOSE 9080
 # Start the server using the production build
 CMD ["dist/main.js" ]
