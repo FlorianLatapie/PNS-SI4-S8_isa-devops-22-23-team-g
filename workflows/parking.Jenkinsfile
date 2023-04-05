@@ -4,9 +4,9 @@ pipeline {
     }
 
     environment {
-        BANK_ARTIFACT_PATH = getNodeArtifactPath('bank')
-        BANK_ARTIFACT_EXISTS = exists(BANK_ARTIFACT_PATH)
-        BANK_VERSION = parseVersion(BANK_ARTIFACT_PATH)
+        PARKING_ARTIFACT_PATH = getNodeArtifactPath('parking')
+        PARKING_ARTIFACT_EXISTS = exists(PARKING_ARTIFACT_PATH)
+        PARKING_VERSION = parseVersion(PARKING_ARTIFACT_PATH)
         ARTIFACTORY_ACCESS_TOKEN = credentials('artifactory-access-token')
     }
 
@@ -18,19 +18,19 @@ pipeline {
             steps {
                 echo 'Pulling...' + env.BRANCH_NAME
                 checkout scm
-                sh "cd ./bank && npm ci"
+                sh "cd ./parking && npm ci"
             }
         }
 
         stage('Linting'){
             steps {
-                sh "cd ./bank && npm run lint"
+                sh "cd ./parking && npm run lint"
             }
         }
 
         stage('Tests'){
             steps {
-                sh 'cd ./bank && npm run test'
+                sh 'cd ./parking && npm run test'
             }
         }
 
@@ -38,12 +38,12 @@ pipeline {
             when{
                 allOf {
                     expression { env.CHANGE_ID != null } 
-                    expression { BANK_ARTIFACT_EXISTS == 'true' }
+                    expression { PARKING_ARTIFACT_EXISTS == 'true' }
                 }
             }
             steps {
                 error(
-                    "BANK artifact with version ${BANK_VERSION} already exists."
+                    "PARKING artifact with version ${PARKING_VERSION} already exists."
                 )
             }
         }
@@ -55,7 +55,7 @@ def getArtifactPath(module) {
           script: "cd ${module} -p \"require('./package.json').version\"",
           returnStdout: true
     ).trim()
-    return 'fr/univ-cotedazur/bank/' + version
+    return 'fr/univ-cotedazur/parking/' + version
 }
 
 def parseVersion(artifactPath) {
@@ -74,5 +74,5 @@ def getNodeArtifactPath(module) {
           script: "cd ./${module} && npm pkg get version",
           returnStdout: true
     ).trim().replaceAll('"', '')
-    return 'fr/univ-cotedazur/bank/' + version
+    return 'fr/univ-cotedazur/parking/' + version
 }
