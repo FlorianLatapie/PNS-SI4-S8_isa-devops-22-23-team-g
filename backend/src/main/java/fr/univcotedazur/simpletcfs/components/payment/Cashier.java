@@ -48,7 +48,7 @@ public class Cashier implements Payment, ChargeCard {
             // on ajoute 2 fois le montant d'euro en point, (les euros sont en centimes)
             pointEarned = pointsRewards.gain(customer, amount);
         }else{
-            throw new PaymentException();
+            throw new PaymentException(amount, customer, date);
         }
 
         // need to register the transaction in DB
@@ -105,7 +105,7 @@ public class Cashier implements Payment, ChargeCard {
             throw new NegativePaymentException();
         }
         if (!bankProxy.pay(creditCard, amount)) {
-            throw new PaymentException();
+            throw new PaymentException(amount, customer, date);
         }
 
         // amount is already checked to be positive above, can't throw exception but need to catch it

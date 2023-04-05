@@ -57,7 +57,7 @@ public class ChargeCardStepDef {
         when(bankMock.pay(anyString(), any(Euro.class))).thenAnswer(invocation -> {
             String cardNumber = invocation.getArgument(0);
             Euro amount = invocation.getArgument(1);
-            return cardNumber.contains(MAGIC_CARD_NUMBER) && amount.getCentsAmount() > 0;
+            return cardNumber.contains(MAGIC_CARD_NUMBER) && amount.getCentsAmount() >= 0;
         });
     }
 

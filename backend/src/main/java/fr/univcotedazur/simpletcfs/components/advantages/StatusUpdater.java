@@ -34,7 +34,7 @@ public class StatusUpdater implements StatusModifier {
         customer.setLastEuroTransactionDate(thisTransactionDate);
     }
 
-    void updateStatus(Customer customer, Date date) {
+    private void updateStatus(Customer customer, Date date) {
         var lastTransactionDate = customer.getLastEuroTransactionDate();
         var sevenDaysInMs = 7 * 24 * 60 * 60 * 1000;
 
