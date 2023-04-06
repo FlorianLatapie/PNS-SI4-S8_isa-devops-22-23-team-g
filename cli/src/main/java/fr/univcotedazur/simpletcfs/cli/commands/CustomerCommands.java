@@ -20,6 +20,7 @@ public class CustomerCommands {
     @ShellMethod("Register a customer in the backend (register CUSTOMER_NAME)")
     public CliCustomer register(String name) {
         return restTemplate.postForObject(BASE_URI + "/register", new CliCustomer(name), CliCustomer.class);
+
     }
 
     @ShellMethod("Login a customer in the backend (login CUSTOMER_NAME)")
