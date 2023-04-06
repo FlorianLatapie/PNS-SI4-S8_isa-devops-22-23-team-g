@@ -46,6 +46,7 @@ if [ "$ENV" == "prod" ] || [ "$DEMO" == "true" ]; then
     CONTAINER_NAME="mfc-cli-prod"
 fi
 
+
 waitForCLIStart
 
 if [ -z "$file" ]; then
