@@ -28,7 +28,7 @@ else
     echo "Running in staging mode ..."
 fi
 
-if [ "$ENV" == "prod" ] || [ "$DEMO" == "true" ]; then
+if [ "$ENV" == "prod" ]; then
     COMPOSE_CMD="docker-compose -f docker-compose.prod.yml -p mfc-prod"
 else
     COMPOSE_CMD="docker-compose"
