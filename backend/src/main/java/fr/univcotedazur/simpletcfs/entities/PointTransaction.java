@@ -1,5 +1,8 @@
 package fr.univcotedazur.simpletcfs.entities;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Objects;
@@ -15,7 +18,9 @@ public class PointTransaction {
     private Date date;
     private String description;
 
+
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Customer customer;
 
     @ManyToOne

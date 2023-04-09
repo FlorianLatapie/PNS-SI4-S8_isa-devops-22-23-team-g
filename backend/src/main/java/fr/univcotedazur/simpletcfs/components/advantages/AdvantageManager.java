@@ -25,4 +25,10 @@ public class AdvantageManager implements AdvantageAdder, AdvantageRemover   {
         }
         customer.getAdvantageItems().remove(item);
     }
+
+    public void checkAdvantagePresence(Customer customer, AdvantageItem item) throws CustomerDoesntHaveAdvantageException {
+        if (!customer.getAdvantageItems().contains(item)) {
+            throw new CustomerDoesntHaveAdvantageException();
+        }
+    }
 }

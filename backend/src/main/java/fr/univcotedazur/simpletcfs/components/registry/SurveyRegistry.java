@@ -1,7 +1,6 @@
 package fr.univcotedazur.simpletcfs.components.registry;
 
 import fr.univcotedazur.simpletcfs.entities.Answer;
-import fr.univcotedazur.simpletcfs.entities.Customer;
 import fr.univcotedazur.simpletcfs.entities.Question;
 import fr.univcotedazur.simpletcfs.entities.Survey;
 import fr.univcotedazur.simpletcfs.interfaces.SurveyFinder;
@@ -35,7 +34,6 @@ public class SurveyRegistry implements SurveyFinder, SurveyModifier {
         return surveyRepository.save(survey);
     }
 
-    // TODO : Je comprends pas pourquoi tu as besoin de cette méthode pour créer un survey vide ?
     @Override
     public Survey newSurvey() {
         Survey survey = new Survey();

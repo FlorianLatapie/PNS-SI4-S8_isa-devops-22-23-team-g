@@ -13,11 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class AdvantageCatalogRegistry implements AdvantageFinder, AdvantageModifier {
 
-    private AdvantageCatalogRepository advantageRepository;
+    private final AdvantageCatalogRepository advantageRepository;
 
    @Autowired
     public AdvantageCatalogRegistry(AdvantageCatalogRepository advantageRepository) {
@@ -63,5 +64,10 @@ public class AdvantageCatalogRegistry implements AdvantageFinder, AdvantageModif
     public AdvantageItem updateAdvantage(AdvantageItem advantageItem) {
         this.advantageRepository.save(advantageItem);
         return advantageRepository.findById(advantageItem.getId()).orElse(null);
+    }
+
+    @Override
+    public Optional<AdvantageItem> findByTitle(String name) {
+        return advantageRepository.findByTitle(name);
     }
 }

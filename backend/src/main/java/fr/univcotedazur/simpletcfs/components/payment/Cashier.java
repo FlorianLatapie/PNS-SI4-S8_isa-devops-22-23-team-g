@@ -36,7 +36,6 @@ public class Cashier implements Payment, ChargeCard {
         this.statusUpdater = statusUpdater;
     }
 
-    // TODO: merge the two methods below if possible
     @Override
     public EuroTransaction payWithCreditCard(Euro amount, Customer customer, Shop shop, String creditCard, Date date) throws PaymentException, NegativePaymentException {
         if(amount.getCentsAmount() < 0){
@@ -101,11 +100,7 @@ public class Cashier implements Payment, ChargeCard {
             throw new PaymentException(amount, customer, date);
         }
 
-        try {
-            customer.getCustomerBalance().setEuroBalance(customer.getCustomerBalance().getEuroBalance().add(amount));
-        } catch (Exception e) {
-            System.err.println("Error while adding (" + amount + ") euro to customer balance, this should not happen");
-        }
+        customer.getCustomerBalance().setEuroBalance(customer.getCustomerBalance().getEuroBalance().add(amount));
 
         return new EuroTransaction(customer, amount, date);
     }

@@ -16,7 +16,6 @@ public class Statistic {
         this.shop = shop;
     }
 
-    // TODO : to change later
     public Statistic(double statisticValues) {
        this(statisticValues, Indicator.AVERAGE, null);
     }

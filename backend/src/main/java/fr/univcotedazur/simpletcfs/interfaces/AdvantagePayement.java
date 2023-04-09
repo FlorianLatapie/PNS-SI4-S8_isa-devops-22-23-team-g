@@ -11,6 +11,6 @@ import java.util.List;
 public interface AdvantagePayement {
     AdvantageTransaction debitAdvantage(Customer customer, AdvantageItem item) throws CustomerDoesntHaveAdvantageException, ParkingException;
 
-    void debitAllAdvantage(Customer customer, List<AdvantageItem> items) throws CustomerDoesntHaveAdvantageException, ParkingException;
+    List<AdvantageTransaction> debitAllAdvantage(Customer customer, List<AdvantageItem> items) throws CustomerDoesntHaveAdvantageException, ParkingException;
 
 }

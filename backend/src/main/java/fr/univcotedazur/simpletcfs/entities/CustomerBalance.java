@@ -33,6 +33,12 @@ public class CustomerBalance {
         this.euroBalance = euroBalance;
     }
 
+    public CustomerBalance(Point pointBalance, Euro euroBalance) {
+        this.pointBalance = pointBalance;
+        this.euroBalance = euroBalance;
+    }
+
+
     public Point getPointBalance() {
         return pointBalance;
     }

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-public class StatusUpdaterTest {
+class StatusUpdaterTest {
 
     @Autowired
     private StatusUpdater statusUpdater;

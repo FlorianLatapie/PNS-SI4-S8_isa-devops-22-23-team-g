@@ -1,9 +1,8 @@
 package fr.univcotedazur.simpletcfs.connectors;
 
-import fr.univcotedazur.simpletcfs.connectors.externalDTO.FreeParkingDTO;
+import fr.univcotedazur.simpletcfs.connectors.externaldto.FreeParkingDTO;
 import fr.univcotedazur.simpletcfs.interfaces.Park;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -13,8 +12,6 @@ import java.sql.Timestamp;
 @Component
 public class ParkingProxy implements Park {
 
-    // @Value("${parking.host.baseurl}")
-    // private String parkingHostAndPort;
     private String parkingHostAndPort = "http://parking-system-staging:9080";
 
     private RestTemplate restTemplate = new RestTemplate();
@@ -35,7 +32,6 @@ public class ParkingProxy implements Park {
     @Override
     public boolean parkForDuration(String licensePlate, Timestamp duration) {
         return true;
-        // TODO Auto-generated method stub
     }
 
 

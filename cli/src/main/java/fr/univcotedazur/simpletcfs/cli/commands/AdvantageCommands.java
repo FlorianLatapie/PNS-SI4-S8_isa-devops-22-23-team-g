@@ -46,7 +46,7 @@ public class AdvantageCommands {
         AdvantageItemDTO advantageItemDTO = cliContext.getAdvantageItems().get(advantageName);
         String advantageItemId = String.valueOf(advantageItemDTO.getId());
         Long customerID = cliContext.getCustomers().get(customerName).getId();
-        return restTemplate.postForObject(BASE_URI + customerID + "/debitAdvantage/" + advantageItemId, new AdvantageTransactionDTO(new CliCustomer(customerName), advantageItemDTO.getTitle()), AdvantageTransactionDTO.class);
+        return restTemplate.postForObject(BASE_URI + customerID + "/debitAdvantage/" + advantageItemId, new AdvantageTransactionDTO(new CliCustomer(customerName), advantageItemDTO), AdvantageTransactionDTO.class);
     }
 
     @ShellMethod("exchange points for an advantage")

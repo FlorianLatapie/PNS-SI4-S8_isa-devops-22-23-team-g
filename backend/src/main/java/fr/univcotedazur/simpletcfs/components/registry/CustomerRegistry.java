@@ -15,7 +15,7 @@ import java.util.Optional;
 @Component
 public class CustomerRegistry implements CustomerFinder, CustomerModifier {
 
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
     @Autowired
     public CustomerRegistry(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
@@ -33,31 +33,25 @@ public class CustomerRegistry implements CustomerFinder, CustomerModifier {
 
     @Override
     public Customer signup(String username, ContactDetails contactDetails) throws CustomerAlreadyExistsException {
-        System.out.println("Customer trying to signup: " + username);
         Optional<Customer> customerOpt = findCustomerByUsername(username);
         if (customerOpt.isPresent()) {
             throw new CustomerAlreadyExistsException("Customer already exists");
         }
 
-        System.out.println("Customer not found, creating new customer: " + username);
         Customer customer = new Customer(username);
         return customerRepository.save(customer);
     }
 
     @Override
     public Customer signup(String username, ContactDetails contactDetails, String licensePlate) throws CustomerAlreadyExistsException {
-        System.out.println("Customer trying to signup: " + username);
         Optional<Customer> customerOpt = findCustomerByUsername(username);
         if (customerOpt.isPresent()) {
             throw new CustomerAlreadyExistsException("Customer already exists");
         }
-        System.out.println("Customer not found, creating new customer: " + username);
         Customer customer = new Customer(username, licensePlate);
         return customerRepository.save(customer);
     }
 
-
-    // TODO: implement
     @Override
     public Customer update(Customer customer) throws CustomerNotFoundException {
         return null;
@@ -65,11 +59,5 @@ public class CustomerRegistry implements CustomerFinder, CustomerModifier {
 
     private Optional<Customer> findCustomerByUsername(String username) {
         return customerRepository.findCustomerByUsername(username);
-
-        /* need a test to check if this works
-        return StreamSupport.stream(customerRepository.findAll().spliterator(), false)
-                .filter(customer -> customer.getUsername().equals(username))
-                .findFirst().orElse(Optional.empty());
-        */
     }
 }

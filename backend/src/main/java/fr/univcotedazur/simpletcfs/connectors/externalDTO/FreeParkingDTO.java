@@ -1,4 +1,4 @@
-package fr.univcotedazur.simpletcfs.connectors.externalDTO;
+package fr.univcotedazur.simpletcfs.connectors.externaldto;
 
 public class FreeParkingDTO {
 

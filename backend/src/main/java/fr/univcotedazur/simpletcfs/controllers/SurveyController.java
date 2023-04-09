@@ -45,13 +45,11 @@ public class SurveyController {
 
     @PostMapping(path = "add", consumes = APPLICATION_JSON_VALUE) // path is a REST CONTROLLER NAME
     public ResponseEntity<SurveyDTO> addSurvey(@RequestBody @Valid SurveyDTO surveyDTO) {
-        System.out.println("Adding new survey " + surveyDTO/*.getName()*/);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(convertSurveyToDto(surveyModifier.newSurvey()));
     }
 
     static SurveyDTO convertSurveyToDto(Survey survey) { // In more complex cases, we could use ModelMapper
-        System.out.println("Converting survey " + survey.getId() + " to DTO");
         List<CustomerDTO> participants = new ArrayList<>();
         for (int i = 0; i < survey.getParticipants().size(); i++) {
             participants.add(convertCustomerToDto(survey.getParticipants().get(i)));
@@ -61,7 +59,6 @@ public class SurveyController {
 
     @GetMapping(path = "/all")
     public List<SurveyDTO> getAllSurveys() {
-        System.out.println("Getting all surveys");
         List<SurveyDTO> surveyDTOS = new ArrayList<>();
         surveyFinder.findAll().forEach(survey -> surveyDTOS.add(convertSurveyToDto(survey)));
         return surveyDTOS;

@@ -6,4 +6,6 @@ import fr.univcotedazur.simpletcfs.exceptions.CustomerDoesntHaveAdvantageExcepti
 
 public interface AdvantageRemover {
     void removeAdvantage(Customer customer, AdvantageItem item)throws CustomerDoesntHaveAdvantageException;
+
+    void checkAdvantagePresence(Customer customer, AdvantageItem item) throws CustomerDoesntHaveAdvantageException;
 }

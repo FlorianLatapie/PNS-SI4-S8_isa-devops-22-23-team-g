@@ -1,4 +1,4 @@
-package fr.univcotedazur.simpletcfs.connectors.externalDTO;
+package fr.univcotedazur.simpletcfs.connectors.externaldto;
 
 import fr.univcotedazur.simpletcfs.entities.Customer;
 import fr.univcotedazur.simpletcfs.entities.Euro;

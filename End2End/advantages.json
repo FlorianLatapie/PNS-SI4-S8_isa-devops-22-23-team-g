@@ -1,25 +1,32 @@
 [
   {
     "name": "It retrieve advantage catalog",
-    "seedCommands": ["register Robert", "login Robert", "pay-with-credit-card 50 896983 Robert"],
+    "seedCommands": [
+      "register Robert",
+      "login Robert",
+      "pay-with-credit-card 50 896983 Robert"
+    ],
     "command": "get-catalog",
     "expected": "name: Croissant  price: 20  description: un délicieux croissant, croquant, gourmand  shop: Unknown  type: CLASSIC\nname: Chocolatine  price: 30  description: une chocoloatine fondante  shop: Unknown  type: CLASSIC\nname: Café  price: 10  description: un café bien chaud  shop: Unknown  type: CLASSIC\nname: Thé  price: 10  description: un thé vert aromatisé  shop: Unknown  type: CLASSIC\nname: Jus  price: 10  description: un jus de fruit frais  shop: Unknown  type: CLASSIC"
   },
   {
     "name": "It should buy an advantage with points",
     "command": "pay-points Croissant Robert",
-    "expected": "PointTransactionDTO[customerDTO=CliCustomer{id=[0-9]+, name='Robert', points=80, euros=0.0, status=CLASSIC, licensePlate=null}, avantageName=Croissant, price=20]"
+    "expected": "PointTransactionDTO\\[customerDTO=CliCustomer{id=[0-9]+, name='Robert', points=80, euros=0.0, status=CLASSIC, licensePlate=null}, avantageName=Croissant, price=20\\]"
   },
   {
     "name": "It should print multiple items in customer advantages",
-    "seedCommands": ["pay-points Jus Robert", "pay-points Jus Robert"],
+    "seedCommands": [
+      "pay-points Jus Robert",
+      "pay-points Jus Robert"
+    ],
     "command": "get-customer-advantages Robert",
     "expected": "name: Croissant  price: 20  description: un délicieux croissant, croquant, gourmand  shop: Unknown  type: CLASSIC\nname: Jus  price: 10  description: un jus de fruit frais  shop: Unknown  type: CLASSIC\nname: Jus  price: 10  description: un jus de fruit frais  shop: Unknown  type: CLASSIC"
   },
   {
     "name": "It should debit an advantage",
     "command": "debit-advantage Croissant Robert",
-    "expected": "AdvantageTransactionDTO\\[customerDTO=CliCustomer{id=[0-9]+, name='Robert', points=60, euros=0.0, status=CLASSIC, licensePlate=null}, advantageName=Croissant\\]"
+    "expected": "AdvantageTransactionDTO\\[customerDTO=CliCustomer{id=[0-9]+, name='Robert', points=60, euros=0.0, status=CLASSIC, licensePlate=null}, advantage=Croissant\\]"
   },
   {
     "name": "It should have one less advantage in advantage list",
@@ -38,13 +45,17 @@
   },
   {
     "name": "It should buy the Parking advantage with points",
-    "seedCommands": ["register-with-license-plate Georges 896983 ", "login Georges", "pay-with-credit-card 50 896983 Georges"],
+    "seedCommands": [
+      "register-with-license-plate Georges 896983",
+      "login Georges",
+      "pay-with-credit-card 50 896983 Georges"
+    ],
     "command": "pay-points Parking Georges",
     "expected": "PointTransactionDTO\\[customerDTO=CliCustomer{id=[0-9]+, name='Georges', points=80, euros=0.0, status=CLASSIC, licensePlate=896983}, avantageName=Parking, price=20\\]"
   },
   {
     "name": "It should debit the Parking advantage",
     "command": "debit-advantage Parking Georges",
-    "expected": "AdvantageTransactionDTO\\[customerDTO=CliCustomer{id=18, name='Georges', points=80, euros=0.0, status=CLASSIC, licensePlate=896983}, advantageName=Parking\\]"
-  }
+    "expected": "AdvantageTransactionDTO\\[customerDTO=CliCustomer{id=[0-9]+, name='Georges', points=80, euros=0.0, status=CLASSIC, licensePlate=896983}, advantage=Parking\\]"
+}
 ]

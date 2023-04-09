@@ -6,6 +6,7 @@ import fr.univcotedazur.simpletcfs.entities.Shop;
 import fr.univcotedazur.simpletcfs.interfaces.PointTransactionFinder;
 import fr.univcotedazur.simpletcfs.interfaces.PointTransactionModifier;
 import fr.univcotedazur.simpletcfs.repositories.PointTransactionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -15,7 +16,12 @@ import java.util.Optional;
 @Component
 public class PointTransactionRegistry implements PointTransactionFinder, PointTransactionModifier {
 
-    PointTransactionRepository pointTransactionRepository;
+    private final PointTransactionRepository pointTransactionRepository;
+
+    @Autowired
+    public PointTransactionRegistry(PointTransactionRepository pointTransactionRepository) {
+        this.pointTransactionRepository = pointTransactionRepository;
+    }
 
     @Override
     public PointTransaction findPoint(Long id) {
@@ -23,10 +29,9 @@ public class PointTransactionRegistry implements PointTransactionFinder, PointTr
         return pointTransaction.orElse(null);
     }
 
-    // TODO: implement this method
     @Override
     public List<PointTransaction> findPoint(Shop shop) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override

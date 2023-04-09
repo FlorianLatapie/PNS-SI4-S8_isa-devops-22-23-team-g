@@ -36,19 +36,18 @@ public class AnswerSurveyController {
 
 
     @PostMapping(path = "post", consumes = APPLICATION_JSON_VALUE,params = "surveyID,answer,questionID")
-    public ResponseEntity<SurveyDTO> addSurvey(@RequestBody Long surveyID, @RequestBody String answer, @RequestBody Long questionID, @RequestBody Customer customer) throws AlreadyAnsweredException {
+    public ResponseEntity<SurveyDTO> addSurvey(@RequestBody Long surveyID, @RequestBody String answer, @RequestBody Long questionID, @RequestBody CustomerDTO customerDto) throws AlreadyAnsweredException {
         Survey survey;
+        Customer customer = new Customer(customerDto);
         try {
             survey = surveyAddAnswer.addAnswer(answer,surveyID,questionID, customer);
         } catch (AlreadyAnsweredException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        System.out.println("Adding new answer for client : " + customer.getUsername() + " to survey " + surveyID);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(convertSurveyToDto(survey));
     }
     static SurveyDTO convertSurveyToDto(Survey survey) { // In more complex cases, we could use ModelMapper
-        System.out.println("Converting survey " + survey.getId() + " to DTO");
         List<CustomerDTO> participants = new ArrayList<>();
         for (int i = 0; i < survey.getParticipants().size(); i++) {
             participants.add(convertCustomerToDto(survey.getParticipants().get(i)));

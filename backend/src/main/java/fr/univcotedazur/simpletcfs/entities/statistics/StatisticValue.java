@@ -4,7 +4,7 @@ public abstract class StatisticValue {
     protected Indicator indicator;
     protected String description;
 
-    public StatisticValue(String description, Indicator indicator) {
+    protected StatisticValue(String description, Indicator indicator) {
         this.description = description;
         this.indicator = indicator;
     }

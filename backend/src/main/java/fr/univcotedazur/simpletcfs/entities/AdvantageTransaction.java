@@ -1,41 +1,33 @@
 package fr.univcotedazur.simpletcfs.entities;
 
 import java.util.Date;
+import java.util.Random;
+import java.util.UUID;
 
-import javax.persistence.*;
-
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
-@Entity
-@Table(name = "advantageTransactions")
 public class AdvantageTransaction {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private UUID id;
 
     private Date date;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Customer customer;
 
-    private String advantageName;
+    private AdvantageItem advantage;
 
-    public AdvantageTransaction(Date date, Customer customer, String advantageName) {
+    public AdvantageTransaction(Date date, Customer customer, AdvantageItem advantage) {
         this.date = date;
         this.customer = customer;
-        this.advantageName = advantageName;
+        this.advantage = advantage;
+        this.id = UUID.randomUUID();
     }
 
     public AdvantageTransaction() {}
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -56,11 +48,11 @@ public class AdvantageTransaction {
         this.customer = customer;
     }
 
-    public String getAdvantageName() {
-        return advantageName;
+    public AdvantageItem getAdvantage() {
+        return advantage;
     }
 
-    public void setAdvantageName(String advantageName) {
-        this.advantageName = advantageName;
+    public void setAdvantage(AdvantageItem advantage) {
+        this.advantage = advantage;
     }
 }

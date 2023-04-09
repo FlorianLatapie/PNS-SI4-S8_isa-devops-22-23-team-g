@@ -1,5 +1,6 @@
 package fr.univcotedazur.simpletcfs.entities;
 
+import fr.univcotedazur.simpletcfs.controllers.dto.CustomerDTO;
 import fr.univcotedazur.simpletcfs.exceptions.NegativeEuroBalanceException;
 import fr.univcotedazur.simpletcfs.exceptions.NegativePointBalanceException;
 import javax.persistence.*;
@@ -32,6 +33,16 @@ public class Customer {
         this.username = username;
         this.customerBalance = new CustomerBalance();
     }
+    
+    public Customer(CustomerDTO customerDto) {
+        this.username = customerDto.getName();
+        this.licensePlate = customerDto.getLicensePlate();
+        this.id = customerDto.getId();
+        Point points = new Point(customerDto.getPoints());
+        Euro euros = new Euro(customerDto.getEuros());
+        this.customerBalance = new CustomerBalance(points, euros);
+        this.status = Status.valueOf(customerDto.getStatus());
+    }
 
     public Customer(String username, String licensePlate) {
         this.username = username;
@@ -56,12 +67,8 @@ public class Customer {
         customerBalance.addEuro(euro);
     }
 
-    public void removePoint(Point point) {
-        try {
-            customerBalance.removePoint(point);
-        } catch (NegativePointBalanceException e) {
-
-        }
+    public void removePoint(Point point) throws NegativePointBalanceException {
+        customerBalance.removePoint(point);
     }
 
     public CustomerBalance getCustomerBalance() {

@@ -5,6 +5,7 @@ import fr.univcotedazur.simpletcfs.entities.Customer;
 import fr.univcotedazur.simpletcfs.entities.PointTransaction;
 import fr.univcotedazur.simpletcfs.exceptions.NegativePointBalanceException;
 import fr.univcotedazur.simpletcfs.interfaces.PointPayement;
+import fr.univcotedazur.simpletcfs.interfaces.PointTransactionModifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,9 +13,12 @@ import org.springframework.stereotype.Component;
 public class ExchangePoint implements PointPayement {
     private final AdvantageManager advantageManager;
 
+    private final PointTransactionModifier pointTransactionModifier;
+
     @Autowired
-    public ExchangePoint(AdvantageManager advantageManager) {
+    public ExchangePoint(AdvantageManager advantageManager, PointTransactionModifier pointTransactionModifier) {
         this.advantageManager = advantageManager;
+        this.pointTransactionModifier = pointTransactionModifier;
     }
 
     @Override
@@ -23,6 +27,8 @@ public class ExchangePoint implements PointPayement {
         customer.getCustomerBalance().removePoint(item.getPrice());
         // need to add the advantage items
         advantageManager.addAdvantage(customer, item);
-        return new PointTransaction(item.getPrice(), customer, item);
+        PointTransaction pointTransaction = new PointTransaction(item.getPrice(), customer, item);
+        pointTransactionModifier.add(pointTransaction);
+        return pointTransaction;
     }
 }

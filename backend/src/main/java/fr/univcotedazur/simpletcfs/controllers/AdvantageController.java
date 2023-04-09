@@ -23,7 +23,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static fr.univcotedazur.simpletcfs.controllers.CustomerController.convertCustomerToDto;
 
@@ -120,7 +119,9 @@ public class AdvantageController {
 
     static AdvantageTransactionDTO convertAdvantageTransactionToDto(AdvantageTransaction advantageTransaction) {
         CustomerDTO customerDTO = convertCustomerToDto(advantageTransaction.getCustomer());
-        return new AdvantageTransactionDTO(customerDTO, advantageTransaction.getAdvantageName(), UUID.randomUUID());
+        return new AdvantageTransactionDTO(customerDTO, new AdvantageItemDTO(advantageTransaction.getAdvantage()));
     }
+
+
 
 }

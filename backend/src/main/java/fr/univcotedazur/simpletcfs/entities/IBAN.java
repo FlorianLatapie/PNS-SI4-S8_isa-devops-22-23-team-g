@@ -5,21 +5,21 @@ import java.util.Objects;
 
 @Embeddable
 public class IBAN {
-    String iban;
+    String number;
 
     public IBAN() {
     }
 
     public IBAN(String iban) {
-        this.iban = iban;
+        this.number = iban;
     }
 
-    public String getIban() {
-        return iban;
+    public String getNumber() {
+        return number;
     }
 
-    public void setIban(String iban) {
-        this.iban = iban;
+    public void setNumber(String iban) {
+        this.number = iban;
     }
 
     @Override
@@ -27,18 +27,18 @@ public class IBAN {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         IBAN iban1 = (IBAN) o;
-        return Objects.equals(iban, iban1.iban);
+        return Objects.equals(number, iban1.number);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(iban);
+        return Objects.hash(number);
     }
 
     @Override
     public String toString() {
         return "IBAN{" +
-                "iban='" + iban + '\'' +
+                "iban='" + number + '\'' +
                 '}';
     }
 }

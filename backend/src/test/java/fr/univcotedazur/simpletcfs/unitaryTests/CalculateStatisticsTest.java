@@ -19,7 +19,7 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
-public class CalculateStatisticsTest {
+class CalculateStatisticsTest {
     @Autowired
     private CustomerRepository customerRepository;
 
