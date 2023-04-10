@@ -14,7 +14,7 @@
 Nous avons construit notre workflow dans le but de répondre à 4 objectifs principaux :
 
 - Avoir une branche main livrable à tout moment
-- Avoir des pipelines rapides et sécures
+- Avoir des pipelines rapides et sécurisées
 - Pouvoir intégrer nos changements rapidement
 - Avoir un feedback rapide en cas de problème
 
@@ -35,45 +35,48 @@ qu'une autre est en train de les exécuter, celle-ci interrompra les tests de la
 C'est également pour conserver la branche main livrable que nous avons choisi d'éviter le [Trunk Based Development](https://www.atlassian.com/continuous-delivery/continuous-integration/trunk-based-development).
 Cette approche présentée comme nécessaire à une véritable intégration continue ne nous semble pas permettre de tester de manière adéquate les changements à chaque intégration de code.
 
-  **2. Des pipelines rapides et sécures :**  
+  **2. Des pipelines rapides et sécurisées :**  
 Comme nous l'avons vu la stratégie Git Flow nous permet de réaliser les tests
 de bout en bout uniquement une fois les changements mergés sur la branche Develop,
-ce qui nous permet réduire les tests à réaliser sur les Pull-Requests.
-Pour continuer notre optimisation du temps des pipelines sur les branches de feature
-nous réalisons uniquement les tests sur le module qui a été modifié.
+ce qui nous permet réduire les tests à réaliser sur les Pull-Requests. 
+  Pour continuer à optimiser le temps, nous réalisons uniquement les tests sur les modules qui ont été modifiés, sur les pipelines de nos branches de feature.
 Pour implémenter cette stratégie, les pipelines se lancent en fonction du nom de la branche.
 Par exemple, une branche nommée `backend/add_advantadges_items` lancera uniquement les tests du module backend,
 une branche commençant par `cli/` lancera uniquement les tests du module cli et une branche commençant par `feature/` lancera les tests de tous les modules.
 Les pipelines sont donc rapides et sécures, car elles exécutent tous les tests nécessaires sans exécuter de tests superflus.
 
   **3. Intégration rapide des changements :**  
-L'existence de la branche Develop a mis-chemin entre les branches de feature et la branche main nous permet d'avoir une zone tampon où nous pouvons
+L'existence de la branche Develop à mi-chemin entre les branches de feature et la branche main nous permet d'avoir une zone tampon où nous pouvons
 intégrer rapidement nos changements sans risque que ceux-ci soient déployés.
   
   **4. Feedback rapide en cas de problème :**  
-L'intégration des tests de bout en bout dans les pipelines s'exécutant sur la branche Develop lié à l'intégration de notifications Jenkins dans notre canal de communication d'équipe nous permet de corriger rapidement les problèmes qui peuvent survenir. Nous pouvons ainsi avoir confiance dans le code qui a été intégré.  
+L'intégration des tests de bout en bout dans les pipelines s'exécutant sur la branche 
+  Develop, ainsi que l'intégration des notifications Jenkins dans notre canal de communication 
+  d'équipe, nous permet de corriger rapidement les problèmes qui peuvent survenir. 
+  Nous pouvons ainsi avoir confiance dans le code qui a été intégré.  
 ![Notification](./assets/2%20-%20DevOps-Notification.jpg)
 
-**Autres :**
+**Autres informations :**
 
 - Sur GitHub, nous bloquons le merge des Pull-requests en l'absence de status check de Jenkins (option `Require status checks to pass before merging` + `Status checks that are required: continuous-integration/jenkins/pr-head`)
-- Nous vérifions dans nos pipeline de branche feature que les versions des modules à merger ne sont pas déjà présent sur Artifactory.
+- Nous vérifions dans nos pipeline de branche feature que les versions des modules à merger ne sont pas déjà présent sur Artifactory. Cette vérification nous permet de ne pas avoir à reconstruire les versions présentes sur Artifactory lorsque nous sommes sur la branche Develop. En effet, nous savons que les modules qui ont subi des modifications ne sont pas présents sur Artifactory et que les modules présents ont été téléversé depuis la pipeline de publication sur Main et sont donc sûr.
 - L'intégration de SonarQube dans nos pipelines de branche feature nous a permis de prévenir certains bugs potentiels, principalement des risques de null pointer exceptions.
 - Une fois sur Main les modules sont prêt à être livrés. C'est à ce moment que ceux-ci sont publiés sur Artifactory. Ces versions peuvent alors être utilisées par les pipelines en amonts pour réaliser les tests de bout en bout.
+- Nous avons développé un [runner](../End2End/utils.sh) de tests de bout en bout qui nous permet grâce à jq de définir des tests directement en [json](../End2End/creditCard.json). Ceci nous permet d'avoir des tests de bout en bout facilement extensibles. Notre script lance les fichiers json du dossier End2End. Cependant, nous pouvons également utiliser un argument `-f` qui nous permet de définir le chemin du fichier à exécuter. Ceci nous sera utile quand nous restreindrons les tests à effectuer en fonction de la pipeline (voir Discussions et Perspectives).
 
 **Discussions et Perspectives :**  
 Nous réalisons actuellement les mêmes tests de bouts en bouts sur les branches Develop, Main et sur les Releases.
-En effet, nous réalisons les tests sur Develop pour avoir un feedback rapide suite au merge, nous réalisons ceux sur Main car dans la stratégie Git Flow les Hotfix ne passent pas par la branche Develop il est donc nécessaire de réaliser les tests avant le merge sur Main. Nous réalisons également les tests lors du déploiement pour vérifier. Actuellement ces tests de bout en bout sont les mêmes, mais les perspectives seraient de réaliser des tests vitaux lors des merge sur Develop ainsi que lors du déploiement et des tests de non-régression lors des merge sur Main.
+En effet, nous réalisons les tests sur Develop pour avoir un feedback rapide suite au merge. Nous les réalisons également sur Main, car dans la stratégie Git Flow, les Hotfix ne passent pas par la branche Develop, il est donc nécessaire de réaliser les tests avant le merge sur Main. Nous réalisons également les tests lors du déploiement pour avoir plus de confiance dans notre livrable. Actuellement ces tests de bout en bout sont les mêmes, mais les perspectives seraient de réaliser des tests vitaux lors de merge sur Develop, ainsi que lors du déploiement et des tests de non-régression lors des merge sur Main.
 
 **En résumé :**
 
 - Notre projet est composé de deux branches principales (Main et Develop) ainsi que de branches de features.
-- Les pipelines de features qui réalisent les tests unitaires et d'intégration des modules concernés par les changements.
-  Elles vérifient la qualité du code via SonarQube et vérifient que les versions des modules que nous avons mis à jours n'existent pas déjà sur Artifactory.
+- Les pipelines de features réalisent les tests unitaires et d'intégration des modules concernés par les changements.
+  Elles vérifient la qualité du code via SonarQube et vérifient que les versions des modules que nous avons mis à jour n'existent pas déjà sur Artifactory. [(exemple de pipeline)](../workflows/backend.Jenkinsfile)
 - La pipeline de la branche Develop télécharge les artefacts déjà existants, build et test les nouveaux artefacts et build les images docker.
   Elle réalise ensuite les tests de bout en bout.
-- Une fois que nous sommes sur la branche Main nous pouvons publier les artefacts (jar et zip) sur [Artifactory](http://vmpx07.polytech.unice.fr:8003/ui/repos/tree/General/libs-snapshot-local/fr/univ-cotedazur/mfc-backend).
-- Le tag d'une nouvelle release sur la branche Main déclenche la pipeline de déploiement qui publie les images sur [DockerHub](https://hub.docker.com/u/teamgisadevops2023) et déploie le système sur la machine virtuelle.
+- Une fois que nous sommes sur la branche Main nous pouvons publier les artefacts (jar et zip) sur [Artifactory](http://vmpx07.polytech.unice.fr:8003/ui/repos/tree/General/libs-snapshot-local/fr/univ-cotedazur/mfc-backend). [(exemple de pipeline)](../workflows/publishing.Jenkinsfile)
+- Le tag d'une nouvelle release suivant la spécification [SemVer](https://semver.org) sur la branche Main déclenche la pipeline de déploiement qui publie les images sur [DockerHub](https://hub.docker.com/u/teamgisadevops2023) et déploie le système sur la machine virtuelle. [(exemple de pipeline)](../workflows/deployment.Jenkinsfile)
   
 ![Workflow](./assets/2%20-%20DevOps-Workflow.png)
 

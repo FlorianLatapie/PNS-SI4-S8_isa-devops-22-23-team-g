@@ -22,7 +22,7 @@
 ## Introduction
 
 Dans le but d'automatiser au maximum notre plan de reprise de l'activité, nous l'avons testé à plusieurs reprises.
-L'exécution du script de reconstruction dure 10 minutes. L'initialisation manuelle d'Artifactory et les étapes finales durent 15 minutes. Nous estimons donc à environs 30 minutes la reconstruction de notre environnement par une personne connaissant la procédure avec un bon débit de connexion. Celle-ci devrait prendre moins d'une heure pour une personne ne connaissant pas la procédure et suivant les instructions du PRA.
+L'exécution du script de reconstruction dure 10 minutes. L'initialisation manuelle d'Artifactory et les étapes finales durent 15 minutes. Nous estimons donc à environs 30 minutes la reconstruction de notre environnement par une personne connaissant la procédure avec un bonne connexion. Celle-ci devrait prendre moins d'une heure pour une personne ne connaissant pas la procédure et suivant les instructions du PRA.
 
 ## Problèmes et Solutions
 
