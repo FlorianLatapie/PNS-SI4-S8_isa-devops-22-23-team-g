@@ -3,7 +3,9 @@ pipeline {
 
     stages {
         stage('Allow merge') {
-            steps {}
+            steps {
+              echo "OK"
+            }
         }
     }
 }

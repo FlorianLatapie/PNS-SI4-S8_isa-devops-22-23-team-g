@@ -1,0 +1,13 @@
+localRepositories:
+    myproject-mvn-release-local-repo:
+        repositories:
+            - myproject-mvn-release-local-repo
+            - myproject-mvn-snapshot-local-repo
+            - myproject-mvn-remote-repo
+        type: maven
+    myproject-mvn-snapshot-local-repo:
+        repositories:
+            - myproject-mvn-release-local-repo
+            - myproject-mvn-snapshot-local-repo
+            - myproject-mvn-remote-repo
+        type: maven
