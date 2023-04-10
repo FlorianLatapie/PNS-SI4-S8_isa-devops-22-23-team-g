@@ -1,0 +1,404 @@
+{
+  "localRepoConfigs": [
+    {
+      "type": "local",
+      "key": "generic-releases-local",
+      "packageType": "generic",
+      "baseConfig": {
+        "modelVersion": 0,
+        "description": "",
+        "notes": "",
+        "repoLayoutRef": "simple-default",
+        "includesPattern": "**/*",
+        "excludesPattern": ""
+      },
+      "repoTypeConfig": {
+        "archiveBrowsingEnabled": false,
+        "blackedOut": false,
+        "propertySetRefs": [],
+        "checksumPolicyType": "client-checksums",
+        "priorityResolution": false,
+        "maxUniqueSnapshots": 0,
+        "handleReleases": true,
+        "handleSnapshots": true,
+        "snapshotVersionBehavior": "unique"
+      },
+      "packageTypeConfig": {},
+      "securityConfig": {
+        "hideUnauthorizedResources": false,
+        "signedUrlTtl": 90
+      },
+      "repoType": "LOCAL"
+    },
+    {
+      "type": "local",
+      "key": "libs-snapshot-local",
+      "packageType": "maven",
+      "baseConfig": {
+        "modelVersion": 0,
+        "description": "libs-snapshot-local",
+        "notes": "",
+        "repoLayoutRef": "maven-2-default",
+        "includesPattern": "**/*",
+        "excludesPattern": ""
+      },
+      "repoTypeConfig": {
+        "archiveBrowsingEnabled": false,
+        "blackedOut": false,
+        "propertySetRefs": [],
+        "checksumPolicyType": "client-checksums",
+        "priorityResolution": false,
+        "maxUniqueSnapshots": 0,
+        "handleReleases": true,
+        "handleSnapshots": true,
+        "snapshotVersionBehavior": "unique"
+      },
+      "packageTypeConfig": { "suppressPomConsistencyChecks": "false" },
+      "securityConfig": {
+        "hideUnauthorizedResources": false,
+        "signedUrlTtl": 90
+      },
+      "repoType": "LOCAL"
+    },
+    {
+      "type": "local",
+      "key": "artifactory-build-info",
+      "packageType": "buildinfo",
+      "baseConfig": {
+        "modelVersion": 0,
+        "repoLayoutRef": "simple-default",
+        "includesPattern": "**/*"
+      },
+      "repoTypeConfig": {
+        "archiveBrowsingEnabled": false,
+        "blackedOut": false,
+        "propertySetRefs": [],
+        "checksumPolicyType": "client-checksums",
+        "priorityResolution": false,
+        "maxUniqueSnapshots": 0,
+        "handleReleases": true,
+        "handleSnapshots": true,
+        "snapshotVersionBehavior": "unique"
+      },
+      "packageTypeConfig": {},
+      "securityConfig": {
+        "hideUnauthorizedResources": false,
+        "signedUrlTtl": 90
+      },
+      "repoType": "LOCAL"
+    }
+  ],
+  "federatedRepoConfigs": [],
+  "releaseBundleRepoConfigs": [],
+  "remoteRepoConfigs": [
+    {
+      "type": "remote",
+      "key": "maven-remote",
+      "packageType": "maven",
+      "baseConfig": {
+        "modelVersion": 0,
+        "repoLayoutRef": "maven-2-default",
+        "includesPattern": "**/*"
+      },
+      "repoTypeConfig": {
+        "archiveBrowsingEnabled": false,
+        "blackedOut": false,
+        "propertySetRefs": [],
+        "allowAnyHostAuth": false,
+        "blockMismatchingMimeTypes": true,
+        "mismatchingMimeTypesOverrideList": "",
+        "bypassHeadRequests": false,
+        "disableUrlNormalization": false,
+        "enableCookieManagement": false,
+        "enableTokenAuthentication": false,
+        "propagateQueryParams": false,
+        "shareConfiguration": false,
+        "listRemoteFolderItems": true,
+        "synchronizeProperties": false,
+        "contentSynchronisation": {
+          "enabled": false,
+          "statistics": { "enabled": false },
+          "properties": { "enabled": false },
+          "source": { "originAbsenceDetection": false }
+        },
+        "disableProxy": false,
+        "storeArtifactsLocally": true,
+        "url": "https://repo1.maven.org/maven2/",
+        "hardFail": false,
+        "offline": false,
+        "retrievalCachePeriodSecs": 7200,
+        "metadataRetrievalTimeoutSecs": 60,
+        "assumedOfflinePeriodSecs": 300,
+        "missedRetrievalCachePeriodSecs": 1800,
+        "checksumPolicyType": "generate-if-absent",
+        "unusedArtifactsCleanupPeriodHours": 0,
+        "socketTimeoutMillis": 15000,
+        "priorityResolution": false,
+        "handleReleases": true,
+        "handleSnapshots": true,
+        "maxUniqueSnapshots": 0
+      },
+      "packageTypeConfig": {
+        "fetchSourcesEagerly": "false",
+        "fetchJarsEagerly": "false",
+        "rejectInvalidJars": "false",
+        "suppressPomConsistencyChecks": "false",
+        "p2OriginalUrl": "https://repo1.maven.org/maven2/"
+      },
+      "securityConfig": {
+        "hideUnauthorizedResources": false,
+        "signedUrlTtl": 90
+      },
+      "repoType": "REMOTE",
+      "proxyDisabled": false
+    }
+  ],
+  "virtualRepoConfigs": [
+    {
+      "type": "virtual",
+      "key": "libs-snapshot",
+      "packageType": "maven",
+      "baseConfig": {
+        "modelVersion": 0,
+        "repoLayoutRef": "maven-2-default",
+        "includesPattern": "**/*"
+      },
+      "repoTypeConfig": {
+        "artifactoryRequestsCanRetrieveRemoteArtifacts": false,
+        "virtualCacheConfig": { "virtualRetrievalCachePeriodSecs": 600 },
+        "repositoryRefs": ["maven-remote"]
+      },
+      "packageTypeConfig": {
+        "pomRepositoryReferencesCleanupPolicy": "discard_active_reference",
+        "forceMavenAuthentication": "false"
+      },
+      "securityConfig": {
+        "hideUnauthorizedResources": false,
+        "signedUrlTtl": 90
+      },
+      "repoType": "VIRTUAL"
+    },
+    {
+      "type": "virtual",
+      "key": "libs-release",
+      "packageType": "maven",
+      "baseConfig": {
+        "modelVersion": 0,
+        "repoLayoutRef": "maven-2-default",
+        "includesPattern": "**/*"
+      },
+      "repoTypeConfig": {
+        "artifactoryRequestsCanRetrieveRemoteArtifacts": false,
+        "virtualCacheConfig": { "virtualRetrievalCachePeriodSecs": 600 },
+        "repositoryRefs": ["maven-remote"]
+      },
+      "packageTypeConfig": {
+        "pomRepositoryReferencesCleanupPolicy": "discard_active_reference",
+        "forceMavenAuthentication": "false"
+      },
+      "securityConfig": {
+        "hideUnauthorizedResources": false,
+        "signedUrlTtl": 90
+      },
+      "repoType": "VIRTUAL"
+    }
+  ],
+  "all": [
+    {
+      "type": "local",
+      "key": "generic-releases-local",
+      "packageType": "generic",
+      "baseConfig": {
+        "modelVersion": 0,
+        "description": "",
+        "notes": "",
+        "repoLayoutRef": "simple-default",
+        "includesPattern": "**/*",
+        "excludesPattern": ""
+      },
+      "repoTypeConfig": {
+        "archiveBrowsingEnabled": false,
+        "blackedOut": false,
+        "propertySetRefs": [],
+        "checksumPolicyType": "client-checksums",
+        "priorityResolution": false,
+        "maxUniqueSnapshots": 0,
+        "handleReleases": true,
+        "handleSnapshots": true,
+        "snapshotVersionBehavior": "unique"
+      },
+      "packageTypeConfig": {},
+      "securityConfig": {
+        "hideUnauthorizedResources": false,
+        "signedUrlTtl": 90
+      },
+      "repoType": "LOCAL"
+    },
+    {
+      "type": "local",
+      "key": "libs-snapshot-local",
+      "packageType": "maven",
+      "baseConfig": {
+        "modelVersion": 0,
+        "description": "libs-snapshot-local",
+        "notes": "",
+        "repoLayoutRef": "maven-2-default",
+        "includesPattern": "**/*",
+        "excludesPattern": ""
+      },
+      "repoTypeConfig": {
+        "archiveBrowsingEnabled": false,
+        "blackedOut": false,
+        "propertySetRefs": [],
+        "checksumPolicyType": "client-checksums",
+        "priorityResolution": false,
+        "maxUniqueSnapshots": 0,
+        "handleReleases": true,
+        "handleSnapshots": true,
+        "snapshotVersionBehavior": "unique"
+      },
+      "packageTypeConfig": { "suppressPomConsistencyChecks": "false" },
+      "securityConfig": {
+        "hideUnauthorizedResources": false,
+        "signedUrlTtl": 90
+      },
+      "repoType": "LOCAL"
+    },
+    {
+      "type": "local",
+      "key": "artifactory-build-info",
+      "packageType": "buildinfo",
+      "baseConfig": {
+        "modelVersion": 0,
+        "repoLayoutRef": "simple-default",
+        "includesPattern": "**/*"
+      },
+      "repoTypeConfig": {
+        "archiveBrowsingEnabled": false,
+        "blackedOut": false,
+        "propertySetRefs": [],
+        "checksumPolicyType": "client-checksums",
+        "priorityResolution": false,
+        "maxUniqueSnapshots": 0,
+        "handleReleases": true,
+        "handleSnapshots": true,
+        "snapshotVersionBehavior": "unique"
+      },
+      "packageTypeConfig": {},
+      "securityConfig": {
+        "hideUnauthorizedResources": false,
+        "signedUrlTtl": 90
+      },
+      "repoType": "LOCAL"
+    },
+    {
+      "type": "remote",
+      "key": "maven-remote",
+      "packageType": "maven",
+      "baseConfig": {
+        "modelVersion": 0,
+        "repoLayoutRef": "maven-2-default",
+        "includesPattern": "**/*"
+      },
+      "repoTypeConfig": {
+        "archiveBrowsingEnabled": false,
+        "blackedOut": false,
+        "propertySetRefs": [],
+        "allowAnyHostAuth": false,
+        "blockMismatchingMimeTypes": true,
+        "mismatchingMimeTypesOverrideList": "",
+        "bypassHeadRequests": false,
+        "disableUrlNormalization": false,
+        "enableCookieManagement": false,
+        "enableTokenAuthentication": false,
+        "propagateQueryParams": false,
+        "shareConfiguration": false,
+        "listRemoteFolderItems": true,
+        "synchronizeProperties": false,
+        "contentSynchronisation": {
+          "enabled": false,
+          "statistics": { "enabled": false },
+          "properties": { "enabled": false },
+          "source": { "originAbsenceDetection": false }
+        },
+        "disableProxy": false,
+        "storeArtifactsLocally": true,
+        "url": "https://repo1.maven.org/maven2/",
+        "hardFail": false,
+        "offline": false,
+        "retrievalCachePeriodSecs": 7200,
+        "metadataRetrievalTimeoutSecs": 60,
+        "assumedOfflinePeriodSecs": 300,
+        "missedRetrievalCachePeriodSecs": 1800,
+        "checksumPolicyType": "generate-if-absent",
+        "unusedArtifactsCleanupPeriodHours": 0,
+        "socketTimeoutMillis": 15000,
+        "priorityResolution": false,
+        "handleReleases": true,
+        "handleSnapshots": true,
+        "maxUniqueSnapshots": 0
+      },
+      "packageTypeConfig": {
+        "fetchSourcesEagerly": "false",
+        "fetchJarsEagerly": "false",
+        "rejectInvalidJars": "false",
+        "suppressPomConsistencyChecks": "false",
+        "p2OriginalUrl": "https://repo1.maven.org/maven2/"
+      },
+      "securityConfig": {
+        "hideUnauthorizedResources": false,
+        "signedUrlTtl": 90
+      },
+      "repoType": "REMOTE",
+      "proxyDisabled": false
+    },
+    {
+      "type": "virtual",
+      "key": "libs-snapshot",
+      "packageType": "maven",
+      "baseConfig": {
+        "modelVersion": 0,
+        "repoLayoutRef": "maven-2-default",
+        "includesPattern": "**/*"
+      },
+      "repoTypeConfig": {
+        "artifactoryRequestsCanRetrieveRemoteArtifacts": false,
+        "virtualCacheConfig": { "virtualRetrievalCachePeriodSecs": 600 },
+        "repositoryRefs": ["maven-remote"]
+      },
+      "packageTypeConfig": {
+        "pomRepositoryReferencesCleanupPolicy": "discard_active_reference",
+        "forceMavenAuthentication": "false"
+      },
+      "securityConfig": {
+        "hideUnauthorizedResources": false,
+        "signedUrlTtl": 90
+      },
+      "repoType": "VIRTUAL"
+    },
+    {
+      "type": "virtual",
+      "key": "libs-release",
+      "packageType": "maven",
+      "baseConfig": {
+        "modelVersion": 0,
+        "repoLayoutRef": "maven-2-default",
+        "includesPattern": "**/*"
+      },
+      "repoTypeConfig": {
+        "artifactoryRequestsCanRetrieveRemoteArtifacts": false,
+        "virtualCacheConfig": { "virtualRetrievalCachePeriodSecs": 600 },
+        "repositoryRefs": ["maven-remote"]
+      },
+      "packageTypeConfig": {
+        "pomRepositoryReferencesCleanupPolicy": "discard_active_reference",
+        "forceMavenAuthentication": "false"
+      },
+      "securityConfig": {
+        "hideUnauthorizedResources": false,
+        "signedUrlTtl": 90
+      },
+      "repoType": "VIRTUAL"
+    }
+  ]
+}

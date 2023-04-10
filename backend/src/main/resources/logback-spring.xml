@@ -39,7 +39,7 @@
     </root>
 
     <!-- LOG TCFS elements at TRACE level -->
-    <logger name="fr.univcotedazur.simpletcfs" level="trace" additivity="false">
+    <logger name="fr.univcotedazur.mfc" level="trace" additivity="false">
         <appender-ref ref="RollingFile"/>
         <appender-ref ref="Console"/>
     </logger>

@@ -1,11 +1,10 @@
 #!/bin/bash
 source End2End/utils.sh
 
-while getopts "d:f:" opt; do
+while getopts "df:" opt; do
   case $opt in
     d) DEMO=true        ;;
-    f) file="$OPTARG"
-       DEMO=true   ;;
+    f) file="$OPTARG";;
   esac
 done
 
@@ -28,7 +27,7 @@ else
     echo "Running in staging mode ..."
 fi
 
-if [ "$ENV" == "prod" ] || [ "$DEMO" == "true" ]; then
+if [ "$ENV" == "prod" ]; then
     COMPOSE_CMD="docker-compose -f docker-compose.prod.yml -p mfc-prod"
 else
     COMPOSE_CMD="docker-compose"
@@ -42,9 +41,10 @@ if [[ -z "${JENKINS_URL}" ]]; then
     eval "$COMPOSE_CMD up -d"
 fi
 
-if [ "$ENV" == "prod" ] || [ "$DEMO" == "true" ]; then
+if [ "$ENV" == "prod" ]; then
     CONTAINER_NAME="mfc-cli-prod"
 fi
+
 
 waitForCLIStart
 

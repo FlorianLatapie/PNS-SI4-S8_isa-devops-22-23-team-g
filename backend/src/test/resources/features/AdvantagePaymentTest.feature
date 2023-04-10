@@ -16,15 +16,17 @@ Fonctionnalité: utilisation d'avantages
       Et le client a 2 points de fidélité
 
 
-    Scénario: dépenser des avantages
+    Scénario: dépenser un avantage
       Etant donné un client possèdant un avantage
         Quand le client dépense son avantage
         Alors le client n'a plus cet avantage
 
+  Scénario: dépenser plusieurs avantages
       Etant donné un client possèdant plusieurs avantage
         Quand le client dépense tout ses avantages
         Alors le client n'a plus ces avantages
 
+  Scénario: dépenser aun avantage non existant
       Etant donné un client ne possèdant pas un avantage
         Quand le client essaye de dépenser son avantage
         Alors le systeme revoie une AdvantageNotInBalanceException

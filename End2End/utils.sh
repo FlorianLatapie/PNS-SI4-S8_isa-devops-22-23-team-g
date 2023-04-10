@@ -51,7 +51,7 @@ function assertEquals(){
 }
 
 function resetTable(){
-    docker exec db sh -c "echo 'TRUNCATE $1 RESTART IDENTITY CASCADE;' | psql -d tcf-db -U postgresuser" 
+    docker exec db sh -c "echo 'TRUNCATE $1 RESTART IDENTITY CASCADE;' | psql -d mfc-db-staging -U postgresuser" 
 }
 
 function testRunner(){

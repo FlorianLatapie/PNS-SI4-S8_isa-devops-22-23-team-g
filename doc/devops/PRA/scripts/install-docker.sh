@@ -1,9 +1,11 @@
 #!/bin/bash
-# inspired by https://github.com/FlorianLatapie/Config/blob/main/linux/ubuntu/ubuntu_install.sh
 
-# docker 
+echo -e "\n###################### install-docker.sh ######################\n"
+
+echo -e "\nInstall docker\n"
+
 sudo apt-get update
-sudo apt-get install \
+sudo apt-get install -y \
     ca-certificates \
     curl \
     gnupg \
@@ -18,9 +20,11 @@ echo \
 
 sudo apt-get update
 
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
-sudo apt install docker-compose
+sudo apt-get install docker-ce docker-ce-cli containerd.io -y
+
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.17.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
 
 sudo apt update
 sudo apt upgrade -y

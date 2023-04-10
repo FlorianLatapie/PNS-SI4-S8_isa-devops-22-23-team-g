@@ -3,12 +3,12 @@
     <module name="mfc-backend" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="fr.univcotedazur.simpletcfs.*" />
+        <option name="PATTERN" value="fr.univcotedazur.mfc.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
-    <option name="PACKAGE_NAME" value="fr.univcotedazur.simpletcfs" />
-    <option name="MAIN_CLASS_NAME" value="fr.univcotedazur.simpletcfs.RunCucumberIT" />
+    <option name="PACKAGE_NAME" value="fr.univcotedazur.mfc" />
+    <option name="MAIN_CLASS_NAME" value="fr.univcotedazur.mfc.RunCucumberIT" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="class" />
     <method v="2">

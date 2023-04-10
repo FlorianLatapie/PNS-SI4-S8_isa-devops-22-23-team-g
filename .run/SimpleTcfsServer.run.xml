@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="SimpleTcfsServer" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-    <module name="simpleTCFS" />
-    <option name="SPRING_BOOT_MAIN_CLASS" value="fr.univcotedazur.simpletcfs.SimpleTcfsServer" />
+  <configuration default="false" name="MfcServer" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+    <module name="mfc" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="fr.univcotedazur.mfc.MfcServer" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

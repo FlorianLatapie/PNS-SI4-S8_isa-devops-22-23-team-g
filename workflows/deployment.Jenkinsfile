@@ -20,6 +20,9 @@ pipeline {
         BANK_ARTIFACT_PATH = getNodeArtifactPath('bank')
         BANK_ARTIFACT_EXISTS = exists(BANK_ARTIFACT_PATH)
         BANK_VERSION = parseVersion(BANK_ARTIFACT_PATH)
+        PARKING_ARTIFACT_PATH = getNodeArtifactPath('parking')
+        PARKING_ARTIFACT_EXISTS = exists(PARKING_ARTIFACT_PATH)
+        PARKING_VERSION = parseVersion(PARKING_ARTIFACT_PATH)
         ARTIFACTORY_ACCESS_TOKEN = credentials('artifactory-access-token')
         TAG_VERSION = getTag()
     }
@@ -35,6 +38,7 @@ pipeline {
                 downloadIfExists('backend')
                 downloadIfExists('cli')
                 downloadIfExistsNode('bank')
+                downloadIfExistsNode('parking')
             }
         }
 
@@ -47,6 +51,8 @@ pipeline {
                     sh "cd ./cli && docker build --build-arg JAR_FILE=${CLI_VERSION}.jar -t teamgisadevops2023/cli:${TAG_VERSION} -f Dockerfile ."
                     echo "Building Bank Image ..."
                     sh "cd ./bank && docker build -t teamgisadevops2023/bank:${TAG_VERSION} -f Dockerfile ."
+                    echo "Building Parking Image ..."
+                    sh "cd ./parking && docker build -t teamgisadevops2023/parking:${TAG_VERSION} -f Dockerfile ."
                     echo "Start System"
                     sh "./End2End.sh"
                 }
@@ -62,10 +68,12 @@ pipeline {
                     sh "docker push teamgisadevops2023/backend:${TAG_VERSION}"
                     sh "docker push teamgisadevops2023/cli:${TAG_VERSION}"
                     sh "docker push teamgisadevops2023/bank:${TAG_VERSION}"
+                    sh "docker push teamgisadevops2023/parking:${TAG_VERSION}"
 
                     sh "docker push teamgisadevops2023/backend:latest"
                     sh "docker push teamgisadevops2023/cli:latest"
                     sh "docker push teamgisadevops2023/bank:latest"
+                    sh "docker push teamgisadevops2023/parking:latest"
                 }
             }
         }
@@ -127,7 +135,7 @@ def getNodeArtifactPath(module) {
           script: "cd ./${module} && npm pkg get version",
           returnStdout: true
     ).trim().replaceAll('"', '')
-    return 'fr/univ-cotedazur/bank/' + version
+    return "fr/univ-cotedazur/${module}/" + version
 }
 
 def parseVersion(artifactPath) {
@@ -224,6 +232,10 @@ def downloadIfExistsNode(module){
         case 'bank':
             artifactPath = BANK_ARTIFACT_PATH
             version = BANK_VERSION
+            break
+        case 'parking':
+            artifactPath = PARKING_ARTIFACT_PATH
+            version = PARKING_VERSION
             break
     }
     sh("jf rt dl --url http://vmpx07.polytech.unice.fr:8002/artifactory/ --access-token ${ARTIFACTORY_ACCESS_TOKEN} --limit=1 generic-releases-local/${artifactPath}/ ./${module}/")
