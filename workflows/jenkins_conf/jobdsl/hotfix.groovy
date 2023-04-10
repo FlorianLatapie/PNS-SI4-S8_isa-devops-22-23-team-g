@@ -1,10 +1,10 @@
-multibranchPipelineJob('feature') {
-  displayName('feature')
+multibranchPipelineJob('hotfix') {
+  displayName('hotfix')
   branchSources {
       branchSource {
         source {
           github {
-            id('feature')
+            id('hotfix')
             repository('isa-devops-22-23-team-g-23.git')
             repoOwner('pns-isa-devops')
             credentialsId('FlorianGitHub')
@@ -22,7 +22,7 @@ multibranchPipelineJob('feature') {
                 typeSuffix(true)
               }
               headRegexFilterWithPRFromOrigin{
-                regex('^feature/.*$')
+                regex('^hotfix/.*$')
                 tagRegex('^$')
               }
               gitHubIgnoreDraftPullRequestFilter()
@@ -45,7 +45,7 @@ multibranchPipelineJob('feature') {
   }
   factory {
       workflowBranchProjectFactory {
-          scriptPath('workflows/feature.Jenkinsfile')
+          scriptPath('workflows/hotfix.Jenkinsfile')
       }
   }
 }

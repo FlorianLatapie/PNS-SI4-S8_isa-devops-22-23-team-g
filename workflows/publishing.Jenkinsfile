@@ -27,17 +27,6 @@ pipeline {
     }
 
     stages {
-        stage('Gateway') {
-            when{
-                expression { CLI_ARTIFACT_EXISTS == 'true' && BACKEND_ARTIFACT_EXISTS == 'true' && BANK_ARTIFACT_EXISTS == 'true' && PARKING_ARTIFACT_EXISTS == 'true'  }
-            }
-            steps{
-                error(
-                    "BACKEND, CLI, BANK and PARKING artifacts already exists."
-                )
-            }
-        }
-
         stage('Prepare') {
             options {
               timeout(time: 5, unit: 'MINUTES')   // timeout on this stage

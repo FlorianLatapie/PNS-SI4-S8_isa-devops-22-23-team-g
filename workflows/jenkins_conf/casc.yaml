@@ -79,5 +79,6 @@ jobs:
   - file: /var/jenkins_home/jobdsl/feature.groovy
   - file: /var/jenkins_home/jobdsl/cicd.groovy
   - file: /var/jenkins_home/jobdsl/doc.groovy
+  - file: /var/jenkins_home/jobdsl/hotfix.groovy
   - file: /var/jenkins_home/jobdsl/deployment.groovy
   - file: /var/jenkins_home/jobdsl/publishing.groovy

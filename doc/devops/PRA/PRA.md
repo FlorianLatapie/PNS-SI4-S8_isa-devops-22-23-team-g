@@ -1,34 +1,38 @@
 # Plan de Reprise de l'Activité
 
 - [Plan de Reprise de l'Activité](#plan-de-reprise-de-lactivité)
-  - [Problèmes et solutions](#problèmes-et-solutions)
-    - [Accès VM](#vm)
+  - [Introduction](#introduction)
+  - [Résolution de problèmes déjà rencontrés](#résolution-de-problèmes-déjà-rencontrés)
+    - [VM](#vm)
     - [Jenkins](#jenkins)
     - [SonarQube](#sonarqube)
     - [Artifactory](#artifactory)
     - [Smee](#smee)
-    - [Github](#github)
+    - [GitHub](#github)
   - [Procédures de reconstruction](#procédures-de-reconstruction)
-    - [Introduction](#introduction)
     - [Connexion à la VM](#connexion-à-la-vm)
       - [Unix](#unix)
       - [Windows](#windows)
-    - [Jenkins](#jenkins)
-    - [Smee](#smee)
+    - [Create Smee payload URL](#create-smee-payload-url)
       - [Scripts](#scripts)
     - [Artifactory initialisation manuelle](#artifactory-initialisation-manuelle)
-    - [SonarQube](#sonarqube)
+    - [SonarQube initialisation manuelle](#sonarqube-initialisation-manuelle)
+    - [Redémarrage Jenkins](#redémarrage-jenkins)
 
 ## Introduction
 
-Dans le but d'automatiser au maximum notre plan de reprise de l'activité, nous l'avons testé à plusieurs reprises.
-L'exécution du script de reconstruction dure 10 minutes. L'initialisation manuelle d'Artifactory et les étapes finales durent 15 minutes. Nous estimons donc à environs 30 minutes la reconstruction de notre environnement par une personne connaissant la procédure avec un bonne connexion. Celle-ci devrait prendre moins d'une heure pour une personne ne connaissant pas la procédure et suivant les instructions du PRA.
+Dans le but d'automatiser au maximum notre plan de reprise de l'activité, nous l'avons testé à plusieurs reprises sur des machines virtuelles locales sur nos ordinateurs personnels.
 
-## Problèmes et Solutions
+L'exécution du script de reconstruction dure 10 minutes. L'initialisation manuelle d'Artifactory et les étapes finales durent 15 minutes. Nous estimons donc à environs 30 minutes la reconstruction de notre environnement par une personne connaissant la procédure avec une bonne connexion internet.
+Celle-ci devrait prendre moins d'une heure pour une personne ne connaissant pas la procédure et suivant les instructions du PRA.
+
+---
+
+## Résolution de problèmes déjà rencontrés
 
 ### VM
 
-- Problème : plus d'accès à la VM en ssh
+- Problème : plus d'accès à la VM en SSH
 - Solution : demander à redémarrer la VM sur Slack
 
 - Problème : perte d'accès a la VM liée à l'utilisation élevée de RAM
@@ -45,7 +49,7 @@ L'exécution du script de reconstruction dure 10 minutes. L'initialisation manue
 ### SonarQube
 
 - Problème : fail de la quality gate SonarQube malgré que les conditions soient respectées
-- Solution : contrôler la mémoire disponible sur la VM (voir partie VM)
+- Solution : contrôler la mémoire disponible sur la VM (voir partie [VM](#vm))
 
 ### Artifactory
 
@@ -68,6 +72,8 @@ L'exécution du script de reconstruction dure 10 minutes. L'initialisation manue
 - Solution : Voir les raisons de l'échec de la pipeline sur Jenkins. Généralement 2 raisons :
   1. La quality gate SonarQube n'est pas passée
   2. La version du module existe déjà sur Artifactory
+
+---
 
 ## Procédures de reconstruction
 
@@ -92,6 +98,8 @@ L'initialisation d'Artifactory n'est pas possible automatiquement. En effet, les
 Après l'initialisation d'Artifactory redémarrer le système pour que le token soit automatiquement ajouté à Jenkins
 
 Suivre les instructions [Redémarrage Jenkins](#redémarrage-jenkins)
+
+---
 
 ### Connexion à la VM
 

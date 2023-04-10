@@ -76,38 +76,11 @@ pipeline {
         stage('Parking Tests & Linting'){
             steps {
                 sh "cd ./parking && npm ci"
-                sh "cd ./parking && npm run lint"
+                sh "cd ./parking && npm run lint" 
                 sh "cd ./parking && npm run test"
             }
         }
 
-
-        stage('Verify version number') {
-            when{
-                allOf {
-                    expression { env.CHANGE_ID != null } 
-                    expression { BACKEND_ARTIFACT_EXISTS == 'true' || CLI_ARTIFACT_EXISTS == 'true' || BANK_ARTIFACT_EXISTS == 'true' || PARKING_ARTIFACT_EXISTS == 'true' }
-                }
-            }
-            steps{
-                script {
-                    def existingArtifacts = "Some artifacts already exist on Artifactory: \n"
-                    if ( CLI_ARTIFACT_EXISTS == 'true' ) {
-                        existingArtifacts += "CLI Artifact ${CLI_VERSION}"
-                    }  
-                    if (BACKEND_ARTIFACT_EXISTS == 'true' ){
-                        existingArtifacts += "BACKEND Artifact ${BACKEND_VERSION}"
-                    }
-                    if (BANK_ARTIFACT_EXISTS == 'true' ){
-                        existingArtifacts += "BANK Artifact ${BANK_VERSION}"
-                    }
-                    if (PARKING_ARTIFACT_EXISTS == 'true' ){
-                        existingArtifacts += "PARKING Artifact ${PARKING_VERSION}"
-                    }
-                    error(existingArtifacts)
-                }
-            }
-        }
     }
 }
 
